@@ -1,0 +1,224 @@
+{
+  "timestamp": "2025-10-19T07:50:34.084117",
+  "server_status": {
+    "gateway_running": true,
+    "port_4002_listening": true,
+    "trading_monitor_running": false,
+    "last_check": "2025-10-19T07:50:34.118213",
+    "overall": true
+  },
+  "trading_metrics": {
+    "total_trades": 18,
+    "total_pnl": "37200.11",
+    "avg_price": "6715.827273",
+    "last_trade": "2025-10-17 01:15:06",
+    "current_leverage": "0.7545",
+    "account_value": "1088338.46",
+    "today_pnl": null,
+    "today_trades": 0
+  },
+  "recent_transactions": [
+    {
+      "timestamp": "2025-10-17 01:15:06",
+      "aktion": "BUY",
+      "differenz_kontrakte": 7,
+      "avg_fill_price": "6645.50",
+      "total_commission": "4.3400",
+      "realized_pnl": "0.00",
+      "execution_status": "Filled",
+      "mes_preis": "6656.75",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-16 01:15:05",
+      "aktion": "SELL",
+      "differenz_kontrakte": -8,
+      "avg_fill_price": "6718.75",
+      "total_commission": "4.9600",
+      "realized_pnl": "914.88",
+      "execution_status": "Filled",
+      "mes_preis": "6717.00",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-15 03:15:05",
+      "aktion": "BUY",
+      "differenz_kontrakte": 26,
+      "avg_fill_price": "6697.13",
+      "total_commission": "16.1200",
+      "realized_pnl": "-39.99",
+      "execution_status": "Filled",
+      "mes_preis": "6693.25",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-14 01:15:05",
+      "aktion": "SELL",
+      "differenz_kontrakte": -42,
+      "avg_fill_price": "6686.67",
+      "total_commission": "26.0400",
+      "realized_pnl": "-4147.09",
+      "execution_status": "Filled",
+      "mes_preis": "6694.75",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-13 18:27:13",
+      "aktion": "BUY",
+      "differenz_kontrakte": 95,
+      "avg_fill_price": "6704.13",
+      "total_commission": "58.9000",
+      "realized_pnl": "15204.29",
+      "execution_status": "Filled",
+      "mes_preis": "6552.00",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-13 18:23:08",
+      "aktion": "SELL",
+      "differenz_kontrakte": -1,
+      "avg_fill_price": "6696.25",
+      "total_commission": "0.6200",
+      "realized_pnl": "0.00",
+      "execution_status": "Filled",
+      "mes_preis": "6791.50",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-03 21:15:07",
+      "aktion": "BUY",
+      "differenz_kontrakte": 1,
+      "avg_fill_price": "6772.25",
+      "total_commission": "0.6200",
+      "realized_pnl": "-62.49",
+      "execution_status": "Filled",
+      "mes_preis": "6770.00",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-02 21:51:36",
+      "aktion": "BUY",
+      "differenz_kontrakte": 1,
+      "avg_fill_price": "6766.50",
+      "total_commission": "0.6200",
+      "realized_pnl": "-33.74",
+      "execution_status": "Filled",
+      "mes_preis": "6768.50",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-02 04:15:05",
+      "aktion": "SELL",
+      "differenz_kontrakte": -152,
+      "avg_fill_price": "6760.84",
+      "total_commission": "94.2400",
+      "realized_pnl": "24980.97",
+      "execution_status": "Filled",
+      "mes_preis": "6770.25",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-10-01 04:15:05",
+      "aktion": "BUY",
+      "differenz_kontrakte": 52,
+      "avg_fill_price": "6716.33",
+      "total_commission": "32.2400",
+      "realized_pnl": "0.00",
+      "execution_status": "Filled",
+      "mes_preis": "6715.75",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-09-30 04:15:05",
+      "aktion": "SELL",
+      "differenz_kontrakte": -15,
+      "avg_fill_price": "6709.75",
+      "total_commission": "9.3000",
+      "realized_pnl": "383.28",
+      "execution_status": "Filled",
+      "mes_preis": "6709.25",
+      "execution_complete": 1
+    },
+    {
+      "timestamp": "2025-09-27 12:34:37",
+      "aktion": "BUY",
+      "differenz_kontrakte": 60,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "PreSubmitted",
+      "mes_preis": "6655.25",
+      "execution_complete": 0
+    },
+    {
+      "timestamp": "2025-09-27 12:33:19",
+      "aktion": "BUY",
+      "differenz_kontrakte": 60,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SIMULATED",
+      "mes_preis": "6655.25",
+      "execution_complete": 0
+    },
+    {
+      "timestamp": "2025-09-27 12:33:09",
+      "aktion": "BUY",
+      "differenz_kontrakte": 60,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SIMULATED",
+      "mes_preis": "6655.25",
+      "execution_complete": 0
+    },
+    {
+      "timestamp": "2025-09-27 12:32:57",
+      "aktion": "BUY",
+      "differenz_kontrakte": 60,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SIMULATED",
+      "mes_preis": "6655.25",
+      "execution_complete": 0
+    }
+  ],
+  "system_status": {
+    "ram_usage_percent": 71.8,
+    "disk_usage_percent": 38,
+    "uptime_days": 16.6
+  },
+  "data_freshness": {
+    "ib_es": {
+      "latest_date": "2025-10-17T15:59:00",
+      "hours_old": 39,
+      "recent_records": 6233,
+      "status": "stale"
+    },
+    "ib_vix": {
+      "latest_date": "2025-10-17T15:59:00",
+      "hours_old": 39,
+      "recent_records": 4050,
+      "status": "stale"
+    },
+    "trading_data_daily": {
+      "latest_date": "2025-10-19T07:10:04",
+      "hours_old": 0,
+      "recent_records": 16,
+      "status": "stale"
+    },
+    "fred_credit_spread_HY": {
+      "latest_date": "2025-10-17T08:00:00",
+      "hours_old": 47,
+      "recent_records": 4,
+      "status": "stale"
+    },
+    "cboe_putcall_sum_all": {
+      "latest_date": "2025-10-17T16:15:00",
+      "hours_old": 39,
+      "recent_records": 5,
+      "status": "stale"
+    }
+  }
+}
