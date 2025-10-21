@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-10-21T07:30:01.483644",
+  "timestamp": "2025-10-21T08:00:01.496145",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-10-21T07:30:01.511607",
+    "last_check": "2025-10-21T08:00:01.573281",
     "overall": true
   },
   "trading_metrics": {
@@ -185,21 +185,21 @@
     }
   ],
   "system_status": {
-    "ram_usage_percent": 43.7,
+    "ram_usage_percent": 44.5,
     "disk_usage_percent": 36,
     "uptime_days": 0.5
   },
   "data_freshness": {
     "ib_es": {
-      "latest_date": "2025-10-20T23:52:00",
+      "latest_date": "2025-10-21T00:22:00",
       "hours_old": 7,
-      "recent_records": 5933,
+      "recent_records": 5963,
       "status": "current"
     },
     "ib_vix": {
       "latest_date": "2025-10-20T15:59:00",
-      "hours_old": 15,
-      "recent_records": 3734,
+      "hours_old": 16,
+      "recent_records": 3704,
       "status": "current"
     },
     "trading_data_daily": {
@@ -210,8 +210,8 @@
     },
     "fred_credit_spread_HY": {
       "latest_date": "2025-10-18T08:00:00",
-      "hours_old": 71,
-      "recent_records": 5,
+      "hours_old": 72,
+      "recent_records": 4,
       "status": "stale"
     },
     "cboe_putcall_sum_all": {
