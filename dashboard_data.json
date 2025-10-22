@@ -1,23 +1,34 @@
 {
-  "timestamp": "2025-10-23T01:00:01.450231",
+  "timestamp": "2025-10-23T01:30:01.693803",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-10-23T01:00:01.527450",
+    "last_check": "2025-10-23T01:30:01.718147",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 20,
-    "total_pnl": "48400.03",
-    "avg_price": "6724.579231",
-    "last_trade": "2025-10-22 01:15:05",
-    "current_leverage": "-0.8749",
-    "account_value": "1101759.19",
-    "today_pnl": null,
-    "today_trades": 0
+    "total_trades": 21,
+    "total_pnl": "49065.07",
+    "avg_price": "6725.627143",
+    "last_trade": "2025-10-23 01:15:05",
+    "current_leverage": "-0.7465",
+    "account_value": "1103711.75",
+    "today_pnl": "665.04",
+    "today_trades": 1
   },
   "recent_transactions": [
+    {
+      "timestamp": "2025-10-23 01:15:05",
+      "aktion": "BUY",
+      "differenz_kontrakte": 4,
+      "avg_fill_price": "6739.25",
+      "total_commission": "2.4800",
+      "realized_pnl": "665.04",
+      "execution_status": "Filled",
+      "mes_preis": "6737.50",
+      "execution_complete": 1
+    },
     {
       "timestamp": "2025-10-22 01:15:05",
       "aktion": "BUY",
@@ -171,27 +182,16 @@
       "execution_status": "PreSubmitted",
       "mes_preis": "6655.25",
       "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-09-27 12:33:19",
-      "aktion": "BUY",
-      "differenz_kontrakte": 60,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SIMULATED",
-      "mes_preis": "6655.25",
-      "execution_complete": 0
     }
   ],
   "system_status": {
-    "ram_usage_percent": 43.9,
+    "ram_usage_percent": 44.2,
     "disk_usage_percent": 36,
     "uptime_days": 2.2
   },
   "data_freshness": {
     "ib_es": {
-      "latest_date": "2025-10-22T17:22:00",
+      "latest_date": "2025-10-22T17:52:00",
       "hours_old": 7,
       "recent_records": 6442,
       "status": "current"
@@ -203,9 +203,9 @@
       "status": "current"
     },
     "trading_data_daily": {
-      "latest_date": "2025-10-23T00:10:03",
+      "latest_date": "2025-10-23T01:10:03",
       "hours_old": 0,
-      "recent_records": 10,
+      "recent_records": 11,
       "status": "stale"
     },
     "fred_credit_spread_HY": {
@@ -216,7 +216,7 @@
     },
     "cboe_putcall_sum_all": {
       "latest_date": "2025-10-21T16:15:00",
-      "hours_old": 32,
+      "hours_old": 33,
       "recent_records": 4,
       "status": "stale"
     }
