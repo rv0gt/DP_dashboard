@@ -1,16 +1,16 @@
 {
-  "timestamp": "2025-10-30T04:00:01.919397",
+  "timestamp": "2025-10-30T04:30:01.596192",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-10-30T04:00:01.997461",
+    "last_check": "2025-10-30T04:30:01.620832",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 16,
-    "total_pnl": "48045.31",
-    "avg_price": "6733.129375",
+    "total_trades": 15,
+    "total_pnl": "47662.03",
+    "avg_price": "6734.688000",
     "last_trade": "2025-10-24 10:15:05",
     "current_leverage": "2.2111",
     "account_value": "1095307.43",
@@ -185,13 +185,13 @@
     }
   ],
   "system_status": {
-    "ram_usage_percent": 37.6,
+    "ram_usage_percent": 37.2,
     "disk_usage_percent": 40,
     "uptime_days": 9.4
   },
   "data_freshness": {
     "ib_es": {
-      "latest_date": "2025-10-29T21:22:00",
+      "latest_date": "2025-10-29T21:52:00",
       "hours_old": 6,
       "recent_records": 6502,
       "status": "current"
@@ -199,11 +199,11 @@
     "ib_vix": {
       "latest_date": "2025-10-29T15:59:00",
       "hours_old": 12,
-      "recent_records": 3944,
+      "recent_records": 3914,
       "status": "current"
     },
     "trading_data_daily": {
-      "latest_date": "2025-10-30T03:10:04",
+      "latest_date": "2025-10-30T04:10:04",
       "hours_old": 0,
       "recent_records": 11,
       "status": "stale"
@@ -216,7 +216,7 @@
     },
     "cboe_putcall_sum_all": {
       "latest_date": "2025-10-27T16:15:00",
-      "hours_old": 59,
+      "hours_old": 60,
       "recent_records": 3,
       "status": "stale"
     }
