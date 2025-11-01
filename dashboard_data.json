@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-01T15:00:01.634401",
+  "timestamp": "2025-11-01T15:30:01.507330",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-01T15:00:01.710292",
+    "last_check": "2025-11-01T15:30:01.531201",
     "overall": true
   },
   "trading_metrics": {
@@ -185,9 +185,9 @@
     }
   ],
   "system_status": {
-    "ram_usage_percent": 39.1,
+    "ram_usage_percent": 37.9,
     "disk_usage_percent": 39,
-    "uptime_days": 11.8
+    "uptime_days": 11.9
   },
   "data_freshness": {
     "ib_es": {
@@ -203,7 +203,7 @@
       "status": "current"
     },
     "trading_data_daily": {
-      "latest_date": "2025-11-01T14:10:04",
+      "latest_date": "2025-11-01T15:10:04",
       "hours_old": 0,
       "recent_records": 12,
       "status": "stale"
@@ -216,7 +216,7 @@
     },
     "cboe_putcall_sum_all": {
       "latest_date": "2025-10-27T16:15:00",
-      "hours_old": 118,
+      "hours_old": 119,
       "recent_records": 1,
       "status": "stale"
     }
