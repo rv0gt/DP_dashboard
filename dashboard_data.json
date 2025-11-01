@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-01T00:30:02.046740",
+  "timestamp": "2025-11-01T01:00:01.484196",
   "server_status": {
-    "gateway_running": true,
-    "port_4002_listening": true,
+    "gateway_running": false,
+    "port_4002_listening": false,
     "trading_monitor_running": false,
-    "last_check": "2025-11-01T00:30:02.070738",
-    "overall": true
+    "last_check": "2025-11-01T01:00:01.582779",
+    "overall": false
   },
   "trading_metrics": {
     "total_trades": 15,
@@ -185,20 +185,20 @@
     }
   ],
   "system_status": {
-    "ram_usage_percent": 37.8,
+    "ram_usage_percent": 20.5,
     "disk_usage_percent": 39,
     "uptime_days": 11.2
   },
   "data_freshness": {
     "ib_es": {
       "latest_date": "2025-10-31T15:59:00",
-      "hours_old": 8,
+      "hours_old": 9,
       "recent_records": 6900,
       "status": "current"
     },
     "ib_vix": {
       "latest_date": "2025-10-31T15:59:00",
-      "hours_old": 8,
+      "hours_old": 9,
       "recent_records": 4050,
       "status": "current"
     },
@@ -210,7 +210,7 @@
     },
     "fred_credit_spread_HY": {
       "latest_date": "2025-10-31T08:00:00",
-      "hours_old": 16,
+      "hours_old": 17,
       "recent_records": 5,
       "status": "current"
     },
