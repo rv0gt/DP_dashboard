@@ -1,23 +1,34 @@
 {
-  "timestamp": "2025-11-02T19:35:36.928090",
+  "timestamp": "2025-11-02T19:40:11.340958",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-02T19:35:36.956190",
+    "last_check": "2025-11-02T19:40:11.368456",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 34,
+    "total_trades": 35,
     "total_pnl": "22961.58",
     "avg_price": "6259.742857",
-    "last_trade": "2025-11-02 19:35:09",
+    "last_trade": "2025-11-02 19:40:11",
     "current_leverage": "1.5963",
     "account_value": "1121438.72",
     "today_pnl": "0.00",
-    "today_trades": 21
+    "today_trades": 22
   },
   "recent_transactions": [
+    {
+      "timestamp": "2025-11-02 19:40:11",
+      "aktion": "SELL",
+      "differenz_kontrakte": -12,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SUBMITTED",
+      "mes_preis": "6872.00",
+      "execution_complete": 0
+    },
     {
       "timestamp": "2025-11-02 19:35:09",
       "aktion": "SELL",
@@ -171,21 +182,10 @@
       "execution_status": "SUBMITTED",
       "mes_preis": "6655.25",
       "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-02 17:38:50",
-      "aktion": "SELL",
-      "differenz_kontrakte": -12,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6872.00",
-      "execution_complete": 0
     }
   ],
   "system_status": {
-    "ram_usage_percent": 76.6,
+    "ram_usage_percent": 74.8,
     "disk_usage_percent": 39,
     "uptime_days": 13.0
   },
@@ -193,7 +193,7 @@
     "ib_es": {
       "latest_date": "2025-10-31T15:59:00",
       "hours_old": 51,
-      "recent_records": 6744,
+      "recent_records": 6739,
       "status": "stale"
     },
     "ib_vix": {
@@ -203,10 +203,10 @@
       "status": "stale"
     },
     "trading_data_daily": {
-      "latest_date": "2025-11-02T17:54:05",
-      "hours_old": 1,
+      "latest_date": "2025-11-02T19:38:11",
+      "hours_old": 0,
       "recent_records": 12,
-      "status": "current"
+      "status": "stale"
     },
     "fred_credit_spread_HY": {
       "latest_date": "2025-10-31T08:00:00",
