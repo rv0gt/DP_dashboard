@@ -1,23 +1,34 @@
 {
-  "timestamp": "2025-11-02T20:16:12.835253",
+  "timestamp": "2025-11-02T20:20:15.155355",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-02T20:16:12.861657",
+    "last_check": "2025-11-02T20:20:15.183130",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 45,
+    "total_trades": 46,
     "total_pnl": "22961.58",
     "avg_price": "6259.742857",
-    "last_trade": "2025-11-02 20:16:09",
+    "last_trade": "2025-11-02 20:20:11",
     "current_leverage": "1.5963",
     "account_value": "1121438.72",
     "today_pnl": "0.00",
-    "today_trades": 32
+    "today_trades": 33
   },
   "recent_transactions": [
+    {
+      "timestamp": "2025-11-02 20:20:11",
+      "aktion": "SELL",
+      "differenz_kontrakte": -11,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SUBMITTED",
+      "mes_preis": "6655.25",
+      "execution_complete": 0
+    },
     {
       "timestamp": "2025-11-02 20:16:09",
       "aktion": "SELL",
@@ -171,29 +182,18 @@
       "execution_status": "SUBMITTED",
       "mes_preis": "6655.25",
       "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-02 18:34:30",
-      "aktion": "SELL",
-      "differenz_kontrakte": -12,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6872.00",
-      "execution_complete": 0
     }
   ],
   "system_status": {
-    "ram_usage_percent": 72.8,
+    "ram_usage_percent": 74.2,
     "disk_usage_percent": 39,
-    "uptime_days": 13.0
+    "uptime_days": 13.1
   },
   "data_freshness": {
     "ib_es": {
       "latest_date": "2025-10-31T15:59:00",
       "hours_old": 52,
-      "recent_records": 6703,
+      "recent_records": 6699,
       "status": "stale"
     },
     "ib_vix": {
