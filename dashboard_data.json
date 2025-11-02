@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-02T20:05:30.300481",
+  "timestamp": "2025-11-02T20:05:36.863862",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-02T20:05:30.327429",
+    "last_check": "2025-11-02T20:05:36.893060",
     "overall": true
   },
   "trading_metrics": {
