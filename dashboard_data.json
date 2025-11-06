@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-06T02:10:15.101698",
+  "timestamp": "2025-11-06T03:10:13.731987",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-06T02:10:15.125764",
+    "last_check": "2025-11-06T03:10:13.756316",
     "overall": true
   },
   "trading_metrics": {
@@ -13,7 +13,7 @@
     "avg_price": "6523.924615",
     "last_trade": "2025-11-06 02:10:10",
     "current_leverage": "1.5963",
-    "account_value": "1109458.86",
+    "account_value": "1108736.53",
     "today_pnl": "-706.46",
     "today_trades": 3
   },
@@ -185,32 +185,32 @@
     }
   ],
   "system_status": {
-    "ram_usage_percent": 37.1,
+    "ram_usage_percent": 37.4,
     "disk_usage_percent": 40,
     "uptime_days": 16.3
   },
   "data_freshness": {
     "ib_es": {
-      "latest_date": "2025-11-05T18:49:00",
+      "latest_date": "2025-11-05T19:49:00",
       "hours_old": 7,
       "recent_records": 6429,
       "status": "current"
     },
     "ib_vix": {
       "latest_date": "2025-11-05T15:59:00",
-      "hours_old": 10,
-      "recent_records": 4050,
+      "hours_old": 11,
+      "recent_records": 3994,
       "status": "current"
     },
     "trading_data_daily": {
-      "latest_date": "2025-11-06T02:01:16",
+      "latest_date": "2025-11-06T03:01:08",
       "hours_old": 0,
       "recent_records": 11,
       "status": "stale"
     },
     "fred_credit_spread_HY": {
       "latest_date": "2025-11-05T08:00:00",
-      "hours_old": 18,
+      "hours_old": 19,
       "recent_records": 5,
       "status": "current"
     },
