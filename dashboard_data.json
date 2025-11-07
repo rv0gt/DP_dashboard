@@ -1,23 +1,34 @@
 {
-  "timestamp": "2025-11-07T18:10:13.686280",
+  "timestamp": "2025-11-07T19:10:14.172102",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-07T18:10:13.710834",
+    "last_check": "2025-11-07T19:10:14.196810",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 65,
+    "total_trades": 66,
     "total_pnl": "6182.29",
-    "avg_price": "6550.561724",
-    "last_trade": "2025-11-07 16:10:10",
+    "avg_price": "6555.176333",
+    "last_trade": "2025-11-07 19:10:09",
     "current_leverage": "1.5963",
-    "account_value": "1061916.90",
+    "account_value": "1068465.60",
     "today_pnl": "-915.90",
-    "today_trades": 1
+    "today_trades": 2
   },
   "recent_transactions": [
+    {
+      "timestamp": "2025-11-07 19:10:09",
+      "aktion": "BUY",
+      "differenz_kontrakte": 1,
+      "avg_fill_price": "6689.00",
+      "total_commission": "0.6200",
+      "realized_pnl": "0.00",
+      "execution_status": "Filled",
+      "mes_preis": "6684.25",
+      "execution_complete": 1
+    },
     {
       "timestamp": "2025-11-07 16:10:10",
       "aktion": "SELL",
@@ -171,46 +182,35 @@
       "execution_status": "Filled",
       "mes_preis": "6884.75",
       "execution_complete": 1
-    },
-    {
-      "timestamp": "2025-11-03 06:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 2,
-      "avg_fill_price": "6887.00",
-      "total_commission": "1.2400",
-      "realized_pnl": "0.00",
-      "execution_status": "Filled",
-      "mes_preis": "6655.25",
-      "execution_complete": 1
     }
   ],
   "system_status": {
-    "ram_usage_percent": 40.6,
+    "ram_usage_percent": 40.7,
     "disk_usage_percent": 40,
     "uptime_days": 18.0
   },
   "data_freshness": {
     "ib_es": {
-      "latest_date": "2025-11-07T10:49:00",
+      "latest_date": "2025-11-07T11:49:00",
       "hours_old": 7,
-      "recent_records": 6550,
+      "recent_records": 6610,
       "status": "current"
     },
     "ib_vix": {
-      "latest_date": "2025-11-07T10:45:00",
+      "latest_date": "2025-11-07T11:45:00",
       "hours_old": 7,
-      "recent_records": 3736,
+      "recent_records": 3796,
       "status": "current"
     },
     "trading_data_daily": {
-      "latest_date": "2025-11-07T18:01:45",
+      "latest_date": "2025-11-07T19:01:28",
       "hours_old": 0,
       "recent_records": 12,
       "status": "stale"
     },
     "fred_credit_spread_HY": {
       "latest_date": "2025-11-07T08:00:00",
-      "hours_old": 10,
+      "hours_old": 11,
       "recent_records": 5,
       "status": "current"
     },
