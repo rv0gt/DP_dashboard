@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-19T21:10:13.023854",
+  "timestamp": "2025-11-19T22:10:13.321849",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-19T21:10:13.046866",
+    "last_check": "2025-11-19T22:10:13.344746",
     "overall": true
   },
   "trading_metrics": {
@@ -13,7 +13,7 @@
     "avg_price": "6594.269091",
     "last_trade": "2025-11-18 14:10:10",
     "current_leverage": "1.5963",
-    "account_value": "1056704.54",
+    "account_value": "1058173.65",
     "today_pnl": null,
     "today_trades": 0
   },
