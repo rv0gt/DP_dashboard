@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-20T21:10:13.100259",
+  "timestamp": "2025-11-20T22:10:12.592945",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-20T21:10:13.122788",
+    "last_check": "2025-11-20T22:10:12.616382",
     "overall": true
   },
   "trading_metrics": {
@@ -13,7 +13,7 @@
     "avg_price": "6613.617105",
     "last_trade": "2025-11-20 17:10:09",
     "current_leverage": "1.5963",
-    "account_value": "1047891.86",
+    "account_value": "1039666.95",
     "today_pnl": "1131.37",
     "today_trades": 6
   },
@@ -185,7 +185,7 @@
     }
   ],
   "system_status": {
-    "ram_usage_percent": 39.2,
+    "ram_usage_percent": 39.3,
     "disk_usage_percent": 44,
     "uptime_days": 31.1
   },
