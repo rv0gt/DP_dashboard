@@ -1,23 +1,34 @@
 {
-  "timestamp": "2025-11-20T09:10:14.804936",
+  "timestamp": "2025-11-20T10:10:14.338213",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-20T09:10:14.828123",
+    "last_check": "2025-11-20T10:10:14.360660",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 87,
-    "total_pnl": "-67445.77",
-    "avg_price": "6602.334286",
-    "last_trade": "2025-11-20 09:10:10",
+    "total_trades": 88,
+    "total_pnl": "-67075.31",
+    "avg_price": "6606.248611",
+    "last_trade": "2025-11-20 10:10:10",
     "current_leverage": "1.5963",
-    "account_value": "1077394.53",
-    "today_pnl": "389.40",
-    "today_trades": 3
+    "account_value": "1076219.55",
+    "today_pnl": "759.86",
+    "today_trades": 4
   },
   "recent_transactions": [
+    {
+      "timestamp": "2025-11-20 10:10:10",
+      "aktion": "SELL",
+      "differenz_kontrakte": -1,
+      "avg_fill_price": "6743.25",
+      "total_commission": "0.6200",
+      "realized_pnl": "370.46",
+      "execution_status": "Filled",
+      "mes_preis": "6746.00",
+      "execution_complete": 1
+    },
     {
       "timestamp": "2025-11-20 09:10:10",
       "aktion": "BUY",
@@ -163,17 +174,6 @@
     },
     {
       "timestamp": "2025-11-09 13:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6655.25",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-09 10:10:10",
       "aktion": "BUY",
       "differenz_kontrakte": 1,
       "avg_fill_price": null,
