@@ -1,23 +1,45 @@
 {
-  "timestamp": "2025-11-22T19:10:13.202845",
+  "timestamp": "2025-11-22T20:10:13.812766",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-22T19:10:13.233185",
+    "last_check": "2025-11-22T20:10:13.848026",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 105,
+    "total_trades": 107,
     "total_pnl": "-67962.46",
     "avg_price": "6608.880000",
-    "last_trade": "2025-11-22 19:10:09",
+    "last_trade": "2025-11-22 20:10:10",
     "current_leverage": "1.5963",
     "account_value": "1059381.27",
     "today_pnl": "0.00",
-    "today_trades": 13
+    "today_trades": 15
   },
   "recent_transactions": [
+    {
+      "timestamp": "2025-11-22 20:10:10",
+      "aktion": "BUY",
+      "differenz_kontrakte": 1,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SUBMITTED",
+      "mes_preis": "6631.50",
+      "execution_complete": 0
+    },
+    {
+      "timestamp": "2025-11-22 19:21:12",
+      "aktion": "BUY",
+      "differenz_kontrakte": 1,
+      "avg_fill_price": null,
+      "total_commission": null,
+      "realized_pnl": null,
+      "execution_status": "SUBMITTED",
+      "mes_preis": "6631.50",
+      "execution_complete": 0
+    },
     {
       "timestamp": "2025-11-22 19:10:09",
       "aktion": "BUY",
@@ -160,32 +182,10 @@
       "execution_status": "SUBMITTED",
       "mes_preis": "6631.50",
       "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-21 22:10:09",
-      "aktion": "SELL",
-      "differenz_kontrakte": -1,
-      "avg_fill_price": "6624.00",
-      "total_commission": "0.6200",
-      "realized_pnl": "-233.00",
-      "execution_status": "Filled",
-      "mes_preis": "6623.75",
-      "execution_complete": 1
-    },
-    {
-      "timestamp": "2025-11-21 20:10:09",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": "6671.75",
-      "total_commission": "0.6200",
-      "realized_pnl": "0.00",
-      "execution_status": "Filled",
-      "mes_preis": "6655.25",
-      "execution_complete": 1
     }
   ],
   "system_status": {
-    "ram_usage_percent": 74.0,
+    "ram_usage_percent": 43.5,
     "disk_usage_percent": 44,
     "uptime_days": 33.0
   },
