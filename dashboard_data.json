@@ -1,193 +1,22 @@
 {
-  "timestamp": "2025-11-23T18:10:13.833150",
+  "timestamp": "2025-11-28T21:10:08.982599",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-23T18:10:13.860121",
+    "last_check": "2025-11-28T21:10:09.011778",
     "overall": true
   },
   "trading_metrics": {
-    "total_trades": 122,
-    "total_pnl": "-66942.70",
-    "avg_price": "6599.576579",
-    "last_trade": "2025-11-23 18:10:10",
-    "current_leverage": "1.5963",
-    "account_value": "1059381.27",
-    "today_pnl": "0.00",
-    "today_trades": 16
+    "error": "1146 (42S02): Table 'DP_DataBase.ib_rebalancing_log' doesn't exist",
+    "total_trades": 0,
+    "total_pnl": 0
   },
-  "recent_transactions": [
-    {
-      "timestamp": "2025-11-23 18:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6557.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 17:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6557.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 16:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6557.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 15:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 14:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6557.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 13:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6557.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 12:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 11:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 08:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 07:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 05:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 04:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 03:10:09",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 02:10:09",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    },
-    {
-      "timestamp": "2025-11-23 01:10:10",
-      "aktion": "BUY",
-      "differenz_kontrakte": 1,
-      "avg_fill_price": null,
-      "total_commission": null,
-      "realized_pnl": null,
-      "execution_status": "SUBMITTED",
-      "mes_preis": "6631.50",
-      "execution_complete": 0
-    }
-  ],
+  "recent_transactions": [],
   "system_status": {
-    "ram_usage_percent": 45.4,
-    "disk_usage_percent": 45,
-    "uptime_days": 34.0
+    "ram_usage_percent": 48.6,
+    "disk_usage_percent": 48,
+    "uptime_days": 39.1
   },
   "data_freshness": {
     "ib_es": {
