@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-29T08:10:09.634113",
+  "timestamp": "2025-11-29T09:10:09.520365",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-11-29T08:10:09.656314",
+    "last_check": "2025-11-29T09:10:09.542990",
     "overall": true
   },
   "trading_metrics": {
@@ -14,9 +14,9 @@
   },
   "recent_transactions": [],
   "system_status": {
-    "ram_usage_percent": 34.6,
+    "ram_usage_percent": 34.3,
     "disk_usage_percent": 47,
-    "uptime_days": 39.5
+    "uptime_days": 39.6
   },
   "data_freshness": {
     "ib_es": {
