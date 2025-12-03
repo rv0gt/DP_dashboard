@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-12-03T10:10:05.724234",
+  "timestamp": "2025-12-03T11:10:05.129247",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-12-03T10:10:05.753278",
+    "last_check": "2025-12-03T11:10:05.156363",
     "overall": true
   },
   "trading_metrics": {
@@ -16,7 +16,7 @@
   "system_status": {
     "ram_usage_percent": 29.2,
     "disk_usage_percent": 94,
-    "uptime_days": 1.5
+    "uptime_days": 1.6
   },
   "data_freshness": {
     "ib_es": {
