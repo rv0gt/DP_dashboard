@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-06T06:19:03.722370",
+  "timestamp": "2025-12-06T07:10:06.240833",
   "server_status": {
-    "gateway_running": false,
-    "port_4002_listening": false,
+    "gateway_running": true,
+    "port_4002_listening": true,
     "trading_monitor_running": false,
-    "last_check": "2025-12-06T06:19:03.752149",
-    "overall": false
+    "last_check": "2025-12-06T07:10:06.270096",
+    "overall": true
   },
   "trading_metrics": {
     "error": "1146 (42S02): Table 'DP_DataBase.ib_rebalancing_log' doesn't exist",
@@ -14,7 +14,7 @@
   },
   "recent_transactions": [],
   "system_status": {
-    "ram_usage_percent": 28.6,
+    "ram_usage_percent": 37.5,
     "disk_usage_percent": 100,
     "uptime_days": 4.4
   },
