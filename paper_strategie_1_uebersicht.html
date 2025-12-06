@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Übersicht</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .hero {
+            background: #0a2540;
+            background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%);
+            padding: 50px 30px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: 40px 40px;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .breadcrumb a:hover {
+            color: #fff;
+        }
+        
+        .breadcrumb span {
+            color: rgba(255,255,255,0.5);
+            margin: 0 10px;
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        
+        .server-status {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .status-online { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+        .status-offline { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+        
+        .stats-section {
+            background: linear-gradient(180deg, #0f3554 0%, #0a2540 100%);
+            padding: 40px 30px 50px;
+        }
+        
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        
+        .nav-section {
+            padding: 40px 30px;
+            background: #f8f9fa;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: #fff;
+            border: 2px solid #0066cc;
+            border-radius: 8px;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: #0066cc;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+        
+        .nav-btn-icon {
+            font-size: 20px;
+        }
+        
+        .transactions-section {
+            padding: 60px 30px;
+            background: #fff;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .table-container {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .footer {
+            background: #333;
+            color: #fff;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="dashboard_analyse_home.html">← Zurück zur Übersicht</a>
+            </div>
+            <h1>Paper Strategie 1</h1>
+            <div class="server-status" id="server-status">
+                <span class="status-badge status-offline">Lade...</span>
+            </div>
+        </div>
+    </section>
+    
+    <section class="stats-section">
+        <div class="stats-grid" id="metrics">
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Konto-Wert</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Aktueller Hebel</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Trades (30T)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Total P&L (30T)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Heutiges P&L</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Ø Fill-Preis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Kontraktname</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Offene Orders</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="nav-section">
+        <div class="nav-buttons">
+            <a href="paper_strategie_1_performance_analyse.html" class="nav-btn">
+                <span class="nav-btn-icon">📈</span>
+                Performance Analyse
+            </a>
+            <a href="paper_strategie_1_margin_analyse.html" class="nav-btn">
+                <span class="nav-btn-icon">💰</span>
+                Margin Analyse
+            </a>
+            <a href="paper_strategie_1_rollover_analyse.html" class="nav-btn">
+                <span class="nav-btn-icon">🔄</span>
+                Rollover Analyse
+            </a>
+        </div>
+    </section>
+    
+    <section class="transactions-section">
+        <div class="container">
+            <h2 class="section-title">Letzte Transaktionen</h2>
+            <div class="table-container">
+                <table id="transactions">
+                    <thead>
+                        <tr>
+                            <th>Zeitpunkt</th>
+                            <th>Aktion</th>
+                            <th>Delta</th>
+                            <th>Ausgeführt</th>
+                            <th>Fill-Preis</th>
+                            <th>Kosten</th>
+                            <th>Slippage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="8" style="text-align:center">Lade Daten...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="last-update" id="last-update"></div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <p>Paper Strategie 1 · Trading Dashboard</p>
+    </footer>
+    
+    <script>
+        const DATA_URL = './dashboard_data.json';
+        
+        async function loadDashboard() {
+            try {
+                const response = await fetch(DATA_URL);
+                const data = await response.json();
+                
+                updateServerStatus(data.server_status);
+                updateMetrics(data.paper_strategie_1?.overview);
+                updateTransactions(data.paper_strategie_1?.recent_transactions);
+                updateLastUpdate(data.timestamp);
+                
+            } catch (error) {
+                console.error('Fehler:', error);
+            }
+        }
+        
+        function updateServerStatus(status) {
+            if (!status) return;
+            
+            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
+            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
+            
+            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
+            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
+            
+            document.getElementById('server-status').innerHTML = `
+                <span class="status-badge ${gatewayClass}">${gatewayText}</span>
+                <span class="status-badge ${portClass}">${portText}</span>
+            `;
+        }
+        
+        function updateMetrics(overview) {
+            if (!overview) return;
+            
+            const formatCurrency = (num) => {
+                if (num === null || num === undefined) return '—';
+                return new Intl.NumberFormat('de-DE', {
+                    style: 'currency', currency: 'USD',
+                    minimumFractionDigits: 0, maximumFractionDigits: 0
+                }).format(num);
+            };
+            
+            const pnl30d = parseFloat(overview.total_pnl_30d || 0);
+            const pnlToday = parseFloat(overview.today_pnl || 0);
+            
+            document.getElementById('metrics').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${formatCurrency(overview.konto_wert_nlv)}</div>
+                    <div class="stat-label">Konto-Wert</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.neuer_hebel ? parseFloat(overview.neuer_hebel).toFixed(3) + 'x' : '—'}</div>
+                    <div class="stat-label">Aktueller Hebel</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.total_trades_30d || 0}</div>
+                    <div class="stat-label">Trades (30T)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${pnl30d >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl30d)}</div>
+                    <div class="stat-label">Total P&L (30T)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${pnlToday >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnlToday)}</div>
+                    <div class="stat-label">Heutiges P&L</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.avg_fill_price ? '$' + parseFloat(overview.avg_fill_price).toFixed(2) : '—'}</div>
+                    <div class="stat-label">Ø Fill-Preis</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:18px">${overview.kontraktname || '—'}</div>
+                    <div class="stat-label">Kontraktname</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.offene_orders_anzahl ?? '—'}</div>
+                    <div class="stat-label">Offene Orders</div>
+                </div>
+            `;
+        }
+        
+        function updateTransactions(transactions) {
+            const tbody = document.querySelector('#transactions tbody');
+            
+            if (!transactions || transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Keine Transaktionen</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = transactions.map(t => {
+                const slippage = parseFloat(t.slippage_kosten || 0);
+                return `
+                    <tr>
+                        <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
+                        <td><strong>${t.aktion || '—'}</strong></td>
+                        <td>${t.delta_zu_handeln ?? '—'}</td>
+                        <td>${t.ausgefuehrte_menge ?? '—'}</td>
+                        <td>${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                        <td>${t.kosten_transaktion ? '$' + parseFloat(t.kosten_transaktion).toFixed(2) : '—'}</td>
+                        <td class="${slippage >= 0 ? 'positive' : 'negative'}">${t.slippage_kosten ? '$' + slippage.toFixed(2) : '—'}</td>
+                        <td>${t.status || '—'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function updateLastUpdate(timestamp) {
+            if (!timestamp) return;
+            document.getElementById('last-update').innerHTML = 
+                `Letzte Aktualisierung: ${new Date(timestamp).toLocaleString('de-DE')}`;
+        }
+        
+        loadDashboard();
+        setInterval(loadDashboard, 60000);
+    </script>
+</body>
+</html>

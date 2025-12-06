@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Performance Analyse</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .hero {
+            background: #0a2540;
+            background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%);
+            padding: 50px 30px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: 40px 40px;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .breadcrumb a:hover { color: #fff; }
+        
+        .breadcrumb span {
+            color: rgba(255,255,255,0.5);
+            margin: 0 10px;
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .hero p {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+        }
+        
+        .stats-section {
+            background: linear-gradient(180deg, #0f3554 0%, #0a2540 100%);
+            padding: 40px 30px 50px;
+        }
+        
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 15px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        
+        .chart-section {
+            padding: 60px 30px;
+            background: #f8f9fa;
+        }
+        
+        .chart-section:nth-child(odd) {
+            background: #fff;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .chart-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-section:nth-child(odd) .chart-card {
+            background: #f8f9fa;
+        }
+        
+        .chart-wrapper {
+            height: 350px;
+            position: relative;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .table-section {
+            padding: 60px 30px;
+            background: #fff;
+        }
+        
+        .table-container {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        tr:hover { background: #f8f9fa; }
+        tr:last-child td { border-bottom: none; }
+        
+        .footer {
+            background: #333;
+            color: #fff;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 1000px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hero h1 { font-size: 28px; }
+            
+            .chart-wrapper {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="dashboard_analyse_home.html">Home</a>
+                <span>›</span>
+                <a href="paper_strategie_1_uebersicht.html">Paper Strategie 1</a>
+                <span>›</span>
+                <span style="color:#fff">Performance Analyse</span>
+            </div>
+            <h1>Performance Analyse</h1>
+            <p>Paper Strategie 1 - Konto-Entwicklung und Kostenanalyse</p>
+        </div>
+    </section>
+    
+    <section class="stats-section">
+        <div class="stats-grid" id="metrics">
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Startwert</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Aktueller Wert</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Rendite</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Kum. Kosten</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Kum. Slippage</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="container">
+            <h2 class="section-title">Konto-Entwicklung</h2>
+            
+            <div class="chart-card">
+                <div class="chart-title">Konto-Wert (absolut in USD)</div>
+                <div class="chart-wrapper">
+                    <canvas id="accountValueChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-title">Konto-Wert (% Veränderung seit Start)</div>
+                <div class="chart-wrapper">
+                    <canvas id="accountPctChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="container">
+            <h2 class="section-title">Kumulative Kosten</h2>
+            
+            <div class="chart-card">
+                <div class="chart-title">Transaktionskosten & Slippage (kumulativ)</div>
+                <div class="chart-wrapper">
+                    <canvas id="costsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="table-section">
+        <div class="container">
+            <h2 class="section-title">Tägliche Übersicht</h2>
+            <div class="table-container">
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Konto-Wert</th>
+                            <th>Veränderung %</th>
+                            <th>Kum. Kosten</th>
+                            <th>Kum. Slippage</th>
+                            <th>Total Kosten</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" style="text-align:center">Lade Daten...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="last-update" id="last-update"></div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p>
+    </footer>
+    
+    <script>
+        const DATA_URL = './dashboard_data.json';
+        let accountValueChart, accountPctChart, costsChart;
+        
+        async function loadData() {
+            try {
+                const response = await fetch(DATA_URL);
+                const data = await response.json();
+                
+                const perfData = data.paper_strategie_1?.performance_data;
+                if (perfData) {
+                    updateMetrics(perfData);
+                    updateCharts(perfData.history);
+                    updateTable(perfData.history);
+                }
+                updateLastUpdate(data.timestamp);
+                
+            } catch (error) {
+                console.error('Fehler:', error);
+            }
+        }
+        
+        function formatCurrency(num) {
+            if (num === null || num === undefined) return '—';
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency', currency: 'USD',
+                minimumFractionDigits: 0, maximumFractionDigits: 0
+            }).format(num);
+        }
+        
+        function updateMetrics(perfData) {
+            if (!perfData) return;
+            
+            const returnPct = parseFloat(perfData.total_return_pct || 0);
+            const returnClass = returnPct >= 0 ? 'positive' : 'negative';
+            
+            document.getElementById('metrics').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${formatCurrency(perfData.start_value)}</div>
+                    <div class="stat-label">Startwert</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${formatCurrency(perfData.current_value)}</div>
+                    <div class="stat-label">Aktueller Wert</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${returnClass}">${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2)}%</div>
+                    <div class="stat-label">Rendite</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number negative">${formatCurrency(perfData.total_costs)}</div>
+                    <div class="stat-label">Kum. Kosten</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number negative">${formatCurrency(perfData.total_slippage)}</div>
+                    <div class="stat-label">Kum. Slippage</div>
+                </div>
+            `;
+        }
+        
+        function updateCharts(history) {
+            if (!history || history.length === 0) return;
+            
+            const labels = history.map(h => h.datum);
+            const values = history.map(h => h.konto_wert);
+            const pctValues = history.map(h => h.konto_wert_pct);
+            const costs = history.map(h => h.kosten_kumulativ);
+            const slippage = history.map(h => h.slippage_kumulativ);
+            const totalCosts = history.map(h => h.total_kosten_kumulativ);
+            
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    x: { grid: { color: '#f0f0f0' } },
+                    y: { grid: { color: '#f0f0f0' } }
+                }
+            };
+            
+            // Account Value Chart
+            const ctx1 = document.getElementById('accountValueChart').getContext('2d');
+            if (accountValueChart) accountValueChart.destroy();
+            
+            accountValueChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Konto-Wert (USD)',
+                        data: values,
+                        borderColor: '#0066cc',
+                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#0066cc'
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: {
+                            ...chartOptions.scales.y,
+                            ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' }
+                        }
+                    }
+                }
+            });
+            
+            // Account Percentage Chart
+            const ctx2 = document.getElementById('accountPctChart').getContext('2d');
+            if (accountPctChart) accountPctChart.destroy();
+            
+            accountPctChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Veränderung (%)',
+                        data: pctValues,
+                        borderColor: pctValues[pctValues.length - 1] >= 0 ? '#4ade80' : '#f87171',
+                        backgroundColor: pctValues[pctValues.length - 1] >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: {
+                            ...chartOptions.scales.y,
+                            ticks: { callback: v => v.toFixed(2) + '%' }
+                        }
+                    }
+                }
+            });
+            
+            // Costs Chart
+            const ctx3 = document.getElementById('costsChart').getContext('2d');
+            if (costsChart) costsChart.destroy();
+            
+            costsChart = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Transaktionskosten',
+                            data: costs,
+                            borderColor: '#f87171',
+                            backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Slippage',
+                            data: slippage,
+                            borderColor: '#fbbf24',
+                            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Total',
+                            data: totalCosts,
+                            borderColor: '#8b5cf6',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: {
+                            ...chartOptions.scales.y,
+                            ticks: { callback: v => '$' + v.toFixed(0) }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateTable(history) {
+            const tbody = document.querySelector('#history-table tbody');
+            
+            if (!history || history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Keine Daten</td></tr>';
+                return;
+            }
+            
+            // Reverse for newest first
+            const reversed = [...history].reverse();
+            
+            tbody.innerHTML = reversed.map(h => {
+                const pctClass = h.konto_wert_pct >= 0 ? 'positive' : 'negative';
+                const pctSign = h.konto_wert_pct >= 0 ? '+' : '';
+                
+                return `
+                    <tr>
+                        <td>${h.datum}</td>
+                        <td>${formatCurrency(h.konto_wert)}</td>
+                        <td class="${pctClass}">${pctSign}${h.konto_wert_pct.toFixed(2)}%</td>
+                        <td class="negative">$${h.kosten_kumulativ.toFixed(2)}</td>
+                        <td class="negative">$${h.slippage_kumulativ.toFixed(2)}</td>
+                        <td class="negative"><strong>$${h.total_kosten_kumulativ.toFixed(2)}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function updateLastUpdate(timestamp) {
+            if (!timestamp) return;
+            document.getElementById('last-update').innerHTML = 
+                `Letzte Aktualisierung: ${new Date(timestamp).toLocaleString('de-DE')}`;
+        }
+        
+        loadData();
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>
