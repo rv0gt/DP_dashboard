@@ -248,7 +248,8 @@
                 const response = await fetch(DATA_URL);
                 const data = await response.json();
                 
-                updateServerStatus(data.server_status);
+                // Hier übergeben wir jetzt BEIDE Status-Objekte an die Funktion
+                updateServerStatus(data.server_status, data.system_status);
                 updateLastUpdate(data.timestamp);
                 
             } catch (error) {
@@ -256,18 +257,38 @@
             }
         }
         
-        function updateServerStatus(status) {
+        function updateServerStatus(status, system) {
             if (!status) return;
             
+            // 1. Gateway & Port Status
             const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
             const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
             
             const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
             const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
             
+            // 2. RAM & Disk Status (Neu hinzugefügt)
+            let ramHtml = '';
+            let diskHtml = '';
+            
+            if (system) {
+                // RAM: Wenn über 85%, dann rot (offline style), sonst grün
+                const ramVal = system.ram_usage_percent;
+                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
+                ramHtml = `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
+                
+                // Disk: Wenn über 85%, dann rot (offline style), sonst grün
+                const diskVal = system.disk_usage_percent;
+                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
+                diskHtml = `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
+            }
+            
+            // Alles zusammenfügen
             document.getElementById('server-status').innerHTML = `
                 <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
                 <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
+                ${ramHtml}
+                ${diskHtml}
             `;
         }
         
