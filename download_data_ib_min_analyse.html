@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IB Download Fehleranalyse</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #fff; }
+        
+        .hero {
+            background: #0a2540;
+            background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%);
+            padding: 60px 30px 40px; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: 40px 40px;
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+        
+        /* Breadcrumb Style */
+        .breadcrumb { margin-bottom: 20px; }
+        .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; }
+        .breadcrumb a:hover { color: #fff; }
+        
+        .hero h1 { font-size: 42px; font-weight: 300; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
+        .hero p { font-size: 18px; color: rgba(255, 255, 255, 0.8); font-weight: 300; }
+        
+        .stats-section { background: linear-gradient(180deg, #0f3554 0%, #0a2540 100%); padding: 40px 30px 60px; position: relative; z-index: 1; }
+        .stats-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        .stat-item { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 12px; text-align: center; transition: all 0.3s ease; }
+        .stat-item:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+        .stat-number { font-size: 36px; font-weight: 600; color: #fff; display: block; margin-bottom: 8px; line-height: 1; }
+        .stat-label { font-size: 14px; color: rgba(255, 255, 255, 0.7); font-weight: 400; }
+        
+        .controls-section { padding: 60px 30px; background: #f8f9fa; }
+        .controls-container, .chart-container { max-width: 1200px; margin: 0 auto; }
+        .section-title { font-size: 28px; font-weight: 300; color: #333; margin-bottom: 30px; text-align: center; }
+        .controls-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
+        .control-group { background: #fff; padding: 20px; border: 1px solid #e9ecef; border-radius: 8px; }
+        .control-group label { display: block; font-size: 14px; color: #666; margin-bottom: 10px; font-weight: 500; }
+        .control-group input, .control-group select { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 15px; background: #fff; transition: border-color 0.3s ease; }
+        .control-group input:focus, .control-group select:focus { outline: none; border-color: #0066cc; }
+        
+        .symbol-section { background: #fff; padding: 25px; border: 1px solid #e9ecef; border-radius: 8px; }
+        .symbol-section-title { font-size: 14px; color: #666; margin-bottom: 15px; font-weight: 500; }
+        .symbol-list { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+        .symbol-btn { padding: 12px 18px; border-radius: 4px; border: 2px solid; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; background: transparent; display: flex; align-items: center; justify-content: center; }
+        .symbol-btn.priority { padding: 14px 22px; font-size: 15px; box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2); }
+        .symbol-btn.inactive { opacity: 0.3; }
+        .symbol-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+        .symbol-divider { width: 2px; background: #e9ecef; margin: 0 10px; align-self: stretch; }
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .btn { padding: 12px 28px; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 4px; transition: all 0.3s ease; display: inline-block; background: #0066cc; color: #fff; border: 2px solid #0066cc; cursor: pointer; }
+        .btn:hover { background: #0052a3; border-color: #0052a3; }
+        .btn-secondary { background: transparent; color: #0066cc; }
+        .btn-secondary:hover { background: #0066cc; color: #fff; }
+        
+        .chart-section { padding: 60px 30px; background: #fff; }
+        .chart-section:nth-child(even) { background: #f8f9fa; }
+        .chart-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 30px; }
+        .chart-section:nth-child(even) .chart-card { background: #fff; }
+        .chart-title { font-size: 24px; font-weight: 300; color: #333; margin-bottom: 25px; text-align: center; }
+        .chart-wrapper { height: 380px; position: relative; }
+        
+        .heatmap-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 25px; }
+        .heatmap-header select { padding: 10px 15px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; color: #333; background: #fff; }
+        .heatmap-container { overflow-x: auto; }
+        .heatmap { display: grid; grid-template-columns: 45px repeat(12, 1fr); gap: 3px; font-size: 12px; min-width: 600px; }
+        .heatmap-month { background: #0a2540; padding: 10px 5px; text-align: center; font-weight: 600; color: #fff; border-radius: 4px; }
+        .heatmap-row-label { background: #f8f9fa; padding: 6px; text-align: center; display: flex; align-items: center; justify-content: center; color: #666; font-weight: 500; border-radius: 4px; }
+        .heatmap-cell { aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; cursor: default; transition: transform 0.2s ease; border: 1px solid #e9ecef; }
+        .heatmap-cell:hover { transform: scale(1.15); z-index: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .legend { display: flex; gap: 20px; align-items: center; margin-top: 25px; justify-content: center; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid #e0e0e0; }
+        
+        .footer { background: #333; color: #fff; padding: 30px; text-align: center; }
+        .footer p { font-size: 13px; color: #999; }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .stats-container { grid-template-columns: repeat(2, 1fr); }
+            .controls-grid { grid-template-columns: 1fr; }
+            .chart-wrapper { height: 300px; }
+        }
+        @media (max-width: 480px) {
+            .stats-container { grid-template-columns: 1fr; }
+            .stat-number { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="dashboard_analyse_home.html">← Zurück zur Übersicht</a>
+            </div>
+            
+            <h1>IB Download Fehleranalyse</h1>
+            <p>KEINE DATEN Ereignisse · Interaktive Filterung</p>
+        </div>
+    </section>
+    
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number" id="statTotal">...</span>
+                <div class="stat-label">Gefilterte Fehler</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="statSymbols">...</span>
+                <div class="stat-label">Aktive Symbole</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="statDays">...</span>
+                <div class="stat-label">Tage mit Fehlern</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="statRange" style="font-size:18px">...</span>
+                <div class="stat-label">Zeitraum</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="controls-section">
+        <div class="controls-container">
+            <h2 class="section-title">Filter & Auswahl</h2>
+            
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label>Ab Datum</label>
+                    <input type="date" id="fromDate">
+                </div>
+                <div class="control-group">
+                    <label>Bis Datum</label>
+                    <input type="date" id="toDate">
+                </div>
+            </div>
+            
+            <div class="symbol-section">
+                <div class="symbol-section-title">Symbole auswählen</div>
+                <div class="symbol-list" id="symbolList"></div>
+                <div class="btn-group">
+                    <button class="btn" id="selectAll">Alle auswählen</button>
+                    <button class="btn btn-secondary" id="deselectAll">Alle abwählen</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="chart-container">
+            <div class="chart-card">
+                <h3 class="chart-title">Fehler nach Tageszeit (Chicago Time)</h3>
+                <div class="chart-wrapper"><canvas id="timeChart"></canvas></div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="chart-container">
+            <div class="chart-card">
+                <h3 class="chart-title">Fehler nach Wochentag</h3>
+                <div class="chart-wrapper"><canvas id="weekdayChart"></canvas></div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="chart-container">
+            <div class="chart-card">
+                <div class="heatmap-header">
+                    <h3 class="chart-title" style="margin:0">Jahresübersicht</h3>
+                    <select id="yearSelect"></select>
+                </div>
+                <div class="heatmap-container"><div class="heatmap" id="heatmap"></div></div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#fff"></div>0</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#cce5ff"></div>1-2</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#66b3ff"></div>3-5</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#0066cc"></div>6-10</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#e74c3c"></div>10+</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <p id="footerText">Lade Daten...</p>
+    </footer>
+    
+    <script>
+        // Pfad zur externen JSON Datei
+        const DATA_URL = './download_data_ib_min_analyse_html_data.json';
+        
+        const weekdays = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+        const months = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+        const allTimes = Array.from({length:48}, (_,i) => `${String(Math.floor(i/2)).padStart(2,'0')}:${i%2===0?'00':'30'}`);
+        
+        let rawData = [];
+        let config = {};
+        let activeSymbols = new Set();
+        let timeChart, weekdayChart;
+        
+        // 1. Daten laden beim Start
+        async function loadData() {
+            try {
+                const response = await fetch(DATA_URL);
+                if (!response.ok) throw new Error("HTTP Fehler " + response.status);
+                
+                const json = await response.json();
+                
+                // Root-Level Zugriff auf das JSON Format
+                rawData = json.events;
+                config = json.config;
+                activeSymbols = new Set(config.symbols);
+                
+                initializeUI(json.meta, json.config);
+                updateAll();
+                
+            } catch (error) {
+                console.error("Fehler beim Laden der Daten:", error);
+                document.getElementById('footerText').innerHTML = 
+                    `<span style="color: #ff6b6b">Fehler: Daten konnten nicht geladen werden.<br><small>(${DATA_URL})</small></span>`;
+            }
+        }
+
+        // 2. UI Initialisierung (Buttons, Dropdowns)
+        function initializeUI(meta, conf) {
+            document.getElementById('footerText').innerText = `Quelle: ${meta.source_file} · Generiert: ${meta.generated_at}`;
+            
+            // Datum Felder
+            const fromInput = document.getElementById('fromDate');
+            const toInput = document.getElementById('toDate');
+            fromInput.value = conf.min_date;
+            toInput.value = conf.max_date;
+            fromInput.min = conf.min_date;
+            fromInput.max = conf.max_date;
+            toInput.min = conf.min_date;
+            toInput.max = conf.max_date;
+            
+            // Jahresauswahl
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = new Date().getFullYear();
+            conf.years.forEach(y => {
+                const option = document.createElement('option');
+                option.value = y;
+                option.text = y;
+                // Wähle aktuelles Jahr oder das letzte verfügbare Jahr aus
+                if (y === currentYear || y === conf.years[conf.years.length - 1]) {
+                    option.selected = true;
+                }
+                yearSelect.appendChild(option);
+            });
+
+            // Symbol Buttons erstellen
+            const symbolList = document.getElementById('symbolList');
+            let addedDivider = false;
+            conf.symbols.forEach(s => {
+                // Trenner zwischen Prio-Symbolen und anderen
+                if (!conf.priority.includes(s) && !addedDivider) {
+                    const divider = document.createElement('div');
+                    divider.className = 'symbol-divider';
+                    symbolList.appendChild(divider);
+                    addedDivider = true;
+                }
+                const btn = document.createElement('button');
+                btn.className = 'symbol-btn' + (conf.priority.includes(s) ? ' priority' : '');
+                btn.textContent = s;
+                btn.style.borderColor = conf.colors[s];
+                btn.style.color = conf.colors[s];
+                btn.dataset.symbol = s;
+                btn.onclick = () => toggleSymbol(s, btn);
+                symbolList.appendChild(btn);
+            });
+
+            // Charts initialisieren (noch leer)
+            initCharts();
+        }
+        
+        function toggleSymbol(symbol, btn) {
+            if (activeSymbols.has(symbol)) {
+                activeSymbols.delete(symbol);
+                btn.classList.add('inactive');
+            } else {
+                activeSymbols.add(symbol);
+                btn.classList.remove('inactive');
+            }
+            updateAll();
+        }
+        
+        // Event Listener für Controls
+        document.getElementById('selectAll').onclick = () => {
+            activeSymbols = new Set(config.symbols);
+            document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('inactive'));
+            updateAll();
+        };
+        
+        document.getElementById('deselectAll').onclick = () => {
+            activeSymbols.clear();
+            document.querySelectorAll('.symbol-btn').forEach(b => b.classList.add('inactive'));
+            updateAll();
+        };
+        
+        document.getElementById('fromDate').onchange = updateAll;
+        document.getElementById('toDate').onchange = updateAll;
+        document.getElementById('yearSelect').onchange = () => updateHeatmap(getFilteredData());
+        
+        // 3. Filterlogik
+        function getFilteredData() {
+            const from = document.getElementById('fromDate').value;
+            const to = document.getElementById('toDate').value;
+            return rawData.filter(e => 
+                activeSymbols.has(e.symbol) && 
+                e.date >= from && 
+                e.date <= to
+            );
+        }
+        
+        function updateAll() {
+            if (!rawData || rawData.length === 0) return;
+            
+            const filtered = getFilteredData();
+            const from = document.getElementById('fromDate').value;
+            const to = document.getElementById('toDate').value;
+            
+            // Statistiken oben
+            document.getElementById('statTotal').textContent = filtered.length;
+            document.getElementById('statSymbols').textContent = activeSymbols.size;
+            const distinctDays = new Set(filtered.map(e => e.date)).size;
+            document.getElementById('statDays').textContent = distinctDays;
+            document.getElementById('statRange').textContent = `${from} – ${to}`;
+            
+            // Charts aktualisieren
+            updateTimeChart(filtered);
+            updateWeekdayChart(filtered);
+            updateHeatmap(filtered);
+        }
+        
+        function initCharts() {
+            const chartOpts = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {display: false},
+                    tooltip: {mode:'index', intersect:false}
+                },
+                scales: {
+                    x: {stacked:true, grid:{color:'#f0f0f0'}, ticks:{color:'#666', maxRotation:90, minRotation:45}},
+                    y: {stacked:true, grid:{color:'#f0f0f0'}, ticks:{color:'#666', stepSize:1}}
+                }
+            };
+            
+            timeChart = new Chart(document.getElementById('timeChart'), {
+                type: 'bar',
+                data: {labels: allTimes, datasets: []},
+                options: chartOpts
+            });
+            
+            weekdayChart = new Chart(document.getElementById('weekdayChart'), {
+                type: 'bar',
+                data: {labels: weekdays, datasets: []},
+                options: chartOpts
+            });
+        }
+
+        function updateTimeChart(filtered) {
+            const datasets = config.symbols.filter(s => activeSymbols.has(s)).map(symbol => {
+                const counts = {};
+                filtered.filter(e => e.symbol === symbol).forEach(e => counts[e.time] = (counts[e.time]||0) + 1);
+                return {
+                    label: symbol,
+                    data: allTimes.map(t => counts[t] || 0),
+                    backgroundColor: config.colors[symbol]
+                };
+            });
+            
+            timeChart.data.datasets = datasets;
+            timeChart.update();
+        }
+        
+        function updateWeekdayChart(filtered) {
+            const datasets = config.symbols.filter(s => activeSymbols.has(s)).map(symbol => {
+                const counts = [0,0,0,0,0,0,0];
+                filtered.filter(e => e.symbol === symbol).forEach(e => counts[e.weekday]++);
+                return {
+                    label: symbol,
+                    data: counts,
+                    backgroundColor: config.colors[symbol]
+                };
+            });
+            
+            weekdayChart.data.datasets = datasets;
+            weekdayChart.update();
+        }
+        
+        function updateHeatmap(filtered) {
+            const selectedYear = parseInt(document.getElementById('yearSelect').value);
+            const heatmap = document.getElementById('heatmap');
+            const counts = {};
+            filtered.filter(e => e.year === selectedYear).forEach(e => counts[e.date] = (counts[e.date]||0) + 1);
+            
+            heatmap.innerHTML = '<div></div>' + months.map(m => `<div class="heatmap-month">${m}</div>`).join('');
+            
+            for (let day = 0; day < 31; day++) {
+                heatmap.innerHTML += `<div class="heatmap-row-label">${day + 1}</div>`;
+                for (let month = 0; month < 12; month++) {
+                    const dateStr = `${selectedYear}-${String(month+1).padStart(2,'0')}-${String(day+1).padStart(2,'0')}`;
+                    const v = counts[dateStr] || 0;
+                    let bg = '#fff';
+                    let textColor = '#999';
+                    if (v > 0) {
+                        textColor = v > 5 ? '#fff' : '#333';
+                        if (v <= 2) bg = '#cce5ff';
+                        else if (v <= 5) bg = '#66b3ff';
+                        else if (v <= 10) bg = '#0066cc';
+                        else bg = '#e74c3c';
+                    }
+                    const title = v > 0 ? `${dateStr}: ${v} Fehler` : dateStr;
+                    heatmap.innerHTML += `<div class="heatmap-cell" style="background:${bg};color:${textColor}" title="${title}">${v||''}</div>`;
+                }
+            }
+        }
+        
+        // Start
+        loadData();
+    </script>
+</body>
+</html>

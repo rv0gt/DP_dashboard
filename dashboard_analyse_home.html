@@ -120,10 +120,10 @@
             font-size: 15px;
             color: #666;
             line-height: 1.6;
+            margin-bottom: 15px; /* Added spacing */
         }
         
         .strategy-status {
-            margin-top: 20px;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13px;
@@ -139,6 +139,11 @@
         .status-inactive {
             background: #f8d7da;
             color: #721c24;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
         }
         
         .server-status {
@@ -172,6 +177,14 @@
             border-radius: 50%;
             background: currentColor;
         }
+
+        /* Divider für die neuen Sektionen */
+        .section-divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 60px 0;
+            width: 100%;
+        }
         
         .footer {
             background: #333;
@@ -197,7 +210,7 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Trading Dashboard</h1>
-            <p>Übersicht aller Handelsstrategien</p>
+            <p>Übersicht aller Handelsstrategien & Systeme</p>
         </div>
     </section>
     
@@ -232,6 +245,33 @@
                 </div>
             </div>
             
+            <div class="section-divider"></div>
+
+            <h2 class="section-title">Daten & Analyse</h2>
+            
+            <div class="strategies-grid">
+                <a href="download_data_ib_min_analyse.html" class="strategy-card">
+                    <div class="strategy-icon">📉</div>
+                    <h3>Interactive Brokers</h3>
+                    <p>Fehleranalyse der historischen Minutendaten und Download-Überwachung</p>
+                    <span class="strategy-status status-active" id="ib-status">Aktiv</span>
+                </a>
+                
+                <div class="strategy-card" style="opacity: 0.5; cursor: not-allowed;">
+                    <div class="strategy-icon">🔒</div>
+                    <h3>Analyse 2</h3>
+                    <p>Weitere Auswertung in Planung</p>
+                    <span class="strategy-status status-inactive">Inaktiv</span>
+                </div>
+                
+                <div class="strategy-card" style="opacity: 0.5; cursor: not-allowed;">
+                    <div class="strategy-icon">🔒</div>
+                    <h3>Analyse 3</h3>
+                    <p>Weitere Auswertung in Planung</p>
+                    <span class="strategy-status status-inactive">Inaktiv</span>
+                </div>
+            </div>
+            
             <div class="last-update" id="last-update"></div>
         </div>
     </section>
@@ -248,12 +288,17 @@
                 const response = await fetch(DATA_URL);
                 const data = await response.json();
                 
-                // Hier übergeben wir jetzt BEIDE Status-Objekte an die Funktion
                 updateServerStatus(data.server_status, data.system_status);
+                
+                // Falls im JSON vorhanden, IB Status aktualisieren
+                if (data.ib_status) {
+                    updateIBStatus(data.ib_status);
+                }
+
                 updateLastUpdate(data.timestamp);
                 
             } catch (error) {
-                console.error('Fehler:', error);
+                console.error('Fehler beim Laden des Status:', error);
             }
         }
         
@@ -267,17 +312,17 @@
             const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
             const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
             
-            // 2. RAM & Disk Status (Neu hinzugefügt)
+            // 2. RAM & Disk Status
             let ramHtml = '';
             let diskHtml = '';
             
             if (system) {
-                // RAM: Wenn über 85%, dann rot (offline style), sonst grün
+                // RAM rot bei > 85%
                 const ramVal = system.ram_usage_percent;
                 const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
                 ramHtml = `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
                 
-                // Disk: Wenn über 85%, dann rot (offline style), sonst grün
+                // Disk rot bei > 85%
                 const diskVal = system.disk_usage_percent;
                 const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
                 diskHtml = `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
@@ -290,6 +335,24 @@
                 ${ramHtml}
                 ${diskHtml}
             `;
+        }
+
+        // Neue Funktion für IB Status
+        function updateIBStatus(ibData) {
+            const el = document.getElementById('ib-status');
+            if (!el) return;
+            
+            // Logik: Warnung anzeigen, wenn Fehler vorliegen
+            if (ibData.error_count && ibData.error_count > 0) {
+                el.className = 'strategy-status status-warning';
+                el.textContent = `${ibData.error_count} Fehler`;
+            } else if (ibData.active) {
+                el.className = 'strategy-status status-active';
+                el.textContent = 'Aktiv';
+            } else {
+                el.className = 'strategy-status status-inactive';
+                el.textContent = 'Inaktiv';
+            }
         }
         
         function updateLastUpdate(timestamp) {
