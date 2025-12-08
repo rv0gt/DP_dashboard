@@ -236,12 +236,17 @@
             // Datum Felder
             const fromInput = document.getElementById('fromDate');
             const toInput = document.getElementById('toDate');
+            
+            // AUTOMATISCHE DATUMS-ANPASSUNG: HEUTE
+            const todayStr = new Date().toISOString().split('T')[0];
+
             fromInput.value = conf.min_date;
-            toInput.value = conf.max_date;
+            toInput.value = todayStr; // Automatisch auf HEUTE setzen
+
             fromInput.min = conf.min_date;
-            fromInput.max = conf.max_date;
+            fromInput.max = todayStr; // Bis heute erlauben
             toInput.min = conf.min_date;
-            toInput.max = conf.max_date;
+            toInput.max = todayStr; // Bis heute erlauben
             
             // Jahresauswahl
             const yearSelect = document.getElementById('yearSelect');
