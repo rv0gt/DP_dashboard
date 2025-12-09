@@ -1,28 +1,40 @@
 {
-  "timestamp": "2025-12-09T21:10:16.322332",
+  "timestamp": "2025-12-09T22:10:32.222442",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2025-12-09T21:10:16.360844",
+    "last_check": "2025-12-09T22:10:32.353703",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 34.2,
+    "ram_usage_percent": 36.4,
     "disk_usage_percent": 50,
     "uptime_days": 3.3
   },
   "paper_strategie_1": {
     "overview": {
-      "konto_wert_nlv": "1132180.36",
-      "neuer_hebel": "1.4833",
+      "konto_wert_nlv": "1130121.99",
+      "neuer_hebel": "0.0000",
       "kontraktname": "MES 20251219",
       "offene_orders_anzahl": 0,
-      "total_trades_30d": 11,
-      "total_pnl_30d": "353.7500",
-      "today_pnl": "-48.1250",
-      "avg_fill_price": "6849.786000"
+      "total_trades_30d": 12,
+      "total_pnl_30d": "690.6250",
+      "today_pnl": "288.7500",
+      "avg_fill_price": "6849.280000"
     },
     "recent_transactions": [
+      {
+        "date_chi": "2025-12-09 15:10:24",
+        "aktion": "SELL",
+        "delta_zu_handeln": -49,
+        "ausgefuehrte_menge": 49,
+        "durchschnittspreis": "6846.75",
+        "kosten_transaktion": "30.3800",
+        "slippage_kosten": "336.8750",
+        "status": "Filled",
+        "order_typ": "MARKET",
+        "kontraktname": "MES 20251219"
+      },
       {
         "date_chi": "2025-12-09 14:10:10",
         "aktion": "SELL",
@@ -158,23 +170,23 @@
     ],
     "margin_data": {
       "current": {
-        "margin_benoetigt": "83424.66",
-        "maintenance_margin": "75840.60",
-        "margin_verfuegbar": "1048003.37",
-        "excess_liquidity": "1055587.43",
-        "margin_auslastung": "7.3685",
-        "konto_wert_nlv": "1132180.36",
-        "date_chi": "2025-12-09 14:10:10"
+        "margin_benoetigt": "97349.00",
+        "maintenance_margin": "88499.09",
+        "margin_verfuegbar": "1032020.81",
+        "excess_liquidity": "1040870.71",
+        "margin_auslastung": "8.6140",
+        "konto_wert_nlv": "1130121.99",
+        "date_chi": "2025-12-09 15:10:24"
       },
       "history": [
         {
           "datum": "2025-12-09",
-          "margin_benoetigt": "83424.660000",
-          "maintenance_margin": "75840.600000",
-          "margin_verfuegbar": "1048003.370000",
-          "excess_liquidity": "1055587.430000",
-          "margin_auslastung": "7.36850000",
-          "konto_wert": "1132180.360000"
+          "margin_benoetigt": "90386.830000",
+          "maintenance_margin": "82169.845000",
+          "margin_verfuegbar": "1040012.090000",
+          "excess_liquidity": "1048229.070000",
+          "margin_auslastung": "7.99125000",
+          "konto_wert": "1131151.175000"
         },
         {
           "datum": "2025-12-08",
@@ -238,7 +250,7 @@
         "kontrakt_verfall": "2025-12-19",
         "tage_bis_verfall": 10,
         "rollover_stattgefunden": 0,
-        "date_chi": "2025-12-09 14:10:10"
+        "date_chi": "2025-12-09 15:10:24"
       },
       "events": [],
       "history": [
@@ -288,11 +300,11 @@
     },
     "performance_data": {
       "start_value": 1122022.32,
-      "current_value": 1132180.36,
-      "total_return_pct": 0.91,
-      "total_costs": 28.52,
-      "total_slippage": 353.75,
-      "total_all_costs": 382.27,
+      "current_value": 1131151.18,
+      "total_return_pct": 0.81,
+      "total_costs": 58.9,
+      "total_slippage": 690.62,
+      "total_all_costs": 749.52,
       "history": [
         {
           "datum": "2025-11-28",
@@ -344,11 +356,11 @@
         },
         {
           "datum": "2025-12-09",
-          "konto_wert": 1132180.36,
-          "konto_wert_pct": 0.91,
-          "kosten_kumulativ": 28.52,
-          "slippage_kumulativ": 353.75,
-          "total_kosten_kumulativ": 382.27
+          "konto_wert": 1131151.18,
+          "konto_wert_pct": 0.81,
+          "kosten_kumulativ": 58.9,
+          "slippage_kumulativ": 690.62,
+          "total_kosten_kumulativ": 749.52
         }
       ]
     }
