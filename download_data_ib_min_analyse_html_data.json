@@ -2729,6 +2729,34 @@
             "weekday": 1,
             "year": 2025,
             "symbol": "KKR"
+        },
+        {
+            "date": "2025-12-09",
+            "time": "17:00",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "YM"
+        },
+        {
+            "date": "2025-12-09",
+            "time": "17:00",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2025-12-09",
+            "time": "17:00",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "ES"
+        },
+        {
+            "date": "2025-12-09",
+            "time": "17:00",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "MES"
         }
     ],
     "config": {
@@ -2803,7 +2831,7 @@
         "max_date": "2025-12-09"
     },
     "meta": {
-        "generated_at": "2025-12-09 23:10",
+        "generated_at": "2025-12-10 00:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
