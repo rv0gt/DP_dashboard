@@ -1,28 +1,40 @@
 {
-  "timestamp": "2025-12-11T00:10:05.933805",
+  "timestamp": "2025-12-11T01:10:12.681372",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2025-12-11T00:10:05.948961",
+    "last_check": "2025-12-11T01:10:12.696023",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 26.3,
+    "ram_usage_percent": 25.5,
     "disk_usage_percent": 50,
     "uptime_days": 4.4
   },
   "paper_strategie_1": {
     "overview": {
-      "konto_wert_nlv": "1130356.68",
-      "neuer_hebel": "1.9685",
+      "konto_wert_nlv": "1134267.18",
+      "neuer_hebel": "1.6382",
       "kontraktname": "MES 20251219",
       "offene_orders_anzahl": 0,
-      "total_trades_30d": 13,
-      "total_pnl_30d": "690.6250",
+      "total_trades_30d": 14,
+      "total_pnl_30d": "931.2500",
       "today_pnl": null,
-      "avg_fill_price": "6849.280000"
+      "avg_fill_price": "6853.382857"
     },
     "recent_transactions": [
+      {
+        "date_chi": "2025-12-10 18:10:07",
+        "aktion": "SELL",
+        "delta_zu_handeln": -11,
+        "ausgefuehrte_menge": 11,
+        "durchschnittspreis": "6878.00",
+        "kosten_transaktion": "6.8200",
+        "slippage_kosten": "240.6250",
+        "status": "Filled",
+        "order_typ": "MARKET",
+        "kontraktname": "MES 20251219"
+      },
       {
         "date_chi": "2025-12-09 16:10:37",
         "aktion": "BUY",
@@ -182,15 +194,24 @@
     ],
     "margin_data": {
       "current": {
-        "margin_benoetigt": "0.00",
-        "maintenance_margin": "0.00",
-        "margin_verfuegbar": "1129604.19",
-        "excess_liquidity": "1129604.19",
-        "margin_auslastung": "0.0000",
-        "konto_wert_nlv": "1130356.68",
-        "date_chi": "2025-12-09 16:10:37"
+        "margin_benoetigt": "128527.54",
+        "maintenance_margin": "116843.22",
+        "margin_verfuegbar": "1004883.61",
+        "excess_liquidity": "1016567.93",
+        "margin_auslastung": "11.3313",
+        "konto_wert_nlv": "1134267.18",
+        "date_chi": "2025-12-10 18:10:07"
       },
       "history": [
+        {
+          "datum": "2025-12-10",
+          "margin_benoetigt": "128527.540000",
+          "maintenance_margin": "116843.220000",
+          "margin_verfuegbar": "1004883.610000",
+          "excess_liquidity": "1016567.930000",
+          "margin_auslastung": "11.33130000",
+          "konto_wert": "1134267.180000"
+        },
         {
           "datum": "2025-12-09",
           "margin_benoetigt": "60257.886667",
@@ -260,12 +281,18 @@
       "current": {
         "kontraktname": "MES 20251219",
         "kontrakt_verfall": "2025-12-19",
-        "tage_bis_verfall": 10,
+        "tage_bis_verfall": 8,
         "rollover_stattgefunden": 0,
-        "date_chi": "2025-12-09 16:10:37"
+        "date_chi": "2025-12-10 18:10:07"
       },
       "events": [],
       "history": [
+        {
+          "datum": "2025-12-10",
+          "kontraktname": "MES 20251219",
+          "kontrakt_verfall": "2025-12-19",
+          "tage_bis_verfall": 8
+        },
         {
           "datum": "2025-12-09",
           "kontraktname": "MES 20251219",
@@ -312,11 +339,11 @@
     },
     "performance_data": {
       "start_value": 1122022.32,
-      "current_value": 1130886.34,
-      "total_return_pct": 0.79,
-      "total_costs": 58.9,
-      "total_slippage": 690.62,
-      "total_all_costs": 749.52,
+      "current_value": 1134267.18,
+      "total_return_pct": 1.09,
+      "total_costs": 65.72,
+      "total_slippage": 931.25,
+      "total_all_costs": 996.97,
       "history": [
         {
           "datum": "2025-11-28",
@@ -373,6 +400,14 @@
           "kosten_kumulativ": 58.9,
           "slippage_kumulativ": 690.62,
           "total_kosten_kumulativ": 749.52
+        },
+        {
+          "datum": "2025-12-10",
+          "konto_wert": 1134267.18,
+          "konto_wert_pct": 1.09,
+          "kosten_kumulativ": 65.72,
+          "slippage_kumulativ": 931.25,
+          "total_kosten_kumulativ": 996.97
         }
       ]
     }
