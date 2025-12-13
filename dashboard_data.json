@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-12-13T05:10:05.657553",
+  "timestamp": "2025-12-13T06:19:03.337718",
   "server_status": {
-    "gateway_running": true,
-    "port_4002_listening": true,
-    "last_check": "2025-12-13T05:10:05.673086",
-    "overall": true
+    "gateway_running": false,
+    "port_4002_listening": false,
+    "last_check": "2025-12-13T06:19:03.351710",
+    "overall": false
   },
   "system_status": {
-    "ram_usage_percent": 24.7,
+    "ram_usage_percent": 16.1,
     "disk_usage_percent": 51,
-    "uptime_days": 6.6
+    "uptime_days": 6.7
   },
   "paper_strategie_1": {
     "overview": {
