@@ -1,28 +1,40 @@
 {
-  "timestamp": "2025-12-17T00:10:14.066801",
+  "timestamp": "2025-12-17T01:10:13.036704",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2025-12-17T00:10:14.081888",
+    "last_check": "2025-12-17T01:10:13.051707",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 25.6,
+    "ram_usage_percent": 23.7,
     "disk_usage_percent": 51,
     "uptime_days": 10.4
   },
   "paper_strategie_1": {
     "overview": {
-      "konto_wert_nlv": "1116703.00",
-      "neuer_hebel": "4.6328",
+      "konto_wert_nlv": "1109520.15",
+      "neuer_hebel": "4.6268",
       "kontraktname": "MES 20260320",
       "offene_orders_anzahl": 0,
-      "total_trades_30d": 16,
-      "total_pnl_30d": "965.6247",
+      "total_trades_30d": 17,
+      "total_pnl_30d": "981.2497",
       "today_pnl": null,
-      "avg_fill_price": "6859.468889"
+      "avg_fill_price": "6857.697000"
     },
     "recent_transactions": [
+      {
+        "date_chi": "2025-12-16 18:10:07",
+        "aktion": "SELL",
+        "delta_zu_handeln": -1,
+        "ausgefuehrte_menge": 1,
+        "durchschnittspreis": "6841.75",
+        "kosten_transaktion": "0.6200",
+        "slippage_kosten": "15.6250",
+        "status": "Filled",
+        "order_typ": "MARKET",
+        "kontraktname": "MES 20260320"
+      },
       {
         "date_chi": "2025-12-16 17:10:08",
         "aktion": "BUY",
@@ -218,23 +230,23 @@
     ],
     "margin_data": {
       "current": {
-        "margin_benoetigt": "57203.28",
-        "maintenance_margin": "52002.98",
-        "margin_verfuegbar": "1057991.76",
-        "excess_liquidity": "1063192.05",
-        "margin_auslastung": "5.1225",
-        "konto_wert_nlv": "1116703.00",
-        "date_chi": "2025-12-16 17:10:08"
+        "margin_benoetigt": "297910.31",
+        "maintenance_margin": "270827.55",
+        "margin_verfuegbar": "810101.71",
+        "excess_liquidity": "837184.46",
+        "margin_auslastung": "26.8504",
+        "konto_wert_nlv": "1109520.15",
+        "date_chi": "2025-12-16 18:10:07"
       },
       "history": [
         {
           "datum": "2025-12-16",
-          "margin_benoetigt": "45757.273333",
-          "maintenance_margin": "41594.583333",
-          "margin_verfuegbar": "1070622.100000",
-          "excess_liquidity": "1074784.786667",
-          "margin_auslastung": "4.09373333",
-          "konto_wert": "1117886.996667"
+          "margin_benoetigt": "108795.532500",
+          "maintenance_margin": "98902.825000",
+          "margin_verfuegbar": "1005492.002500",
+          "excess_liquidity": "1015384.705000",
+          "margin_auslastung": "9.78290000",
+          "konto_wert": "1115795.285000"
         },
         {
           "datum": "2025-12-15",
@@ -325,7 +337,7 @@
         "kontrakt_verfall": "2026-03-20",
         "tage_bis_verfall": 93,
         "rollover_stattgefunden": 0,
-        "date_chi": "2025-12-16 17:10:08"
+        "date_chi": "2025-12-16 18:10:07"
       },
       "events": [
         {
@@ -404,11 +416,11 @@
     },
     "performance_data": {
       "start_value": 1122022.32,
-      "current_value": 1117887.0,
-      "total_return_pct": -0.37,
-      "total_costs": 192.82,
-      "total_slippage": 965.62,
-      "total_all_costs": 1158.44,
+      "current_value": 1115795.28,
+      "total_return_pct": -0.55,
+      "total_costs": 193.44,
+      "total_slippage": 981.25,
+      "total_all_costs": 1174.69,
       "history": [
         {
           "datum": "2025-11-28",
@@ -484,11 +496,11 @@
         },
         {
           "datum": "2025-12-16",
-          "konto_wert": 1117887.0,
-          "konto_wert_pct": -0.37,
-          "kosten_kumulativ": 192.82,
-          "slippage_kumulativ": 965.62,
-          "total_kosten_kumulativ": 1158.44
+          "konto_wert": 1115795.28,
+          "konto_wert_pct": -0.55,
+          "kosten_kumulativ": 193.44,
+          "slippage_kumulativ": 981.25,
+          "total_kosten_kumulativ": 1174.69
         }
       ]
     }
