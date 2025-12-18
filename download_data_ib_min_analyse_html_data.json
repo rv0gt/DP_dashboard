@@ -3380,6 +3380,20 @@
             "weekday": 3,
             "year": 2025,
             "symbol": "EMD"
+        },
+        {
+            "date": "2025-12-18",
+            "time": "00:30",
+            "weekday": 3,
+            "year": 2025,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2025-12-18",
+            "time": "01:00",
+            "weekday": 3,
+            "year": 2025,
+            "symbol": "EMD"
         }
     ],
     "config": {
@@ -3454,7 +3468,7 @@
         "max_date": "2025-12-18"
     },
     "meta": {
-        "generated_at": "2025-12-18 07:10",
+        "generated_at": "2025-12-18 08:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
