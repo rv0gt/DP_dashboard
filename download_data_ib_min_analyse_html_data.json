@@ -3282,6 +3282,20 @@
             "weekday": 2,
             "year": 2025,
             "symbol": "MES"
+        },
+        {
+            "date": "2025-12-17",
+            "time": "17:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2025-12-17",
+            "time": "18:00",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "EMD"
         }
     ],
     "config": {
@@ -3356,7 +3370,7 @@
         "max_date": "2025-12-17"
     },
     "meta": {
-        "generated_at": "2025-12-18 00:10",
+        "generated_at": "2025-12-18 01:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
