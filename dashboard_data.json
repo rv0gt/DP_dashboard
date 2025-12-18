@@ -1,28 +1,40 @@
 {
-  "timestamp": "2025-12-18T23:10:06.607421",
+  "timestamp": "2025-12-19T00:10:13.479176",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2025-12-18T23:10:06.623227",
+    "last_check": "2025-12-19T00:10:13.494054",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 27.1,
+    "ram_usage_percent": 26.1,
     "disk_usage_percent": 51,
     "uptime_days": 12.4
   },
   "paper_strategie_1": {
     "overview": {
-      "konto_wert_nlv": "1074217.36",
-      "neuer_hebel": "1.4228",
+      "konto_wert_nlv": "1076726.84",
+      "neuer_hebel": "0.8557",
       "kontraktname": "MES 20260320",
       "offene_orders_anzahl": 0,
-      "total_trades_30d": 19,
-      "total_pnl_30d": "7404.3748",
+      "total_trades_30d": 20,
+      "total_pnl_30d": "8056.8748",
       "today_pnl": null,
-      "avg_fill_price": "6853.331667"
+      "avg_fill_price": "6850.613846"
     },
     "recent_transactions": [
+      {
+        "date_chi": "2025-12-18 17:10:07",
+        "aktion": "SELL",
+        "delta_zu_handeln": -18,
+        "ausgefuehrte_menge": 18,
+        "durchschnittspreis": "6818.00",
+        "kosten_transaktion": "11.1600",
+        "slippage_kosten": "652.5000",
+        "status": "Filled",
+        "order_typ": "MARKET",
+        "kontraktname": "MES 20260320"
+      },
       {
         "date_chi": "2025-12-17 17:10:09",
         "aktion": "SELL",
@@ -254,15 +266,24 @@
     ],
     "margin_data": {
       "current": {
-        "margin_benoetigt": "300494.80",
-        "maintenance_margin": "273081.79",
-        "margin_verfuegbar": "772112.68",
-        "excess_liquidity": "799525.69",
-        "margin_auslastung": "27.9734",
-        "konto_wert_nlv": "1074217.36",
-        "date_chi": "2025-12-17 17:10:09"
+        "margin_benoetigt": "90366.12",
+        "maintenance_margin": "82069.00",
+        "margin_verfuegbar": "984646.04",
+        "excess_liquidity": "992943.16",
+        "margin_auslastung": "8.3927",
+        "konto_wert_nlv": "1076726.84",
+        "date_chi": "2025-12-18 17:10:07"
       },
       "history": [
+        {
+          "datum": "2025-12-18",
+          "margin_benoetigt": "90366.120000",
+          "maintenance_margin": "82069.000000",
+          "margin_verfuegbar": "984646.040000",
+          "excess_liquidity": "992943.160000",
+          "margin_auslastung": "8.39270000",
+          "konto_wert": "1076726.840000"
+        },
         {
           "datum": "2025-12-17",
           "margin_benoetigt": "301146.070000",
@@ -368,9 +389,9 @@
       "current": {
         "kontraktname": "MES 20260320",
         "kontrakt_verfall": "2026-03-20",
-        "tage_bis_verfall": 92,
+        "tage_bis_verfall": 91,
         "rollover_stattgefunden": 0,
-        "date_chi": "2025-12-17 17:10:09"
+        "date_chi": "2025-12-18 17:10:07"
       },
       "events": [
         {
@@ -385,6 +406,12 @@
         }
       ],
       "history": [
+        {
+          "datum": "2025-12-18",
+          "kontraktname": "MES 20260320",
+          "kontrakt_verfall": "2026-03-20",
+          "tage_bis_verfall": 91
+        },
         {
           "datum": "2025-12-17",
           "kontraktname": "MES 20260320",
@@ -455,11 +482,11 @@
     },
     "performance_data": {
       "start_value": 1122022.32,
-      "current_value": 1110375.28,
-      "total_return_pct": -1.04,
-      "total_costs": 260.4,
-      "total_slippage": 7404.37,
-      "total_all_costs": 7664.77,
+      "current_value": 1076726.84,
+      "total_return_pct": -4.04,
+      "total_costs": 271.56,
+      "total_slippage": 8056.87,
+      "total_all_costs": 8328.43,
       "history": [
         {
           "datum": "2025-11-28",
@@ -548,6 +575,14 @@
           "kosten_kumulativ": 260.4,
           "slippage_kumulativ": 7404.37,
           "total_kosten_kumulativ": 7664.77
+        },
+        {
+          "datum": "2025-12-18",
+          "konto_wert": 1076726.84,
+          "konto_wert_pct": -4.04,
+          "kosten_kumulativ": 271.56,
+          "slippage_kumulativ": 8056.87,
+          "total_kosten_kumulativ": 8328.43
         }
       ]
     }
