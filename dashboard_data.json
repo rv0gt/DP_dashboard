@@ -1,13 +1,13 @@
 {
-  "timestamp": "2025-12-19T23:10:06.316357",
+  "timestamp": "2025-12-20T00:10:06.064326",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2025-12-19T23:10:06.333740",
+    "last_check": "2025-12-20T00:10:06.079782",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 35.5,
+    "ram_usage_percent": 27.5,
     "disk_usage_percent": 52,
     "uptime_days": 13.4
   },
@@ -19,7 +19,7 @@
       "offene_orders_anzahl": 0,
       "total_trades_30d": 20,
       "total_pnl_30d": "8056.8748",
-      "today_pnl": "0.0000",
+      "today_pnl": null,
       "avg_fill_price": "6850.613846"
     },
     "recent_transactions": [
