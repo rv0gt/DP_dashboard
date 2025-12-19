@@ -3499,6 +3499,76 @@
             "weekday": 3,
             "year": 2025,
             "symbol": "EMD"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "SPX"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "NDX"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "OEX"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "RUI"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "RUA"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "RUT"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "VXN"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "HGX"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "SOX"
+        },
+        {
+            "date": "2025-12-19",
+            "time": "08:30",
+            "weekday": 4,
+            "year": 2025,
+            "symbol": "CG"
         }
     ],
     "config": {
@@ -3570,10 +3640,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2025-12-18"
+        "max_date": "2025-12-19"
     },
     "meta": {
-        "generated_at": "2025-12-19 15:10",
+        "generated_at": "2025-12-19 16:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
