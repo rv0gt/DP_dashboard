@@ -403,7 +403,11 @@
         }
         
         function updateMetrics(perfData) {
-            if (!perfData) return;
+            if (!perfData) {
+                console.warn('updateMetrics: Keine perfData übergeben');
+                return;
+            }
+            console.log('updateMetrics aufgerufen mit:', perfData);
             
             const returnPct = parseFloat(perfData.total_return_pct || 0);
             const returnClass = returnPct >= 0 ? 'positive' : 'negative';
@@ -433,7 +437,17 @@
         }
         
         function updateCharts(history) {
-            if (!history || history.length === 0) return;
+            if (!history || history.length === 0) {
+                console.warn('updateCharts: Keine History-Daten');
+                return;
+            }
+            console.log('updateCharts aufgerufen mit', history.length, 'Einträgen');
+            
+            // Prüfe ob Chart.js geladen ist
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js ist nicht geladen!');
+                return;
+            }
             
             const labels = history.map(h => h.datum);
             const values = history.map(h => h.konto_wert);
@@ -453,7 +467,12 @@
             };
             
             // Account Value Chart
-            const ctx1 = document.getElementById('accountValueChart').getContext('2d');
+            const canvas1 = document.getElementById('accountValueChart');
+            if (!canvas1) {
+                console.error('Canvas accountValueChart nicht gefunden!');
+                return;
+            }
+            const ctx1 = canvas1.getContext('2d');
             if (accountValueChart) accountValueChart.destroy();
             
             accountValueChart = new Chart(ctx1, {
