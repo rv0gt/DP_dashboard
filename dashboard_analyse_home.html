@@ -223,7 +223,7 @@
             <h2 class="section-title">Strategien</h2>
             
             <div class="strategies-grid">
-                <a href="paper_strategie_1_uebersicht.html" class="strategy-card">
+                <a href="paper_strategie_1/uebersicht.html" class="strategy-card">
                     <div class="strategy-icon">📊</div>
                     <h3>Paper Strategie 1</h3>
                     <p>MES Futures Trading mit automatischer Hebelsteuerung und Rollover-Management</p>
@@ -250,7 +250,7 @@
             <h2 class="section-title">Daten & Analyse</h2>
             
             <div class="strategies-grid">
-                <a href="download_data_ib_min_analyse.html" class="strategy-card">
+                <a href="ib_analysis/download_analyse.html" class="strategy-card">
                     <div class="strategy-icon">📉</div>
                     <h3>Interactive Brokers</h3>
                     <p>Fehleranalyse der historischen Minutendaten und Download-Überwachung</p>
@@ -280,13 +280,13 @@
         <p>Trading Dashboard · Automatisierte Strategieüberwachung</p>
     </footer>
     
+    <script src="js/common.js"></script>
     <script>
-        const DATA_URL = './dashboard_data.json';
+        const DATA_URL = './data/dashboard_data.json';
         
         async function loadStatus() {
             try {
-                const response = await fetch(DATA_URL);
-                const data = await response.json();
+                const data = await loadJSONData(DATA_URL);
                 
                 updateServerStatus(data.server_status, data.system_status);
                 
@@ -300,66 +300,6 @@
             } catch (error) {
                 console.error('Fehler beim Laden des Status:', error);
             }
-        }
-        
-        function updateServerStatus(status, system) {
-            if (!status) return;
-            
-            // 1. Gateway & Port Status
-            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
-            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
-            
-            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
-            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
-            
-            // 2. RAM & Disk Status
-            let ramHtml = '';
-            let diskHtml = '';
-            
-            if (system) {
-                // RAM rot bei > 85%
-                const ramVal = system.ram_usage_percent;
-                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
-                ramHtml = `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
-                
-                // Disk rot bei > 85%
-                const diskVal = system.disk_usage_percent;
-                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
-                diskHtml = `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
-            }
-            
-            // Alles zusammenfügen
-            document.getElementById('server-status').innerHTML = `
-                <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
-                <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
-                ${ramHtml}
-                ${diskHtml}
-            `;
-        }
-
-        // Neue Funktion für IB Status
-        function updateIBStatus(ibData) {
-            const el = document.getElementById('ib-status');
-            if (!el) return;
-            
-            // Logik: Warnung anzeigen, wenn Fehler vorliegen
-            if (ibData.error_count && ibData.error_count > 0) {
-                el.className = 'strategy-status status-warning';
-                el.textContent = `${ibData.error_count} Fehler`;
-            } else if (ibData.active) {
-                el.className = 'strategy-status status-active';
-                el.textContent = 'Aktiv';
-            } else {
-                el.className = 'strategy-status status-inactive';
-                el.textContent = 'Inaktiv';
-            }
-        }
-        
-        function updateLastUpdate(timestamp) {
-            if (!timestamp) return;
-            const date = new Date(timestamp);
-            document.getElementById('last-update').innerHTML = 
-                `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
         }
         
         loadStatus();

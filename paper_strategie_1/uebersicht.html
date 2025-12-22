@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Übersicht</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .hero {
+            background: #0a2540;
+            background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%);
+            padding: 50px 30px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: 40px 40px;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .breadcrumb a:hover {
+            color: #fff;
+        }
+        
+        .breadcrumb span {
+            color: rgba(255,255,255,0.5);
+            margin: 0 10px;
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        
+        .server-status {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .status-online { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+        .status-offline { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+        
+        .clock-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .clock-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
+            justify-content: space-between;
+        }
+
+        .clock-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clock-time {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .stats-section {
+            background: linear-gradient(180deg, #0f3554 0%, #0a2540 100%);
+            padding: 40px 30px 50px;
+        }
+        
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        
+        .nav-section {
+            padding: 40px 30px;
+            background: #f8f9fa;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: #fff;
+            border: 2px solid #0066cc;
+            border-radius: 8px;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: #0066cc;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+        
+        .nav-btn-icon {
+            font-size: 20px;
+        }
+        
+        .transactions-section {
+            padding: 60px 30px;
+            background: #fff;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .table-container {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        th.text-right, td.text-right {
+            text-align: right;
+        }
+        
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .footer {
+            background: #333;
+            color: #fff;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="../dashboard_analyse_home.html">← Zurück zur Übersicht</a>
+            </div>
+            <h1>Paper Strategie 1</h1>
+            <div class="server-status" id="server-status">
+                <span class="status-badge status-offline">Lade...</span>
+            </div>
+            <div class="clock-container">
+                <div class="clock-card">
+                    <span class="clock-label">
+                        <svg width="21" height="15" viewBox="0 0 32 32" style="vertical-align: middle; border-radius: 2px; box-shadow: 0 0 1px rgba(0,0,0,0.3);">
+                            <rect width="32" height="32" fill="#D52B1E"/>
+                            <rect x="13" y="6" width="6" height="20" fill="#fff"/>
+                            <rect x="6" y="13" width="20" height="6" fill="#fff"/>
+                        </svg>
+                        Zürich
+                    </span>
+                    <span class="clock-time" id="clock-ch">--:--:--</span>
+                </div>
+                <div class="clock-card">
+                    <span class="clock-label">
+                        <svg width="21" height="15" viewBox="0 0 7410 3900" style="vertical-align: middle; border-radius: 2px; box-shadow: 0 0 1px rgba(0,0,0,0.3);">
+                            <rect width="7410" height="3900" fill="#b22234"/>
+                            <path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" stroke-width="300"/>
+                            <rect width="2964" height="2100" fill="#3c3b6e"/>
+                            <g fill="#fff">
+                                <g id="s18"><g id="s9"><g id="s5"><g id="s4"><path id="s" d="M247,90 317.534230,307.082039 132.873218,172.917961H361.126782L176.465770,307.082039z"/><use href="#s" y="420"/><use href="#s" y="840"/><use href="#s" y="1260"/></g><use href="#s" y="1680"/></g><use href="#s4" x="247" y="210"/></g><use href="#s9" x="494"/></g><use href="#s18" x="988"/><use href="#s9" x="1976"/><use href="#s5" x="2470"/>
+                            </g>
+                        </svg>
+                        Chicago
+                    </span>
+                    <span class="clock-time" id="clock-chi">--:--:--</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="stats-section">
+        <div class="stats-grid" id="metrics">
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Konto-Wert</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Aktueller Hebel</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Trades (30T)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Total P&L (30T)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Heutiges P&L</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Ø Fill-Preis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Kontraktname</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">—</div>
+                <div class="stat-label">Offene Orders</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="nav-section">
+        <div class="nav-buttons">
+            <a href="performance_analyse.html" class="nav-btn">
+                <span class="nav-btn-icon">📈</span>
+                Performance Analyse
+            </a>
+            <a href="margin_analyse.html" class="nav-btn">
+                <span class="nav-btn-icon">💰</span>
+                Margin Analyse
+            </a>
+            <a href="rollover_analyse.html" class="nav-btn">
+                <span class="nav-btn-icon">🔄</span>
+                Rollover Analyse
+            </a>
+            <a href="data_table.html" class="nav-btn">
+                <span class="nav-btn-icon">📋</span>
+                Data Table
+            </a>
+        </div>
+    </section>
+    
+    <section class="transactions-section">
+        <div class="container">
+            <h2 class="section-title">Letzte Transaktionen</h2>
+            <div class="table-container">
+                <table id="transactions">
+                    <thead>
+                        <tr>
+                            <th>Zeitpunkt</th>
+                            <th>Aktion</th>
+                            <th class="text-right">Delta</th>
+                            <th class="text-right">Ausgeführt</th>
+                            <th class="text-right">Fill-Preis</th>
+                            <th class="text-right">Kosten</th>
+                            <th class="text-right">Slippage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="8" style="text-align:center">Lade Daten...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="last-update" id="last-update"></div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <p>Paper Strategie 1 · Trading Dashboard</p>
+    </footer>
+    
+    <script src="../js/common.js"></script>
+    <script>
+        const DATA_URL = '../data/dashboard_data.json';
+        
+        function updateClocks() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            
+            document.getElementById('clock-ch').innerText = 
+                new Intl.DateTimeFormat('de-CH', { ...options, timeZone: 'Europe/Zurich' }).format(now);
+            document.getElementById('clock-chi').innerText = 
+                new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/Chicago' }).format(now);
+        }
+        
+        async function loadDashboard() {
+            try {
+                const data = await loadJSONData(DATA_URL);
+                
+                updateServerStatus(data.server_status);
+                updateMetrics(data.paper_strategie_1?.overview);
+                updateTransactions(data.paper_strategie_1?.recent_transactions);
+                updateLastUpdate(data.timestamp);
+                
+            } catch (error) {
+                console.error('Fehler:', error);
+            }
+        }
+        
+        function updateMetrics(overview) {
+            if (!overview) return;
+            
+            const formatCurrency = (num) => {
+                if (num === null || num === undefined) return '—';
+                return new Intl.NumberFormat('de-DE', {
+                    style: 'currency', currency: 'USD',
+                    minimumFractionDigits: 0, maximumFractionDigits: 0
+                }).format(num);
+            };
+            
+            const pnl30d = parseFloat(overview.total_pnl_30d || 0);
+            const pnlToday = parseFloat(overview.today_pnl || 0);
+            
+            document.getElementById('metrics').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${formatCurrency(overview.konto_wert_nlv)}</div>
+                    <div class="stat-label">Konto-Wert</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.neuer_hebel ? parseFloat(overview.neuer_hebel).toFixed(3) + 'x' : '—'}</div>
+                    <div class="stat-label">Aktueller Hebel</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.total_trades_30d || 0}</div>
+                    <div class="stat-label">Trades (30T)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${pnl30d >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl30d)}</div>
+                    <div class="stat-label">Total P&L (30T)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${pnlToday >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnlToday)}</div>
+                    <div class="stat-label">Heutiges P&L</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.avg_fill_price ? '$' + parseFloat(overview.avg_fill_price).toFixed(2) : '—'}</div>
+                    <div class="stat-label">Ø Fill-Preis</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:18px">${overview.kontraktname || '—'}</div>
+                    <div class="stat-label">Kontraktname</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.offene_orders_anzahl ?? '—'}</div>
+                    <div class="stat-label">Offene Orders</div>
+                </div>
+            `;
+        }
+        
+        function updateTransactions(transactions) {
+            const tbody = document.querySelector('#transactions tbody');
+            
+            if (!transactions || transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Keine Transaktionen</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = transactions.map(t => {
+                const slippage = parseFloat(t.slippage_kosten || 0);
+                return `
+                    <tr>
+                        <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
+                        <td><strong>${t.aktion || '—'}</strong></td>
+                        <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
+                        <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
+                        <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                        <td class="text-right">${t.kosten_transaktion ? '$' + parseFloat(t.kosten_transaktion).toFixed(2) : '—'}</td>
+                        <td class="text-right ${slippage >= 0 ? 'positive' : 'negative'}">${t.slippage_kosten ? '$' + slippage.toFixed(2) : '—'}</td>
+                        <td>${t.status || '—'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        
+        updateClocks();
+        setInterval(updateClocks, 1000);
+        
+        loadDashboard();
+        setInterval(loadDashboard, 60000);
+    </script>
+</body>
+</html>
