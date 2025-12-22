@@ -1,2 +1,9 @@
+# Ignoriere sensible Dateien
 token.txt
-Anleitung_Webseite_aktualisieren.txt
+*.log
+
+# Ignoriere temporäre Dateien
+*.tmp
+*.bak
+*~
+

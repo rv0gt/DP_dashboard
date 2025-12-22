@@ -1,0 +1,18 @@
+{
+  "database": {
+    "host": "192.168.254.6",
+    "user": "vogt",
+    "password": "DP4515$$",
+    "database": "DP_DataBase"
+  },
+  "paths": {
+    "log_file": "/home/cheffe/PortfolioHub/01_Investments/01_Datenverwaltung/10_Logfiles/download_data_ib_min.py.log",
+    "data_dir": "data",
+    "html_dir": "html"
+  },
+  "server_checks": {
+    "gateway_process": "java.*ibc",
+    "port": 4002
+  }
+}
+
