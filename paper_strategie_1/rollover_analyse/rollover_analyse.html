@@ -376,7 +376,35 @@
         <p>Paper Strategie 1 - Rollover Analyse · Trading Dashboard</p>
     </footer>
     
-    <script src="../../_shared/js/common.js"></script>
+    <script>
+        // Inline common.js functions (workaround for GitHub Pages)
+        async function loadJSONData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
+                throw error;
+            }
+        }
+        
+        function updateLastUpdate(timestamp, elementId = 'last-update') {
+            if (!timestamp) return;
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            try {
+                const date = new Date(timestamp);
+                element.innerHTML = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
+            } catch (error) {
+                console.error('Fehler beim Formatieren des Timestamps:', error);
+                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
+            }
+        }
+    </script>
     <script>
         const DATA_URL = './rollover_analyse.json';
         let expiryChart;
