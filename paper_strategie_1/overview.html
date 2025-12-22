@@ -468,13 +468,16 @@
         async function loadDashboard() {
             try {
                 // Lade Overview-Daten
+                console.log('Lade Overview-Daten von:', OVERVIEW_URL);
                 const overviewData = await loadJSONData(OVERVIEW_URL);
+                console.log('Overview-Daten geladen:', overviewData);
                 updateMetrics(overviewData.overview);
                 updateTransactions(overviewData.recent_transactions);
                 updateLastUpdate(overviewData.timestamp);
                 
                 // Lade Server-Status
                 try {
+                    console.log('Lade Server-Status von:', SERVER_STATUS_URL);
                     const serverData = await loadJSONData(SERVER_STATUS_URL);
                     updateServerStatus(serverData.server_status);
                 } catch (e) {
@@ -482,7 +485,20 @@
                 }
                 
             } catch (error) {
-                console.error('Fehler:', error);
+                console.error('Fehler beim Laden des Dashboards:', error);
+                // Zeige Fehler in der UI
+                const errorContainer = document.querySelector('.container');
+                if (errorContainer) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 20px; text-align: center;';
+                    errorDiv.innerHTML = `
+                        <strong>⚠️ Fehler beim Laden der Daten</strong><br>
+                        ${error.message}<br>
+                        <small>URL: ${OVERVIEW_URL}<br>
+                        Bitte öffnen Sie die Browser-Konsole (F12) für weitere Details.</small>
+                    `;
+                    errorContainer.insertBefore(errorDiv, errorContainer.firstChild);
+                }
             }
         }
         
