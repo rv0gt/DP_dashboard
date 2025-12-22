@@ -1,9 +1,9 @@
 {
-    "timestamp": "2025-12-22T23:10:07.044026",
+    "timestamp": "2025-12-23T00:10:12.194355",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1082254.71,
-        "total_return_pct": -3.54,
+        "current_value": 1085591.25,
+        "total_return_pct": -3.25,
         "total_costs": 286.44,
         "total_slippage": 8071.87,
         "total_all_costs": 8358.31,
@@ -114,8 +114,8 @@
             },
             {
                 "datum": "2025-12-22",
-                "konto_wert": 1082254.71,
-                "konto_wert_pct": -3.54,
+                "konto_wert": 1085591.25,
+                "konto_wert_pct": -3.25,
                 "kosten_kumulativ": 286.44,
                 "slippage_kumulativ": 8071.87,
                 "total_kosten_kumulativ": 8358.31
