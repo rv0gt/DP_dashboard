@@ -402,6 +402,16 @@
             }
         }
         
+        function formatCurrency(num) {
+            if (num === null || num === undefined) return '—';
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+        
         function updateMetrics(perfData) {
             if (!perfData) {
                 console.warn('updateMetrics: Keine perfData übergeben');
@@ -409,10 +419,16 @@
             }
             console.log('updateMetrics aufgerufen mit:', perfData);
             
+            const metricsEl = document.getElementById('metrics');
+            if (!metricsEl) {
+                console.error('Element #metrics nicht gefunden!');
+                return;
+            }
+            
             const returnPct = parseFloat(perfData.total_return_pct || 0);
             const returnClass = returnPct >= 0 ? 'positive' : 'negative';
             
-            document.getElementById('metrics').innerHTML = `
+            metricsEl.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-number">${formatCurrency(perfData.start_value)}</div>
                     <div class="stat-label">Startwert</div>
