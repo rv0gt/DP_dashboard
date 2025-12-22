@@ -369,18 +369,36 @@
         
         async function loadData() {
             try {
+                console.log('Lade Performance-Daten von:', DATA_URL);
                 const data = await loadJSONData(DATA_URL);
+                console.log('Daten geladen:', data);
                 
                 const perfData = data.performance_data;
                 if (perfData) {
+                    console.log('Performance-Daten gefunden:', perfData);
                     updateMetrics(perfData);
                     updateCharts(perfData.history);
                     updateTable(perfData.history);
+                } else {
+                    console.warn('Keine performance_data im JSON gefunden');
                 }
                 updateLastUpdate(data.timestamp);
                 
             } catch (error) {
-                console.error('Fehler:', error);
+                console.error('Fehler beim Laden der Performance-Daten:', error);
+                // Zeige Fehler in der UI
+                const errorContainer = document.querySelector('.container');
+                if (errorContainer) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 20px; text-align: center;';
+                    errorDiv.innerHTML = `
+                        <strong>⚠️ Fehler beim Laden der Daten</strong><br>
+                        ${error.message}<br>
+                        <small>URL: ${DATA_URL}<br>
+                        Bitte öffnen Sie die Browser-Konsole (F12) für weitere Details.</small>
+                    `;
+                    errorContainer.insertBefore(errorDiv, errorContainer.firstChild);
+                }
             }
         }
         
