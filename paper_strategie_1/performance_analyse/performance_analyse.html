@@ -336,6 +336,8 @@
     </footer>
     
     <script>
+        const DATA_URL = './performance_analyse.json';
+        
         // Inline common.js functions (workaround for GitHub Pages)
         async function loadJSONData(url) {
             try {
@@ -363,9 +365,6 @@
                 element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
             }
         }
-    </script>
-    <script>
-        const DATA_URL = './performance_analyse.json';
         let accountValueChart, accountPctChart, costsChart;
         
         async function loadData() {

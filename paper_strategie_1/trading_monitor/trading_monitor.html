@@ -206,6 +206,9 @@
     </footer>
 
     <script>
+        // Pfad zur JSON Datei mit den Trading Monitor Daten
+        const DATA_URL = './trading_monitor.json';
+        
         // Inline common.js functions (workaround for GitHub Pages)
         async function loadJSONData(url) {
             try {
@@ -233,10 +236,6 @@
                 element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
             }
         }
-    </script>
-    <script>
-        // Pfad zur JSON Datei mit den Trading Monitor Daten
-        const DATA_URL = './trading_monitor.json';
 
         // --- UHRZEIT FUNKTION ---
         function updateClocks() {
