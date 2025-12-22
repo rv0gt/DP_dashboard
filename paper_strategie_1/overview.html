@@ -322,7 +322,7 @@
     <section class="hero">
         <div class="hero-content">
             <div class="breadcrumb">
-                <a href="../dashboard_analyse_home.html">← Zurück zur Übersicht</a>
+                <a href="../dashboard_analyse.html">← Zurück zur Übersicht</a>
             </div>
             <h1>Paper Strategie 1</h1>
             <div class="server-status" id="server-status">
@@ -397,23 +397,23 @@
     
     <section class="nav-section">
         <div class="nav-buttons">
-            <a href="performance_analyse.html" class="nav-btn">
+            <a href="../performance_analyse/performance_analyse.html" class="nav-btn">
                 <span class="nav-btn-icon">📈</span>
                 Performance Analyse
             </a>
-            <a href="margin_analyse.html" class="nav-btn">
+            <a href="../margin_analyse/margin_analyse.html" class="nav-btn">
                 <span class="nav-btn-icon">💰</span>
                 Margin Analyse
             </a>
-            <a href="rollover_analyse.html" class="nav-btn">
+            <a href="../rollover_analyse/rollover_analyse.html" class="nav-btn">
                 <span class="nav-btn-icon">🔄</span>
                 Rollover Analyse
             </a>
-            <a href="data_table.html" class="nav-btn">
+            <a href="../data_table/data_table.html" class="nav-btn">
                 <span class="nav-btn-icon">📋</span>
                 Data Table
             </a>
-            <a href="trading_monitor.html" class="nav-btn">
+            <a href="../trading_monitor/trading_monitor.html" class="nav-btn">
                 <span class="nav-btn-icon">📊</span>
                 Trading Monitor
             </a>
@@ -452,8 +452,8 @@
     
     <script src="../_shared/js/common.js"></script>
     <script>
-        const OVERVIEW_URL = '../_data/paper_strategie_1/overview.json';
-        const SERVER_STATUS_URL = '../_data/server_status.json';
+        const OVERVIEW_URL = './overview.json';
+        const SERVER_STATUS_URL = '../dashboard_analyse.json';
         
         function updateClocks() {
             const now = new Date();
