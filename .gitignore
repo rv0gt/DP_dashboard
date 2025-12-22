@@ -1,9 +1,0 @@
-# Ignoriere sensible Dateien
-token.txt
-*.log
-
-# Ignoriere temporäre Dateien
-*.tmp
-*.bak
-*~
-
