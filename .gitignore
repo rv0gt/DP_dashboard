@@ -1,0 +1,17 @@
+# Python-Dateien nicht pushen
+*.py
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Temporäre Dateien
+*.tmp
+*.log
+*.swp
+*~
+
+# OS-spezifische Dateien
+.DS_Store
+Thumbs.db
