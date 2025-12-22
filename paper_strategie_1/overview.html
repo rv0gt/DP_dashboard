@@ -450,7 +450,58 @@
         <p>Paper Strategie 1 · Trading Dashboard</p>
     </footer>
     
-    <script src="../_shared/js/common.js"></script>
+    <script>
+        // Inline common.js functions (workaround for GitHub Pages)
+        async function loadJSONData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
+                throw error;
+            }
+        }
+        
+        function updateLastUpdate(timestamp, elementId = 'last-update') {
+            if (!timestamp) return;
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            try {
+                const date = new Date(timestamp);
+                element.innerHTML = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
+            } catch (error) {
+                console.error('Fehler beim Formatieren des Timestamps:', error);
+                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
+            }
+        }
+        
+        function updateServerStatus(status, system = null, elementId = 'server-status') {
+            if (!status) return;
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
+            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
+            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
+            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
+            let html = `
+                <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
+                <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
+            `;
+            if (system) {
+                const ramVal = system.ram_usage_percent;
+                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
+                html += `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
+                const diskVal = system.disk_usage_percent;
+                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
+                html += `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
+            }
+            container.innerHTML = html;
+        }
+    </script>
     <script>
         const OVERVIEW_URL = './overview.json';
         const SERVER_STATUS_URL = '../dashboard_analyse.json';
