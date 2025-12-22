@@ -316,16 +316,16 @@
         <p>Paper Strategie 1 - Margin Analyse · Trading Dashboard</p>
     </footer>
     
-    <script src="../js/common.js"></script>
+    <script src="../_shared/js/common.js"></script>
     <script>
-        const DATA_URL = '../data/dashboard_data.json';
+        const DATA_URL = '../_data/paper_strategie_1/margin_analyse.json';
         let marginChart, utilizationChart;
         
         async function loadData() {
             try {
                 const data = await loadJSONData(DATA_URL);
                 
-                const marginData = data.paper_strategie_1?.margin_data;
+                const marginData = data.margin_data;
                 if (marginData) {
                     updateMetrics(marginData.current);
                     updateCharts(marginData.history);

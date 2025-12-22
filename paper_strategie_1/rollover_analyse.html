@@ -376,16 +376,16 @@
         <p>Paper Strategie 1 - Rollover Analyse · Trading Dashboard</p>
     </footer>
     
-    <script src="../js/common.js"></script>
+    <script src="../_shared/js/common.js"></script>
     <script>
-        const DATA_URL = '../data/dashboard_data.json';
+        const DATA_URL = '../_data/paper_strategie_1/rollover_analyse.json';
         let expiryChart;
         
         async function loadData() {
             try {
                 const data = await loadJSONData(DATA_URL);
                 
-                const rolloverData = data.paper_strategie_1?.rollover_data;
+                const rolloverData = data.rollover_data;
                 if (rolloverData) {
                     updateMetrics(rolloverData.current);
                     updateInfoCards(rolloverData);

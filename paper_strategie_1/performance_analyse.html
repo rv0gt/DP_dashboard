@@ -335,16 +335,16 @@
         <p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p>
     </footer>
     
-    <script src="../js/common.js"></script>
+    <script src="../_shared/js/common.js"></script>
     <script>
-        const DATA_URL = '../data/dashboard_data.json';
+        const DATA_URL = '../_data/paper_strategie_1/performance_analyse.json';
         let accountValueChart, accountPctChart, costsChart;
         
         async function loadData() {
             try {
                 const data = await loadJSONData(DATA_URL);
                 
-                const perfData = data.paper_strategie_1?.performance_data;
+                const perfData = data.performance_data;
                 if (perfData) {
                     updateMetrics(perfData);
                     updateCharts(perfData.history);

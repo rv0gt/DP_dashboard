@@ -446,9 +446,10 @@
         <p>Paper Strategie 1 · Trading Dashboard</p>
     </footer>
     
-    <script src="../js/common.js"></script>
+    <script src="../_shared/js/common.js"></script>
     <script>
-        const DATA_URL = '../data/dashboard_data.json';
+        const OVERVIEW_URL = '../_data/paper_strategie_1/overview.json';
+        const SERVER_STATUS_URL = '../_data/server_status.json';
         
         function updateClocks() {
             const now = new Date();
@@ -462,12 +463,19 @@
         
         async function loadDashboard() {
             try {
-                const data = await loadJSONData(DATA_URL);
+                // Lade Overview-Daten
+                const overviewData = await loadJSONData(OVERVIEW_URL);
+                updateMetrics(overviewData.overview);
+                updateTransactions(overviewData.recent_transactions);
+                updateLastUpdate(overviewData.timestamp);
                 
-                updateServerStatus(data.server_status);
-                updateMetrics(data.paper_strategie_1?.overview);
-                updateTransactions(data.paper_strategie_1?.recent_transactions);
-                updateLastUpdate(data.timestamp);
+                // Lade Server-Status
+                try {
+                    const serverData = await loadJSONData(SERVER_STATUS_URL);
+                    updateServerStatus(serverData.server_status);
+                } catch (e) {
+                    console.warn('Server-Status konnte nicht geladen werden:', e);
+                }
                 
             } catch (error) {
                 console.error('Fehler:', error);
