@@ -427,18 +427,22 @@
                 <table id="transactions">
                     <thead>
                         <tr>
-                            <th>Zeitpunkt</th>
+                            <th>Zeitpunkt (CHI)</th>
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
+                            <th>Grund-Details</th>
                             <th class="text-right">Fill-Preis</th>
                             <th class="text-right">Kosten</th>
-                            <th class="text-right">Slippage</th>
                             <th>Status</th>
+                            <th class="text-right">Hebel</th>
+                            <th>Geänderte Spalten</th>
+                            <th class="text-right">Margin Auslastung (%)</th>
+                            <th>Rollover</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="8" style="text-align:center">Lade Daten...</td></tr>
+                        <tr><td colspan="12" style="text-align:center">Lade Daten...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -607,22 +611,38 @@
             const tbody = document.querySelector('#transactions tbody');
             
             if (!transactions || transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Keine Transaktionen</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center">Keine Transaktionen</td></tr>';
                 return;
             }
             
             tbody.innerHTML = transactions.map(t => {
-                const slippage = parseFloat(t.slippage_kosten || 0);
+                const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined 
+                    ? '$' + parseFloat(t.kosten_angepasst).toFixed(4) 
+                    : '—';
+                const hebel = t.leverage_new !== null && t.leverage_new !== undefined 
+                    ? parseFloat(t.leverage_new).toFixed(3) + 'x' 
+                    : '—';
+                const marginAuslastung = t.margin_auslastung !== null && t.margin_auslastung !== undefined 
+                    ? parseFloat(t.margin_auslastung).toFixed(2) + '%' 
+                    : '—';
+                const rollover = t.is_rollover === 1 ? '1' : '0';
+                const changedColumns = t.changed_columns || '—';
+                const reasonDetail = t.reason_detail || '—';
+                
                 return `
                     <tr>
                         <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
+                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${reasonDetail}">${reasonDetail}</td>
                         <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
-                        <td class="text-right">${t.kosten_transaktion ? '$' + parseFloat(t.kosten_transaktion).toFixed(2) : '—'}</td>
-                        <td class="text-right ${slippage >= 0 ? 'positive' : 'negative'}">${t.slippage_kosten ? '$' + slippage.toFixed(2) : '—'}</td>
+                        <td class="text-right">${kostenAngepasst}</td>
                         <td>${t.status || '—'}</td>
+                        <td class="text-right">${hebel}</td>
+                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${changedColumns}">${changedColumns}</td>
+                        <td class="text-right">${marginAuslastung}</td>
+                        <td>${rollover}</td>
                     </tr>
                 `;
             }).join('');
