@@ -1,10 +1,10 @@
 {
-    "timestamp": "2025-12-23T10:58:45.592406",
+    "timestamp": "2025-12-23T11:06:39.034731",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1088927.8,
-        "current_value_from_ib": false,
-        "total_return_pct": -2.95,
+        "current_value": 1086525.62,
+        "current_value_from_ib": true,
+        "total_return_pct": -3.16,
         "total_costs": 106.64,
         "total_slippage": 7724.38,
         "total_all_costs": 7831.02,
@@ -50,46 +50,6 @@
                 "total_kosten_kumulativ": 251.12
             },
             {
-                "datum": "2025-12-03",
-                "konto_wert": 1117416.17,
-                "konto_wert_pct": -0.41,
-                "kosten_kumulativ": 16.74,
-                "slippage_kumulativ": 234.38,
-                "total_kosten_kumulativ": 251.12
-            },
-            {
-                "datum": "2025-12-04",
-                "konto_wert": 1117416.17,
-                "konto_wert_pct": -0.41,
-                "kosten_kumulativ": 16.74,
-                "slippage_kumulativ": 234.38,
-                "total_kosten_kumulativ": 251.12
-            },
-            {
-                "datum": "2025-12-05",
-                "konto_wert": 1117416.17,
-                "konto_wert_pct": -0.41,
-                "kosten_kumulativ": 16.74,
-                "slippage_kumulativ": 234.38,
-                "total_kosten_kumulativ": 251.12
-            },
-            {
-                "datum": "2025-12-06",
-                "konto_wert": 1117416.17,
-                "konto_wert_pct": -0.41,
-                "kosten_kumulativ": 16.74,
-                "slippage_kumulativ": 234.38,
-                "total_kosten_kumulativ": 251.12
-            },
-            {
-                "datum": "2025-12-07",
-                "konto_wert": 1117416.17,
-                "konto_wert_pct": -0.41,
-                "kosten_kumulativ": 16.74,
-                "slippage_kumulativ": 234.38,
-                "total_kosten_kumulativ": 251.12
-            },
-            {
                 "datum": "2025-12-08",
                 "konto_wert": 1137473.72,
                 "konto_wert_pct": 1.38,
@@ -107,38 +67,6 @@
             },
             {
                 "datum": "2025-12-10",
-                "konto_wert": 1134267.18,
-                "konto_wert_pct": 1.09,
-                "kosten_kumulativ": 28.52,
-                "slippage_kumulativ": 642.5,
-                "total_kosten_kumulativ": 671.02
-            },
-            {
-                "datum": "2025-12-11",
-                "konto_wert": 1134267.18,
-                "konto_wert_pct": 1.09,
-                "kosten_kumulativ": 28.52,
-                "slippage_kumulativ": 642.5,
-                "total_kosten_kumulativ": 671.02
-            },
-            {
-                "datum": "2025-12-12",
-                "konto_wert": 1134267.18,
-                "konto_wert_pct": 1.09,
-                "kosten_kumulativ": 28.52,
-                "slippage_kumulativ": 642.5,
-                "total_kosten_kumulativ": 671.02
-            },
-            {
-                "datum": "2025-12-13",
-                "konto_wert": 1134267.18,
-                "konto_wert_pct": 1.09,
-                "kosten_kumulativ": 28.52,
-                "slippage_kumulativ": 642.5,
-                "total_kosten_kumulativ": 671.02
-            },
-            {
-                "datum": "2025-12-14",
                 "konto_wert": 1134267.18,
                 "konto_wert_pct": 1.09,
                 "kosten_kumulativ": 28.52,
@@ -186,22 +114,6 @@
                 "total_kosten_kumulativ": 7831.02
             },
             {
-                "datum": "2025-12-20",
-                "konto_wert": 1084779.2,
-                "konto_wert_pct": -3.32,
-                "kosten_kumulativ": 106.64,
-                "slippage_kumulativ": 7724.38,
-                "total_kosten_kumulativ": 7831.02
-            },
-            {
-                "datum": "2025-12-21",
-                "konto_wert": 1084779.2,
-                "konto_wert_pct": -3.32,
-                "kosten_kumulativ": 106.64,
-                "slippage_kumulativ": 7724.38,
-                "total_kosten_kumulativ": 7831.02
-            },
-            {
                 "datum": "2025-12-22",
                 "konto_wert": 1088927.8,
                 "konto_wert_pct": -2.95,
@@ -211,8 +123,8 @@
             },
             {
                 "datum": "2025-12-23",
-                "konto_wert": 1088927.8,
-                "konto_wert_pct": -2.95,
+                "konto_wert": 1086525.62,
+                "konto_wert_pct": -3.16,
                 "kosten_kumulativ": 106.64,
                 "slippage_kumulativ": 7724.38,
                 "total_kosten_kumulativ": 7831.02
