@@ -232,20 +232,18 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
         }
         
         th {
             background: #f8f9fa;
-            padding: 12px 8px;
+            padding: 15px 12px;
             text-align: left;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 600;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #e9ecef;
-            white-space: nowrap;
         }
         
         th.text-right, td.text-right {
@@ -253,9 +251,9 @@
         }
         
         td {
-            padding: 12px 8px;
+            padding: 14px 12px;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 12px;
+            font-size: 14px;
         }
         
         tr:hover {
@@ -310,17 +308,12 @@
                 justify-content: center;
             }
             
-            .table-container {
-                overflow-x: auto;
-            }
-            
             table {
-                font-size: 11px;
-                min-width: 1200px;
+                font-size: 12px;
             }
             
             th, td {
-                padding: 8px 6px;
+                padding: 10px 8px;
             }
         }
     </style>
@@ -435,17 +428,17 @@
                     <thead>
                         <tr>
                             <th>Zeitpunkt (CHI)</th>
-                            <th>Reason Detail</th>
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
                             <th class="text-right">Fill-Preis</th>
-                            <th class="text-right">Kosten/Kontrakt</th>
+                            <th class="text-right">Kosten</th>
                             <th>Status</th>
-                            <th class="text-right">Leverage New</th>
+                            <th>Grund Details</th>
+                            <th class="text-right">Hebel Neu</th>
+                            <th>Geänderte Spalten</th>
                             <th class="text-right">Margin Auslastung</th>
-                            <th class="text-right">Tage bis Verfall</th>
-                            <th>Changed Columns</th>
+                            <th>Rollover</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -623,28 +616,34 @@
             }
             
             tbody.innerHTML = transactions.map(t => {
-                const dateChi = t.date_chi ? new Date(t.date_chi).toLocaleString('de-DE', { timeZone: 'America/Chicago' }) : '—';
-                const reasonDetail = t.reason_detail || '—';
-                const kostenProKontrakt = t.kosten_pro_kontrakt !== undefined ? '$' + t.kosten_pro_kontrakt.toFixed(2) : '—';
-                const leverageNew = t.leverage_new ? parseFloat(t.leverage_new).toFixed(3) + 'x' : '—';
-                const marginAuslastung = t.margin_auslastung ? parseFloat(t.margin_auslastung).toFixed(2) + '%' : '—';
-                const tageBisVerfall = t.tage_bis_verfall !== null && t.tage_bis_verfall !== undefined ? t.tage_bis_verfall : '—';
-                const changedColumns = t.changed_columns || '—';
+                // Kosten berechnen: (Kosten + Slippage) / Anzahl Kontrakt
+                const kosten = parseFloat(t.kosten_transaktion || 0);
+                const slippage = parseFloat(t.slippage_kosten || 0);
+                const anzahl = Math.abs(parseFloat(t.ausgefuehrte_menge || 1));
+                const kostenProKontrakt = anzahl > 0 ? (kosten + slippage) / anzahl : 0;
+                
+                // Margin Auslastung formatieren
+                const marginAuslastung = t.margin_auslastung !== null && t.margin_auslastung !== undefined 
+                    ? parseFloat(t.margin_auslastung).toFixed(2) + '%' 
+                    : '—';
+                
+                // Rollover Status
+                const rolloverStatus = t.is_rollover === 1 ? 'Ja' : 'Nein';
                 
                 return `
                     <tr>
-                        <td>${dateChi}</td>
-                        <td style="font-size: 12px;">${reasonDetail}</td>
+                        <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
                         <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
-                        <td class="text-right">${kostenProKontrakt}</td>
+                        <td class="text-right">${kostenProKontrakt > 0 ? '$' + kostenProKontrakt.toFixed(2) : '—'}</td>
                         <td>${t.status || '—'}</td>
-                        <td class="text-right">${leverageNew}</td>
+                        <td>${t.reason_detail || '—'}</td>
+                        <td class="text-right">${t.leverage_new !== null && t.leverage_new !== undefined ? parseFloat(t.leverage_new).toFixed(4) : '—'}</td>
+                        <td style="font-size: 11px;">${t.changed_columns || '—'}</td>
                         <td class="text-right">${marginAuslastung}</td>
-                        <td class="text-right">${tageBisVerfall}</td>
-                        <td style="font-size: 11px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${changedColumns}">${changedColumns}</td>
+                        <td>${rolloverStatus}</td>
                     </tr>
                 `;
             }).join('');

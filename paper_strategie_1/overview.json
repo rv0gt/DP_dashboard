@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-12-23T11:56:27.363086",
+    "timestamp": "2025-12-23T12:09:34.865653",
     "overview": {
         "konto_wert_nlv": 1088927.8,
         "neuer_hebel": 1.623,
@@ -23,11 +23,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 4.9579,
-            "tage_bis_verfall": 88,
-            "reason_detail": "Hebel: 0.8563 -> 1.6322",
-            "leverage_new": 1.6322,
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-            "kosten_pro_kontrakt": 1.25
+            "rollover_stattgefunden": 0,
+            "reason_detail": null,
+            "leverage_new": null,
+            "changed_columns": null,
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-18T17:10:07",
@@ -41,11 +41,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 8.3927,
-            "tage_bis_verfall": 91,
-            "reason_detail": "17:00-18:00 Fenster. Hebel: 1.4235 -> 0.8563",
-            "leverage_new": 0.8563,
+            "rollover_stattgefunden": 0,
+            "reason_detail": null,
+            "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 36.87
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-17T17:10:09",
@@ -59,11 +59,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 27.9734,
-            "tage_bis_verfall": 92,
-            "reason_detail": "17:00-18:00 Fenster. Hebel: 4.6364 -> 1.4235",
-            "leverage_new": 1.4235,
+            "rollover_stattgefunden": 0,
+            "reason_detail": null,
+            "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 60.56
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-17T05:10:07",
@@ -77,11 +77,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 26.6146,
-            "tage_bis_verfall": 93,
-            "reason_detail": "Hebel: None -> 4.6364",
-            "leverage_new": 4.6364,
-            "changed_columns": "pc_ratio_volume",
-            "kosten_pro_kontrakt": 9.99
+            "rollover_stattgefunden": 0,
+            "reason_detail": null,
+            "leverage_new": null,
+            "changed_columns": null,
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-16T18:10:07",
@@ -95,11 +95,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 26.8504,
-            "tage_bis_verfall": 93,
-            "reason_detail": "Hebel: 0.8829 -> 4.6364",
-            "leverage_new": 4.6364,
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-            "kosten_pro_kontrakt": 16.25
+            "rollover_stattgefunden": 0,
+            "reason_detail": null,
+            "leverage_new": null,
+            "changed_columns": null,
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-16T17:10:08",
@@ -113,11 +113,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 5.1225,
-            "tage_bis_verfall": 93,
-            "reason_detail": "Trade wegen 17:00-18:00 Zeitfenster",
+            "rollover_stattgefunden": 0,
+            "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 1.89
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-15T00:10:10",
@@ -131,11 +131,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20260320",
             "margin_auslastung": 9.4803,
-            "tage_bis_verfall": 95,
+            "rollover_stattgefunden": 1,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": -2.39
+            "is_rollover": 1
         },
         {
             "date_chi": "2025-12-10T18:10:07",
@@ -149,11 +149,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.3313,
-            "tage_bis_verfall": 8,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 22.5
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-09T16:10:37",
@@ -167,11 +167,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 0.0,
-            "tage_bis_verfall": 10,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 0.0
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-09T15:10:24",
@@ -185,11 +185,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 8.614,
-            "tage_bis_verfall": 10,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 7.5
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-09T14:10:10",
@@ -203,11 +203,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 7.3685,
-            "tage_bis_verfall": 10,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": -3.75
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-08T18:10:07",
@@ -221,11 +221,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 9.0674,
-            "tage_bis_verfall": 10,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 21.56
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-02T17:10:07",
@@ -239,11 +239,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 10.4657,
-            "tage_bis_verfall": 16,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 8.12
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-12-01T17:10:06",
@@ -257,11 +257,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 9.2325,
-            "tage_bis_verfall": 17,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": -26.88
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-11-30T17:10:08",
@@ -275,11 +275,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.4541,
-            "tage_bis_verfall": 18,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 29.42
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-11-29T07:10:41",
@@ -293,11 +293,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.457,
-            "tage_bis_verfall": 20,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 0.0
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-11-29T07:03:25",
@@ -311,11 +311,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.457,
-            "tage_bis_verfall": 20,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 0.0
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-11-29T06:49:13",
@@ -329,11 +329,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.457,
-            "tage_bis_verfall": 20,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 0.0
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-11-29T06:46:13",
@@ -347,11 +347,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.457,
-            "tage_bis_verfall": 20,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 0.0
+            "is_rollover": 0
         },
         {
             "date_chi": "2025-11-29T06:34:19",
@@ -365,11 +365,11 @@
             "order_typ": "MARKET",
             "kontraktname": "MES 20251219",
             "margin_auslastung": 11.457,
-            "tage_bis_verfall": 20,
+            "rollover_stattgefunden": 0,
             "reason_detail": null,
             "leverage_new": null,
             "changed_columns": null,
-            "kosten_pro_kontrakt": 0.0
+            "is_rollover": 0
         }
     ]
 }

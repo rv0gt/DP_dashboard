@@ -265,6 +265,24 @@
             }
         }
 
+        // --- SPALTENÜBERSETZUNG ---
+        function translateColumnName(columnName) {
+            const translations = {
+                'id': 'ID',
+                'date_chi': 'Datum Chicago',
+                'date_ch': 'Datum Zürich',
+                'transaction_called': 'Transaktion Aufgerufen',
+                'reason_code': 'Grund Code',
+                'reason_detail': 'Grund Details',
+                'leverage_old': 'Hebel Alt',
+                'leverage_new': 'Hebel Neu',
+                'leverage_change': 'Hebel Änderung',
+                'changed_columns': 'Geänderte Spalten',
+                'daily_trades_count': 'Tägliche Trades Anzahl'
+            };
+            return translations[columnName] || columnName.replace(/_/g, ' ').toUpperCase();
+        }
+
         // --- TABELLEN FUNKTIONEN ---
         async function loadTableData() {
             try {
@@ -303,7 +321,7 @@
             
             let headerHTML = '<tr>';
             columns.forEach(col => {
-                const niceName = col.replace(/_/g, ' ').toUpperCase();
+                const niceName = translateColumnName(col);
                 headerHTML += `<th>${niceName}</th>`;
             });
             headerHTML += '</tr>';
