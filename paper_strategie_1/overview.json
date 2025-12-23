@@ -1,7 +1,8 @@
 {
-    "timestamp": "2025-12-23T14:36:58.028422",
+    "timestamp": "2025-12-23T14:42:43.998884",
     "overview": {
-        "konto_wert_nlv": 1088927.8,
+        "konto_wert_nlv": 1083668.93,
+        "konto_wert_from_ib": true,
         "neuer_hebel": 1.623,
         "kontraktname": "MES 20260320",
         "offene_orders_anzahl": 0,
