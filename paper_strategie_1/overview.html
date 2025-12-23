@@ -380,7 +380,7 @@
         
         table {
             width: 100%;
-            min-width: 1400px;
+            min-width: 1800px;
             border-collapse: collapse;
         }
         
@@ -589,6 +589,7 @@
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
+                            <th>Grund-Details</th>
                             <th class="text-right">Fill-Preis</th>
                             <th class="text-right">Avg Cost (vorher)</th>
                             <th class="text-right">Avg Cost (nachher)</th>
@@ -597,11 +598,14 @@
                             <th class="text-right">Realized Net</th>
                             <th class="text-right">Kosten</th>
                             <th>Status</th>
+                            <th class="text-right">Hebel Neu</th>
+                            <th>Geänderte Spalten</th>
+                            <th class="text-right">Margin (%)</th>
                             <th>Rollover</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="13" style="text-align:center">Lade Daten...</td></tr>
+                        <tr><td colspan="17" style="text-align:center">Lade Daten...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -690,7 +694,6 @@
                     <div class="stat-sublabel">seit ${startDateFormatted}</div>
                 `;
             }
-            
         }
         
         // Clock update
@@ -766,7 +769,6 @@
                     <div class="stat-label">Offene Orders</div>
                 </div>
             `;
-            
         }
         
         // Transactions update
@@ -774,7 +776,7 @@
             const tbody = document.querySelector('#transactions tbody');
             
             if (!transactions || transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" style="text-align:center">Keine Transaktionen</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="17" style="text-align:center">Keine Transaktionen</td></tr>';
                 return;
             }
             
@@ -789,7 +791,15 @@
                 const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined 
                     ? '$' + parseFloat(t.kosten_angepasst).toFixed(4) 
                     : '—';
-                const rollover = t.is_rollover === 1 ? '✓' : '—';
+                const rollover = t.is_rollover === 1 ? 'Ja' : 'Nein';
+                const hebel = t.leverage_new !== null && t.leverage_new !== undefined 
+                    ? parseFloat(t.leverage_new).toFixed(3) + 'x' 
+                    : '—';
+                const marginAuslastung = t.margin_auslastung !== null && t.margin_auslastung !== undefined 
+                    ? parseFloat(t.margin_auslastung).toFixed(2) + '%' 
+                    : '—';
+                const changedColumns = t.changed_columns || '—';
+                const reasonDetail = t.reason_detail || '—';
                 
                 return `
                     <tr>
@@ -797,6 +807,7 @@
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${reasonDetail}">${reasonDetail}</td>
                         <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
                         <td class="text-right">${t.avg_position_cost_before ? '$' + parseFloat(t.avg_position_cost_before).toFixed(2) : '—'}</td>
                         <td class="text-right">${t.avg_position_cost ? '$' + parseFloat(t.avg_position_cost).toFixed(2) : '—'}</td>
@@ -805,6 +816,9 @@
                         <td class="text-right">${formatPnlCell(t.realized_pnl_net)}</td>
                         <td class="text-right">${kostenAngepasst}</td>
                         <td>${t.status || '—'}</td>
+                        <td class="text-right">${hebel}</td>
+                        <td>${changedColumns}</td>
+                        <td class="text-right">${marginAuslastung}</td>
                         <td>${rollover}</td>
                     </tr>
                 `;
