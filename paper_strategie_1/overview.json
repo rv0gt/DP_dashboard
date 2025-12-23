@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-12-23T12:09:34.865653",
+    "timestamp": "2025-12-23T12:10:07.745632",
     "overview": {
         "konto_wert_nlv": 1088927.8,
         "neuer_hebel": 1.623,
@@ -24,9 +24,9 @@
             "kontraktname": "MES 20260320",
             "margin_auslastung": 4.9579,
             "rollover_stattgefunden": 0,
-            "reason_detail": null,
-            "leverage_new": null,
-            "changed_columns": null,
+            "reason_detail": "Hebel: 0.8563 -> 1.6322",
+            "leverage_new": 1.6322,
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
             "is_rollover": 0
         },
         {
@@ -42,7 +42,7 @@
             "kontraktname": "MES 20260320",
             "margin_auslastung": 8.3927,
             "rollover_stattgefunden": 0,
-            "reason_detail": null,
+            "reason_detail": "Markt geschlossen",
             "leverage_new": null,
             "changed_columns": null,
             "is_rollover": 0
@@ -60,7 +60,7 @@
             "kontraktname": "MES 20260320",
             "margin_auslastung": 27.9734,
             "rollover_stattgefunden": 0,
-            "reason_detail": null,
+            "reason_detail": "Markt geschlossen",
             "leverage_new": null,
             "changed_columns": null,
             "is_rollover": 0
@@ -78,7 +78,7 @@
             "kontraktname": "MES 20260320",
             "margin_auslastung": 26.6146,
             "rollover_stattgefunden": 0,
-            "reason_detail": null,
+            "reason_detail": "KEINE_NEUEN_DATEN",
             "leverage_new": null,
             "changed_columns": null,
             "is_rollover": 0
@@ -96,7 +96,7 @@
             "kontraktname": "MES 20260320",
             "margin_auslastung": 26.8504,
             "rollover_stattgefunden": 0,
-            "reason_detail": null,
+            "reason_detail": "Trade wegen 17:00-18:00 Zeitfenster",
             "leverage_new": null,
             "changed_columns": null,
             "is_rollover": 0
@@ -114,7 +114,7 @@
             "kontraktname": "MES 20260320",
             "margin_auslastung": 5.1225,
             "rollover_stattgefunden": 0,
-            "reason_detail": null,
+            "reason_detail": "Markt geschlossen",
             "leverage_new": null,
             "changed_columns": null,
             "is_rollover": 0
