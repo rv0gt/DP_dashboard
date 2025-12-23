@@ -232,18 +232,20 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13px;
         }
         
         th {
             background: #f8f9fa;
-            padding: 15px 12px;
+            padding: 12px 8px;
             text-align: left;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #e9ecef;
+            white-space: nowrap;
         }
         
         th.text-right, td.text-right {
@@ -251,9 +253,9 @@
         }
         
         td {
-            padding: 14px 12px;
+            padding: 12px 8px;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
+            font-size: 12px;
         }
         
         tr:hover {
@@ -308,12 +310,17 @@
                 justify-content: center;
             }
             
+            .table-container {
+                overflow-x: auto;
+            }
+            
             table {
-                font-size: 12px;
+                font-size: 11px;
+                min-width: 1200px;
             }
             
             th, td {
-                padding: 10px 8px;
+                padding: 8px 6px;
             }
         }
     </style>
@@ -427,18 +434,22 @@
                 <table id="transactions">
                     <thead>
                         <tr>
-                            <th>Zeitpunkt</th>
+                            <th>Zeitpunkt (CHI)</th>
+                            <th>Reason Detail</th>
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
                             <th class="text-right">Fill-Preis</th>
-                            <th class="text-right">Kosten</th>
-                            <th class="text-right">Slippage</th>
+                            <th class="text-right">Kosten/Kontrakt</th>
                             <th>Status</th>
+                            <th class="text-right">Leverage New</th>
+                            <th class="text-right">Margin Auslastung</th>
+                            <th class="text-right">Tage bis Verfall</th>
+                            <th>Changed Columns</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="8" style="text-align:center">Lade Daten...</td></tr>
+                        <tr><td colspan="12" style="text-align:center">Lade Daten...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -607,22 +618,33 @@
             const tbody = document.querySelector('#transactions tbody');
             
             if (!transactions || transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Keine Transaktionen</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center">Keine Transaktionen</td></tr>';
                 return;
             }
             
             tbody.innerHTML = transactions.map(t => {
-                const slippage = parseFloat(t.slippage_kosten || 0);
+                const dateChi = t.date_chi ? new Date(t.date_chi).toLocaleString('de-DE', { timeZone: 'America/Chicago' }) : '—';
+                const reasonDetail = t.reason_detail || '—';
+                const kostenProKontrakt = t.kosten_pro_kontrakt !== undefined ? '$' + t.kosten_pro_kontrakt.toFixed(2) : '—';
+                const leverageNew = t.leverage_new ? parseFloat(t.leverage_new).toFixed(3) + 'x' : '—';
+                const marginAuslastung = t.margin_auslastung ? parseFloat(t.margin_auslastung).toFixed(2) + '%' : '—';
+                const tageBisVerfall = t.tage_bis_verfall !== null && t.tage_bis_verfall !== undefined ? t.tage_bis_verfall : '—';
+                const changedColumns = t.changed_columns || '—';
+                
                 return `
                     <tr>
-                        <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
+                        <td>${dateChi}</td>
+                        <td style="font-size: 12px;">${reasonDetail}</td>
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
                         <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
-                        <td class="text-right">${t.kosten_transaktion ? '$' + parseFloat(t.kosten_transaktion).toFixed(2) : '—'}</td>
-                        <td class="text-right ${slippage >= 0 ? 'positive' : 'negative'}">${t.slippage_kosten ? '$' + slippage.toFixed(2) : '—'}</td>
+                        <td class="text-right">${kostenProKontrakt}</td>
                         <td>${t.status || '—'}</td>
+                        <td class="text-right">${leverageNew}</td>
+                        <td class="text-right">${marginAuslastung}</td>
+                        <td class="text-right">${tageBisVerfall}</td>
+                        <td style="font-size: 11px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${changedColumns}">${changedColumns}</td>
                     </tr>
                 `;
             }).join('');
