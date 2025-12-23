@@ -596,10 +596,13 @@
             
             const pnl30d = parseFloat(overview.total_pnl_30d || 0);
             const pnlToday = parseFloat(overview.today_pnl || 0);
+            const ibIndicator = overview.konto_wert_from_ib ? 
+                '<span style="font-size: 10px; color: #4ade80; margin-left: 5px;">● IB</span>' : 
+                '<span style="font-size: 10px; color: #999; margin-left: 5px;">● DB</span>';
             
             document.getElementById('metrics').innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-number">${formatCurrency(overview.konto_wert_nlv)}</div>
+                    <div class="stat-number">${formatCurrency(overview.konto_wert_nlv)}${ibIndicator}</div>
                     <div class="stat-label">Konto-Wert</div>
                 </div>
                 <div class="stat-card">
