@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Übersicht</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -117,6 +115,38 @@
             font-size: 18px;
             font-weight: 700;
             color: #fff;
+        }
+        
+        .pnl-date-card {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .pnl-date-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 14px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            cursor: pointer;
+        }
+        
+        .pnl-date-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+        
+        .pnl-date-input:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .pnl-date-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
         }
         
         .stats-section {
@@ -469,6 +499,18 @@
                 <span class="status-badge status-offline">Lade...</span>
             </div>
             <div class="clock-container">
+                <div class="clock-card pnl-date-card">
+                    <span class="clock-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        P&L Start
+                    </span>
+                    <input type="date" id="pnlStartDate" class="pnl-date-input" value="2024-11-28" onchange="updatePnlFromDate()">
+                </div>
                 <div class="clock-card">
                     <span class="clock-label">
                         <svg width="21" height="15" viewBox="0 0 32 32" style="vertical-align: middle; border-radius: 2px; box-shadow: 0 0 1px rgba(0,0,0,0.3);">
@@ -508,35 +550,6 @@
             <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Realized P&L Gross</div></div>
             <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Realized P&L Net</div></div>
             <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Offene Orders</div></div>
-        </div>
-    </section>
-    
-    <section class="chart-section">
-        <div class="chart-container">
-            <div class="chart-header">
-                <h2 class="chart-title">📈 Realized P&L (Kumulativ)</h2>
-                <div class="date-filter">
-                    <label for="startDate">Von:</label>
-                    <input type="date" id="startDate">
-                    <label for="endDate">Bis:</label>
-                    <input type="date" id="endDate">
-                    <button onclick="filterChart()">Filtern</button>
-                    <button onclick="resetChart()" style="background: #6b7280;">Reset</button>
-                </div>
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="pnlChart"></canvas>
-            </div>
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <div class="legend-color legend-gross"></div>
-                    <span>Realized P&L Gross</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color legend-net"></div>
-                    <span>Realized P&L Net</span>
-                </div>
-            </div>
         </div>
     </section>
     
@@ -604,8 +617,7 @@
         const OVERVIEW_URL = './overview.json';
         const SERVER_STATUS_URL = '../dashboard_analyse.json';
         
-        let pnlChart = null;
-        let fullChartData = [];
+        let cachedOverviewData = null;
         
         // Helper functions
         async function loadJSONData(url) {
@@ -635,6 +647,52 @@
                 : '<span class="source-indicator source-db">DB</span>';
         }
         
+        // Calculate P&L from a specific start date
+        function calculatePnlFromDate(chartData, startDate) {
+            if (!chartData || chartData.length === 0) return { gross: 0, net: 0 };
+            
+            const filteredData = chartData.filter(d => d.date >= startDate);
+            
+            let totalGross = 0;
+            let totalNet = 0;
+            filteredData.forEach(d => {
+                totalGross += d.daily_gross || 0;
+                totalNet += d.daily_net || 0;
+            });
+            
+            return { gross: totalGross, net: totalNet };
+        }
+        
+        // Update P&L metrics when date changes
+        function updatePnlFromDate() {
+            if (!cachedOverviewData) return;
+            
+            const startDate = document.getElementById('pnlStartDate').value;
+            const pnl = calculatePnlFromDate(cachedOverviewData.realized_pnl_chart, startDate);
+            const startDateFormatted = new Date(startDate).toLocaleDateString('de-DE');
+            
+            // Update only the P&L cards
+            const grossCard = document.querySelector('#metrics .stat-card:nth-child(6)');
+            const netCard = document.querySelector('#metrics .stat-card:nth-child(7)');
+            
+            if (grossCard) {
+                grossCard.innerHTML = `
+                    <div class="stat-number ${pnl.gross >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl.gross, 2)}</div>
+                    <div class="stat-label">Realized P&L Gross</div>
+                    <div class="stat-sublabel">seit ${startDateFormatted}</div>
+                `;
+            }
+            
+            if (netCard) {
+                netCard.innerHTML = `
+                    <div class="stat-number ${pnl.net >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl.net, 2)}</div>
+                    <div class="stat-label">Realized P&L Net</div>
+                    <div class="stat-sublabel">seit ${startDateFormatted}</div>
+                `;
+            }
+            
+        }
+        
         // Clock update
         function updateClocks() {
             const now = new Date();
@@ -660,12 +718,15 @@
         }
         
         // Metrics update
-        function updateMetrics(overview) {
+        function updateMetrics(overview, chartData) {
             if (!overview) return;
             
-            const startDate = overview.realized_pnl_start_date 
-                ? new Date(overview.realized_pnl_start_date).toLocaleDateString('de-DE')
-                : '—';
+            // Get start date from picker (default: 2024-11-28)
+            const startDate = document.getElementById('pnlStartDate').value || '2024-11-28';
+            const startDateFormatted = new Date(startDate).toLocaleDateString('de-DE');
+            
+            // Calculate P&L from selected start date
+            const pnl = calculatePnlFromDate(chartData, startDate);
             
             document.getElementById('metrics').innerHTML = `
                 <div class="stat-card">
@@ -691,14 +752,14 @@
                     <div class="stat-sublabel">Floating</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number ${parseFloat(overview.realized_pnl_gross_total || 0) >= 0 ? 'positive' : 'negative'}">${formatCurrency(overview.realized_pnl_gross_total, 2)}</div>
+                    <div class="stat-number ${pnl.gross >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl.gross, 2)}</div>
                     <div class="stat-label">Realized P&L Gross</div>
-                    <div class="stat-sublabel">seit ${startDate}</div>
+                    <div class="stat-sublabel">seit ${startDateFormatted}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number ${parseFloat(overview.realized_pnl_net_total || 0) >= 0 ? 'positive' : 'negative'}">${formatCurrency(overview.realized_pnl_net_total, 2)}</div>
+                    <div class="stat-number ${pnl.net >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl.net, 2)}</div>
                     <div class="stat-label">Realized P&L Net</div>
-                    <div class="stat-sublabel">seit ${startDate}</div>
+                    <div class="stat-sublabel">seit ${startDateFormatted}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">${overview.offene_orders_anzahl ?? '0'}</div>
@@ -706,151 +767,6 @@
                 </div>
             `;
             
-            // Set date filter defaults
-            if (overview.realized_pnl_start_date) {
-                document.getElementById('startDate').value = overview.realized_pnl_start_date;
-            }
-            document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
-        }
-        
-        // Chart functions
-        function initChart(chartData) {
-            fullChartData = chartData;
-            
-            const ctx = document.getElementById('pnlChart').getContext('2d');
-            
-            if (pnlChart) {
-                pnlChart.destroy();
-            }
-            
-            pnlChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartData.map(d => d.date),
-                    datasets: [
-                        {
-                            label: 'Realized P&L Gross (Kumulativ)',
-                            data: chartData.map(d => d.cumulative_gross),
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointHoverRadius: 6
-                        },
-                        {
-                            label: 'Realized P&L Net (Kumulativ)',
-                            data: chartData.map(d => d.cumulative_net),
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointHoverRadius: 6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: function(context) {
-                                    return new Date(context[0].label).toLocaleDateString('de-DE');
-                                },
-                                label: function(context) {
-                                    const value = context.parsed.y;
-                                    const formatted = new Intl.NumberFormat('de-DE', {
-                                        style: 'currency', currency: 'USD'
-                                    }).format(value);
-                                    return `${context.dataset.label}: ${formatted}`;
-                                },
-                                afterBody: function(context) {
-                                    const dataIndex = context[0].dataIndex;
-                                    const dataPoint = fullChartData[dataIndex];
-                                    if (dataPoint) {
-                                        return [
-                                            '',
-                                            `Tages-Gross: ${formatCurrency(dataPoint.daily_gross, 2)}`,
-                                            `Tages-Net: ${formatCurrency(dataPoint.daily_net, 2)}`,
-                                            `Trades: ${dataPoint.trade_count}`
-                                        ];
-                                    }
-                                    return [];
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                displayFormats: {
-                                    day: 'dd.MM'
-                                }
-                            },
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString('de-DE');
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function filterChart() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            
-            let filteredData = fullChartData;
-            
-            if (startDate) {
-                filteredData = filteredData.filter(d => d.date >= startDate);
-            }
-            if (endDate) {
-                filteredData = filteredData.filter(d => d.date <= endDate);
-            }
-            
-            // Recalculate cumulative values for filtered range
-            let cumulativeGross = 0;
-            let cumulativeNet = 0;
-            const recalculatedData = filteredData.map(d => {
-                cumulativeGross += d.daily_gross;
-                cumulativeNet += d.daily_net;
-                return {
-                    ...d,
-                    cumulative_gross: cumulativeGross,
-                    cumulative_net: cumulativeNet
-                };
-            });
-            
-            pnlChart.data.labels = recalculatedData.map(d => d.date);
-            pnlChart.data.datasets[0].data = recalculatedData.map(d => d.cumulative_gross);
-            pnlChart.data.datasets[1].data = recalculatedData.map(d => d.cumulative_net);
-            pnlChart.update();
-        }
-        
-        function resetChart() {
-            initChart(fullChartData);
         }
         
         // Transactions update
@@ -899,12 +815,10 @@
         async function loadDashboard() {
             try {
                 const overviewData = await loadJSONData(OVERVIEW_URL);
-                updateMetrics(overviewData.overview);
-                updateTransactions(overviewData.recent_transactions);
+                cachedOverviewData = overviewData; // Cache for date picker updates
                 
-                if (overviewData.realized_pnl_chart && overviewData.realized_pnl_chart.length > 0) {
-                    initChart(overviewData.realized_pnl_chart);
-                }
+                updateMetrics(overviewData.overview, overviewData.realized_pnl_chart);
+                updateTransactions(overviewData.recent_transactions);
                 
                 // Update timestamp
                 if (overviewData.timestamp) {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Performance Analyse</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -313,6 +314,41 @@
         </div>
     </section>
     
+    <section class="chart-section">
+        <div class="container">
+            <h2 class="section-title">📈 Realized P&L (Kumulativ)</h2>
+            
+            <div style="margin-bottom: 20px; text-align: center;">
+                <div style="display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <label for="pnlStartDate" style="font-size: 14px; color: #666;">Von:</label>
+                    <input type="date" id="pnlStartDate" value="2024-11-28" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                    <label for="pnlEndDate" style="font-size: 14px; color: #666;">Bis:</label>
+                    <input type="date" id="pnlEndDate" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                    <button onclick="filterPnlChart()" style="padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Filtern</button>
+                    <button onclick="resetPnlChart()" style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Reset</button>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-title">Realized P&L Gross & Net (kumulativ)</div>
+                <div class="chart-wrapper">
+                    <canvas id="pnlChart"></canvas>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;">
+                    <div style="width: 16px; height: 16px; background: #3b82f6; border-radius: 4px;"></div>
+                    <span>Realized P&L Gross</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;">
+                    <div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div>
+                    <span>Realized P&L Net</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <section class="table-section">
         <div class="container">
             <h2 class="section-title">Tägliche Übersicht</h2>
@@ -343,6 +379,7 @@
     
     <script>
         const DATA_URL = './performance_analyse.json';
+        const OVERVIEW_URL = '../overview.json';
         
         // Inline common.js functions (workaround for GitHub Pages)
         async function loadJSONData(url) {
@@ -371,9 +408,10 @@
                 element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
             }
         }
-        let accountValueChart, accountPctChart, costsChart;
+        let accountValueChart, accountPctChart, costsChart, pnlChart;
         let fullHistory = []; // Speichere vollständige Historie
         let fullPerfData = null; // Speichere vollständige Performance-Daten
+        let fullPnlChartData = []; // Speichere vollständige P&L Chart-Daten
         
         async function loadData() {
             try {
@@ -393,6 +431,23 @@
                     console.warn('Keine performance_data im JSON gefunden');
                 }
                 updateLastUpdate(data.timestamp);
+                
+                // Lade P&L Chart-Daten aus overview.json
+                try {
+                    const overviewData = await loadJSONData(OVERVIEW_URL);
+                    if (overviewData.realized_pnl_chart && overviewData.realized_pnl_chart.length > 0) {
+                        fullPnlChartData = overviewData.realized_pnl_chart;
+                        initPnlChart(fullPnlChartData);
+                        // Setze initiale Filter
+                        const startDate = document.getElementById('pnlStartDate').value;
+                        if (startDate) {
+                            document.getElementById('pnlEndDate').value = new Date().toISOString().split('T')[0];
+                            filterPnlChart();
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Konnte P&L Chart-Daten nicht laden:', e);
+                }
                 
             } catch (error) {
                 console.error('Fehler beim Laden der Performance-Daten:', error);
@@ -454,14 +509,166 @@
             updateCharts(recalculatedHistory);
         }
         
-        function formatCurrency(num) {
+        function formatCurrency(num, decimals = 0) {
             if (num === null || num === undefined) return '—';
             return new Intl.NumberFormat('de-DE', {
                 style: 'currency',
                 currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
             }).format(num);
+        }
+        
+        // P&L Chart functions
+        function initPnlChart(chartData) {
+            fullPnlChartData = chartData;
+            
+            const ctx = document.getElementById('pnlChart');
+            if (!ctx) {
+                console.error('Canvas pnlChart nicht gefunden!');
+                return;
+            }
+            
+            const ctx2d = ctx.getContext('2d');
+            
+            if (pnlChart) {
+                pnlChart.destroy();
+            }
+            
+            pnlChart = new Chart(ctx2d, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Realized P&L Gross (Kumulativ)',
+                            data: chartData.map(d => d.cumulative_gross),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Realized P&L Net (Kumulativ)',
+                            data: chartData.map(d => d.cumulative_net),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return new Date(context[0].label).toLocaleDateString('de-DE');
+                                },
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    const formatted = new Intl.NumberFormat('de-DE', {
+                                        style: 'currency', currency: 'USD'
+                                    }).format(value);
+                                    return `${context.dataset.label}: ${formatted}`;
+                                },
+                                afterBody: function(context) {
+                                    const dataIndex = context[0].dataIndex;
+                                    const dataPoint = fullPnlChartData[dataIndex];
+                                    if (dataPoint) {
+                                        return [
+                                            '',
+                                            `Tages-Gross: ${formatCurrency(dataPoint.daily_gross, 2)}`,
+                                            `Tages-Net: ${formatCurrency(dataPoint.daily_net, 2)}`,
+                                            `Trades: ${dataPoint.trade_count}`
+                                        ];
+                                    }
+                                    return [];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'dd.MM'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString('de-DE');
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function filterPnlChart() {
+            if (!pnlChart || !fullPnlChartData || fullPnlChartData.length === 0) return;
+            
+            const startDate = document.getElementById('pnlStartDate').value;
+            const endDate = document.getElementById('pnlEndDate').value;
+            
+            let filteredData = fullPnlChartData;
+            
+            if (startDate) {
+                filteredData = filteredData.filter(d => d.date >= startDate);
+            }
+            if (endDate) {
+                filteredData = filteredData.filter(d => d.date <= endDate);
+            }
+            
+            // Recalculate cumulative values for filtered range
+            let cumulativeGross = 0;
+            let cumulativeNet = 0;
+            const recalculatedData = filteredData.map(d => {
+                cumulativeGross += d.daily_gross || 0;
+                cumulativeNet += d.daily_net || 0;
+                return {
+                    ...d,
+                    cumulative_gross: cumulativeGross,
+                    cumulative_net: cumulativeNet
+                };
+            });
+            
+            pnlChart.data.labels = recalculatedData.map(d => d.date);
+            pnlChart.data.datasets[0].data = recalculatedData.map(d => d.cumulative_gross);
+            pnlChart.data.datasets[1].data = recalculatedData.map(d => d.cumulative_net);
+            pnlChart.update();
+        }
+        
+        function resetPnlChart() {
+            if (fullPnlChartData && fullPnlChartData.length > 0) {
+                initPnlChart(fullPnlChartData);
+                document.getElementById('pnlStartDate').value = '2024-11-28';
+                document.getElementById('pnlEndDate').value = '';
+            }
         }
         
         function updateMetrics(perfData) {
