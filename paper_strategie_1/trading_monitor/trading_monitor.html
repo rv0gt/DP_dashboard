@@ -43,6 +43,7 @@
             gap: 20px;
             margin-bottom: 25px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .clock-card {
@@ -56,6 +57,48 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.03);
             min-width: 200px;
             justify-content: space-between;
+        }
+
+        .filter-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            min-width: 250px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .filter-select:hover {
+            border-color: #0a2540;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #0a2540;
+            box-shadow: 0 0 0 2px rgba(10, 37, 64, 0.1);
         }
 
         .clock-label {
@@ -144,9 +187,9 @@
     <section class="hero">
         <div class="hero-content">
             <div class="breadcrumb">
-                <a href="../../dashboard_analyse.html">Home</a>
+                <a href="../../dashboard/dashboard_analyse_home.html">Home</a>
                 <span>›</span>
-                <a href="../overview.html">Paper Strategie 1</a>
+                <a href="../overview/uebersicht.html">Paper Strategie 1</a>
                 <span>›</span>
                 <span style="color:#fff">Trading Monitor</span>
             </div>
@@ -183,6 +226,14 @@
                         Chicago
                     </span>
                     <span class="clock-time" id="clock-chi">--:--:--</span>
+                </div>
+                <div class="filter-card">
+                    <span class="filter-label">Filter TRANSACTION CALLED</span>
+                    <select class="filter-select" id="transactionFilter" onchange="setFilter(this.value)">
+                        <option value="all">Alle</option>
+                        <option value="called" selected>✓ CALLED</option>
+                        <option value="skipped">✗ SKIPPED</option>
+                    </select>
                 </div>
             </div>
 
@@ -236,9 +287,33 @@
         
         // Pfad zur JSON Datei mit den Trading Monitor Daten
         const DATA_URL = './trading_monitor.json';
+        
+        // Filter State
+        let currentFilter = 'called';
+        let allData = [];
 
+        // --- FILTER FUNKTIONEN ---
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Re-render table with filter
+            applyFilter();
+        }
+        
+        function applyFilter() {
+            let filteredData = allData;
+            
+            if (currentFilter === 'called') {
+                filteredData = allData.filter(row => row.transaction_called === 1 || row.transaction_called === true);
+            } else if (currentFilter === 'skipped') {
+                filteredData = allData.filter(row => row.transaction_called === 0 || row.transaction_called === false || row.transaction_called === null);
+            }
+            
+            renderTable(filteredData);
+        }
+        
         // --- UHRZEIT FUNKTION ---
-        function updateClocks() {
+        function updateClock() {
             const now = new Date();
             const options = { 
                 hour: '2-digit', 
@@ -248,18 +323,24 @@
             };
             
             try {
-                const timeCH = new Intl.DateTimeFormat('de-CH', { 
+                // Zürich Zeit
+                const zurichTime = new Intl.DateTimeFormat('de-CH', { 
                     ...options, 
                     timeZone: 'Europe/Zurich' 
                 }).format(now);
                 
-                const timeCHI = new Intl.DateTimeFormat('en-US', { 
+                // Chicago Zeit
+                const chicagoTime = new Intl.DateTimeFormat('en-US', { 
                     ...options, 
                     timeZone: 'America/Chicago' 
                 }).format(now);
                 
-                document.getElementById('clock-ch').innerText = timeCH;
-                document.getElementById('clock-chi').innerText = timeCHI;
+                // Update beide Uhren
+                const clockCh = document.getElementById('clock-ch');
+                const clockChi = document.getElementById('clock-chi');
+                
+                if (clockCh) clockCh.innerText = zurichTime;
+                if (clockChi) clockChi.innerText = chicagoTime;
             } catch (e) {
                 console.error("Fehler bei der Zeitberechnung:", e);
             }
@@ -272,7 +353,11 @@
                 const rows = data.paper_strategie_1?.trading_monitor || [];
                 const timestamp = data.timestamp;
 
-                renderTable(rows);
+                // Speichere alle Daten für Filterung
+                allData = rows;
+                
+                // Wende Filter an
+                applyFilter();
                 updateLastUpdate(timestamp);
 
             } catch (error) {
@@ -298,27 +383,12 @@
                 return;
             }
 
-            // Mapping für deutsche Spaltenüberschriften
-            const columnNames = {
-                'id': 'ID',
-                'date_chi': 'Datum/Zeit (Chicago)',
-                'date_ch': 'Datum/Zeit (Zürich)',
-                'transaction_called': 'Transaktion Ausgeführt',
-                'reason_code': 'Grund',
-                'reason_detail': 'Grund-Details',
-                'leverage_old': 'Alter Hebel',
-                'leverage_new': 'Neuer Hebel',
-                'leverage_change': 'Hebel-Änderung',
-                'changed_columns': 'Geänderte Spalten',
-                'daily_trades_count': 'Anzahl tägliche Trades'
-            };
-
             // 1. Header Generierung
             const columns = Object.keys(data[0]);
             
             let headerHTML = '<tr>';
             columns.forEach(col => {
-                const niceName = columnNames[col] || col.replace(/_/g, ' ').toUpperCase();
+                const niceName = col.replace(/_/g, ' ').toUpperCase();
                 headerHTML += `<th>${niceName}</th>`;
             });
             headerHTML += '</tr>';
@@ -364,12 +434,19 @@
                                 day: '2-digit', month: '2-digit', year: 'numeric',
                                 hour: '2-digit', minute: '2-digit', second: '2-digit'
                             });
+                        } else if (col === 'changed_columns' || col === 'reason_detail') {
+                            // Geänderte Spalten und Grund-Details vollständig anzeigen (keine Kürzung)
                         } else if (val.length > 50) {
-                            // Lange Strings kürzen
+                            // Lange Strings kürzen (außer changed_columns und reason_detail)
                             val = val.substring(0, 50) + '...';
                         }
                     }
-                    tr += `<td>${val}</td>`;
+                    // Spezielle Behandlung für Spalten mit langem Text
+                    let cellClass = '';
+                    if (col === 'changed_columns' || col === 'reason_detail') {
+                        cellClass = ' style="white-space: normal; word-wrap: break-word;"';
+                    }
+                    tr += `<td${cellClass}>${val}</td>`;
                 });
                 tr += '</tr>';
                 return tr;
@@ -384,9 +461,9 @@
         // Tabellen-Refresh alle 60 Sekunden
         setInterval(loadTableData, 60000);
 
-        // Uhren sofort starten und jede Sekunde aktualisieren
-        updateClocks();
-        setInterval(updateClocks, 1000);
+        // Uhr sofort starten und jede Sekunde aktualisieren
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
