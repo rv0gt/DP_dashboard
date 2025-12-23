@@ -223,7 +223,7 @@
             <h2 class="section-title">Strategien</h2>
             
             <div class="strategies-grid">
-                <a href="paper_strategie_1/overview.html" class="strategy-card">
+                <a href="../paper_strategie_1/overview/uebersicht.html" class="strategy-card">
                     <div class="strategy-icon">📊</div>
                     <h3>Paper Strategie 1</h3>
                     <p>MES Futures Trading mit automatischer Hebelsteuerung und Rollover-Management</p>
@@ -250,7 +250,7 @@
             <h2 class="section-title">Daten & Analyse</h2>
             
             <div class="strategies-grid">
-                <a href="ib_analysis/download_analyse/download_analyse.html" class="strategy-card">
+                <a href="../ib_analysis/download_analyse/download_analyse.html" class="strategy-card">
                     <div class="strategy-icon">📉</div>
                     <h3>Interactive Brokers</h3>
                     <p>Fehleranalyse der historischen Minutendaten und Download-Überwachung</p>
@@ -280,77 +280,9 @@
         <p>Trading Dashboard · Automatisierte Strategieüberwachung</p>
     </footer>
     
+    <script src="../_shared/js/common.js"></script>
     <script>
-        // Inline common.js functions (workaround for GitHub Pages)
-        async function loadJSONData(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
-                throw error;
-            }
-        }
-        
-        function updateLastUpdate(timestamp, uptimeDays = null, elementId = 'last-update') {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            let html = '';
-            
-            if (timestamp) {
-                try {
-                    const date = new Date(timestamp);
-                    html = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
-                } catch (error) {
-                    console.error('Fehler beim Formatieren des Timestamps:', error);
-                    html = `Letzte Aktualisierung: ${timestamp}`;
-                }
-            }
-            
-            if (uptimeDays !== null && uptimeDays !== undefined) {
-                const uptimeText = uptimeDays >= 1 
-                    ? `${uptimeDays.toFixed(1)} Tage` 
-                    : `${(uptimeDays * 24).toFixed(1)} Stunden`;
-                if (html) {
-                    html += ` · Server Uptime: ${uptimeText}`;
-                } else {
-                    html = `Server Uptime: ${uptimeText}`;
-                }
-            }
-            
-            element.innerHTML = html;
-        }
-        
-        function updateServerStatus(status, system = null, elementId = 'server-status') {
-            if (!status) return;
-            const container = document.getElementById(elementId);
-            if (!container) return;
-            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
-            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
-            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
-            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
-            let html = `
-                <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
-                <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
-            `;
-            if (system) {
-                const ramVal = system.ram_usage_percent;
-                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
-                html += `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
-                const diskVal = system.disk_usage_percent;
-                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
-                html += `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
-            }
-            container.innerHTML = html;
-        }
-    </script>
-    <script>
-        const DATA_URL = './dashboard_analyse.json';
+        const DATA_URL = './server_status.json';
         
         async function loadStatus() {
             try {
@@ -363,8 +295,7 @@
                     updateIBStatus(data.ib_status);
                 }
 
-                const uptimeDays = data.system_status?.uptime_days;
-                updateLastUpdate(data.timestamp, uptimeDays);
+                updateLastUpdate(data.timestamp);
                 
             } catch (error) {
                 console.error('Fehler beim Laden des Status:', error);
