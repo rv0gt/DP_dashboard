@@ -277,13 +277,18 @@
     
     <section class="chart-section">
         <div class="container">
-            <h2 class="section-title">Konto-Entwicklung</h2>
-            
-            <div style="margin-bottom: 30px; text-align: center;">
-                <label for="startDateFilter" style="font-size: 14px; color: #666; margin-right: 10px;">Startdatum:</label>
-                <input type="date" id="startDateFilter" value="2025-11-28" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
-                <button id="applyDateFilter" style="margin-left: 10px; padding: 8px 20px; font-size: 14px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer;">Anwenden</button>
+            <div style="margin-bottom: 40px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                <div style="display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <label for="dateFilterFrom" style="font-size: 14px; color: #666; font-weight: 500;">Von:</label>
+                    <input type="date" id="dateFilterFrom" value="2025-11-28" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                    <label for="dateFilterTo" style="font-size: 14px; color: #666; font-weight: 500;">Bis:</label>
+                    <input type="date" id="dateFilterTo" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                    <button id="applyUnifiedFilter" style="padding: 8px 20px; font-size: 14px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer;">Anwenden</button>
+                    <button id="resetUnifiedFilter" style="padding: 8px 20px; font-size: 14px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer;">Reset</button>
+                </div>
             </div>
+            
+            <h2 class="section-title">Konto-Entwicklung</h2>
             
             <div class="chart-card">
                 <div class="chart-title">Konto-Wert (absolut in USD)</div>
@@ -317,17 +322,6 @@
     <section class="chart-section">
         <div class="container">
             <h2 class="section-title">📈 Realized P&L (Kumulativ)</h2>
-            
-            <div style="margin-bottom: 20px; text-align: center;">
-                <div style="display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                    <label for="pnlStartDate" style="font-size: 14px; color: #666;">Von:</label>
-                    <input type="date" id="pnlStartDate" value="2024-11-28" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
-                    <label for="pnlEndDate" style="font-size: 14px; color: #666;">Bis:</label>
-                    <input type="date" id="pnlEndDate" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
-                    <button onclick="filterPnlChart()" style="padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Filtern</button>
-                    <button onclick="resetPnlChart()" style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Reset</button>
-                </div>
-            </div>
             
             <div class="chart-card">
                 <div class="chart-title">Realized P&L Gross & Net (kumulativ)</div>
@@ -425,7 +419,15 @@
                     fullHistory = perfData.history || [];
                     fullPerfData = perfData;
                     updateMetrics(perfData);
-                    applyDateFilter();
+                    
+                    // Setze Standard "Bis" Datum auf heute
+                    const today = new Date().toISOString().split('T')[0];
+                    const dateFilterTo = document.getElementById('dateFilterTo');
+                    if (dateFilterTo && !dateFilterTo.value) {
+                        dateFilterTo.value = today;
+                    }
+                    
+                    applyUnifiedFilter();
                     updateTable(perfData.history);
                 } else {
                     console.warn('Keine performance_data im JSON gefunden');
@@ -438,12 +440,8 @@
                     if (overviewData.realized_pnl_chart && overviewData.realized_pnl_chart.length > 0) {
                         fullPnlChartData = overviewData.realized_pnl_chart;
                         initPnlChart(fullPnlChartData);
-                        // Setze initiale Filter
-                        const startDate = document.getElementById('pnlStartDate').value;
-                        if (startDate) {
-                            document.getElementById('pnlEndDate').value = new Date().toISOString().split('T')[0];
-                            filterPnlChart();
-                        }
+                        // Wende initialen Filter an
+                        applyUnifiedFilter();
                     }
                 } catch (e) {
                     console.warn('Konnte P&L Chart-Daten nicht laden:', e);
@@ -467,18 +465,26 @@
             }
         }
         
-        function applyDateFilter() {
-            const startDateInput = document.getElementById('startDateFilter');
-            if (!startDateInput || fullHistory.length === 0) return;
+        function applyUnifiedFilter() {
+            const fromDateInput = document.getElementById('dateFilterFrom');
+            const toDateInput = document.getElementById('dateFilterTo');
             
-            const selectedStartDate = startDateInput.value;
-            if (!selectedStartDate) return;
+            if (!fromDateInput || fullHistory.length === 0) return;
             
-            // Filtere Historie ab Startdatum
-            const filteredHistory = fullHistory.filter(h => h.datum >= selectedStartDate);
+            const fromDate = fromDateInput.value;
+            const toDate = toDateInput.value;
+            
+            if (!fromDate) return;
+            
+            // Filtere Historie basierend auf Von/Bis Datum
+            let filteredHistory = fullHistory.filter(h => {
+                if (h.datum < fromDate) return false;
+                if (toDate && h.datum > toDate) return false;
+                return true;
+            });
             
             if (filteredHistory.length === 0) {
-                console.warn('Keine Daten nach dem ausgewählten Startdatum gefunden');
+                console.warn('Keine Daten im ausgewählten Datumsbereich gefunden');
                 return;
             }
             
@@ -506,7 +512,49 @@
                 };
             });
             
+            // Aktualisiere die 3 oberen Charts
             updateCharts(recalculatedHistory);
+            
+            // Aktualisiere P&L Chart
+            if (pnlChart && fullPnlChartData && fullPnlChartData.length > 0) {
+                let filteredPnlData = fullPnlChartData.filter(d => {
+                    if (d.date < fromDate) return false;
+                    if (toDate && d.date > toDate) return false;
+                    return true;
+                });
+                
+                // Recalculate cumulative values for filtered range
+                let cumulativeGross = 0;
+                let cumulativeNet = 0;
+                const recalculatedPnlData = filteredPnlData.map(d => {
+                    cumulativeGross += d.daily_gross || 0;
+                    cumulativeNet += d.daily_net || 0;
+                    return {
+                        ...d,
+                        cumulative_gross: cumulativeGross,
+                        cumulative_net: cumulativeNet
+                    };
+                });
+                
+                pnlChart.data.labels = recalculatedPnlData.map(d => d.date);
+                pnlChart.data.datasets[0].data = recalculatedPnlData.map(d => d.cumulative_gross);
+                pnlChart.data.datasets[1].data = recalculatedPnlData.map(d => d.cumulative_net);
+                pnlChart.update();
+            }
+        }
+        
+        function resetUnifiedFilter() {
+            const fromDateInput = document.getElementById('dateFilterFrom');
+            const toDateInput = document.getElementById('dateFilterTo');
+            
+            if (fromDateInput) {
+                fromDateInput.value = '2025-11-28';
+            }
+            if (toDateInput) {
+                toDateInput.value = new Date().toISOString().split('T')[0];
+            }
+            
+            applyUnifiedFilter();
         }
         
         function formatCurrency(num, decimals = 0) {
@@ -629,47 +677,6 @@
             });
         }
         
-        function filterPnlChart() {
-            if (!pnlChart || !fullPnlChartData || fullPnlChartData.length === 0) return;
-            
-            const startDate = document.getElementById('pnlStartDate').value;
-            const endDate = document.getElementById('pnlEndDate').value;
-            
-            let filteredData = fullPnlChartData;
-            
-            if (startDate) {
-                filteredData = filteredData.filter(d => d.date >= startDate);
-            }
-            if (endDate) {
-                filteredData = filteredData.filter(d => d.date <= endDate);
-            }
-            
-            // Recalculate cumulative values for filtered range
-            let cumulativeGross = 0;
-            let cumulativeNet = 0;
-            const recalculatedData = filteredData.map(d => {
-                cumulativeGross += d.daily_gross || 0;
-                cumulativeNet += d.daily_net || 0;
-                return {
-                    ...d,
-                    cumulative_gross: cumulativeGross,
-                    cumulative_net: cumulativeNet
-                };
-            });
-            
-            pnlChart.data.labels = recalculatedData.map(d => d.date);
-            pnlChart.data.datasets[0].data = recalculatedData.map(d => d.cumulative_gross);
-            pnlChart.data.datasets[1].data = recalculatedData.map(d => d.cumulative_net);
-            pnlChart.update();
-        }
-        
-        function resetPnlChart() {
-            if (fullPnlChartData && fullPnlChartData.length > 0) {
-                initPnlChart(fullPnlChartData);
-                document.getElementById('pnlStartDate').value = '2024-11-28';
-                document.getElementById('pnlEndDate').value = '';
-            }
-        }
         
         function updateMetrics(perfData) {
             if (!perfData) {
@@ -903,16 +910,31 @@
         }
         
         
-        // Event Listener für Datumsfilter
+        // Event Listener für einheitlichen Datumsfilter
         document.addEventListener('DOMContentLoaded', function() {
-            const applyButton = document.getElementById('applyDateFilter');
+            const applyButton = document.getElementById('applyUnifiedFilter');
             if (applyButton) {
-                applyButton.addEventListener('click', applyDateFilter);
+                applyButton.addEventListener('click', applyUnifiedFilter);
             }
             
-            const dateInput = document.getElementById('startDateFilter');
-            if (dateInput) {
-                dateInput.addEventListener('change', applyDateFilter);
+            const resetButton = document.getElementById('resetUnifiedFilter');
+            if (resetButton) {
+                resetButton.addEventListener('click', resetUnifiedFilter);
+            }
+            
+            const fromDateInput = document.getElementById('dateFilterFrom');
+            const toDateInput = document.getElementById('dateFilterTo');
+            
+            if (fromDateInput) {
+                fromDateInput.addEventListener('change', applyUnifiedFilter);
+            }
+            if (toDateInput) {
+                toDateInput.addEventListener('change', applyUnifiedFilter);
+            }
+            
+            // Setze Standard "Bis" Datum auf heute beim Laden
+            if (toDateInput && !toDateInput.value) {
+                toDateInput.value = new Date().toISOString().split('T')[0];
             }
         });
         
