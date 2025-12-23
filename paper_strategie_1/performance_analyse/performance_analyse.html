@@ -471,6 +471,7 @@
             const labels = history.map(h => h.datum);
             const values = history.map(h => h.konto_wert);
             const pctValues = history.map(h => h.konto_wert_pct);
+            const buyHoldValues = history.map(h => h.buy_hold_pct || 0);
             const costs = history.map(h => h.kosten_kumulativ);
             const slippage = history.map(h => h.slippage_kumulativ);
             const totalCosts = history.map(h => h.total_kosten_kumulativ);
@@ -529,15 +530,29 @@
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Veränderung (%)',
-                        data: pctValues,
-                        borderColor: pctValues[pctValues.length - 1] >= 0 ? '#4ade80' : '#f87171',
-                        backgroundColor: pctValues[pctValues.length - 1] >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4
-                    }]
+                    datasets: [
+                        {
+                            label: 'Strategie (%)',
+                            data: pctValues,
+                            borderColor: pctValues[pctValues.length - 1] >= 0 ? '#4ade80' : '#f87171',
+                            backgroundColor: pctValues[pctValues.length - 1] >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Buy & Hold MES (%)',
+                            data: buyHoldValues,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            borderDash: [5, 5]
+                        }
+                    ]
                 },
                 options: {
                     ...chartOptions,
