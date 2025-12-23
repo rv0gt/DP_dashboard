@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Übersicht</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -50,11 +52,6 @@
         
         .breadcrumb a:hover {
             color: #fff;
-        }
-        
-        .breadcrumb span {
-            color: rgba(255,255,255,0.5);
-            margin: 0 10px;
         }
         
         .hero h1 {
@@ -151,10 +148,14 @@
         }
         
         .stat-number {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 600;
             color: #fff;
             margin-bottom: 5px;
+        }
+        
+        .stat-number.small {
+            font-size: 20px;
         }
         
         .stat-label {
@@ -162,8 +163,33 @@
             color: rgba(255, 255, 255, 0.7);
         }
         
+        .stat-sublabel {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 3px;
+        }
+        
         .positive { color: #4ade80; }
         .negative { color: #f87171; }
+        .neutral { color: #fbbf24; }
+        
+        .source-indicator {
+            font-size: 9px;
+            margin-left: 5px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+        
+        .source-ib {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+        
+        .source-db {
+            background: rgba(156, 163, 175, 0.2);
+            color: #9ca3af;
+        }
         
         .container {
             max-width: 1200px;
@@ -171,9 +197,101 @@
             padding: 0 30px;
         }
         
+        .chart-section {
+            padding: 60px 30px;
+            background: #f8f9fa;
+        }
+        
+        .chart-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .chart-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .date-filter label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .date-filter input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .date-filter button {
+            padding: 8px 16px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .date-filter button:hover {
+            background: #0052a3;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+        
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-gross { background: #3b82f6; }
+        .legend-net { background: #10b981; }
+        
         .nav-section {
             padding: 40px 30px;
-            background: #f8f9fa;
+            background: #fff;
         }
         
         .nav-buttons {
@@ -211,7 +329,7 @@
         
         .transactions-section {
             padding: 60px 30px;
-            background: #fff;
+            background: #f8f9fa;
         }
         
         .section-title {
@@ -227,31 +345,12 @@
             border: 1px solid #e9ecef;
             border-radius: 12px;
             overflow-x: auto;
-            overflow-y: visible;
             -webkit-overflow-scrolling: touch;
-        }
-        
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        
-        .table-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .table-container::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-        
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #555;
         }
         
         table {
             width: 100%;
-            min-width: 1200px;
+            min-width: 1400px;
             border-collapse: collapse;
         }
         
@@ -259,7 +358,7 @@
             background: #f8f9fa;
             padding: 15px 12px;
             text-align: left;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #666;
             text-transform: uppercase;
@@ -274,7 +373,7 @@
         td {
             padding: 14px 12px;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         tr:hover {
@@ -284,6 +383,9 @@
         tr:last-child td {
             border-bottom: none;
         }
+        
+        .pnl-positive { color: #10b981; font-weight: 600; }
+        .pnl-negative { color: #ef4444; font-weight: 600; }
         
         .footer {
             background: #333;
@@ -305,9 +407,20 @@
             padding-bottom: 30px;
         }
         
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
         @media (max-width: 900px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
         
@@ -329,17 +442,18 @@
                 justify-content: center;
             }
             
-            table {
-                font-size: 12px;
-                min-width: 1000px;
+            .chart-wrapper {
+                height: 300px;
             }
             
-            th, td {
-                padding: 10px 8px;
+            .date-filter {
+                flex-direction: column;
+                width: 100%;
             }
             
-            .table-container {
-                overflow-x: auto;
+            .date-filter input[type="date"],
+            .date-filter button {
+                width: 100%;
             }
         }
     </style>
@@ -386,37 +500,42 @@
     
     <section class="stats-section">
         <div class="stats-grid" id="metrics">
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Konto-Wert</div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Konto-Wert</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Aktueller Hebel</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">MES Kurs</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Avg Position Cost</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Unrealized P&L</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Realized P&L Gross</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Realized P&L Net</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Offene Orders</div></div>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <div class="chart-container">
+            <div class="chart-header">
+                <h2 class="chart-title">📈 Realized P&L (Kumulativ)</h2>
+                <div class="date-filter">
+                    <label for="startDate">Von:</label>
+                    <input type="date" id="startDate">
+                    <label for="endDate">Bis:</label>
+                    <input type="date" id="endDate">
+                    <button onclick="filterChart()">Filtern</button>
+                    <button onclick="resetChart()" style="background: #6b7280;">Reset</button>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Aktueller Hebel</div>
+            <div class="chart-wrapper">
+                <canvas id="pnlChart"></canvas>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Trades (30T)</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Total P&L (30T)</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Heutiges P&L</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Ø Fill-Preis</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Kontraktname</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Offene Orders</div>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-gross"></div>
+                    <span>Realized P&L Gross</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-net"></div>
+                    <span>Realized P&L Net</span>
+                </div>
             </div>
         </div>
     </section>
@@ -457,18 +576,19 @@
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
-                            <th>Grund-Details</th>
                             <th class="text-right">Fill-Preis</th>
+                            <th class="text-right">Avg Cost (vorher)</th>
+                            <th class="text-right">Avg Cost (nachher)</th>
+                            <th class="text-right">Unrealized P&L</th>
+                            <th class="text-right">Realized Gross</th>
+                            <th class="text-right">Realized Net</th>
                             <th class="text-right">Kosten</th>
                             <th>Status</th>
-                            <th class="text-right">Hebel Neu</th>
-                            <th>Geänderte Spalten</th>
-                            <th class="text-right">Margin Auslastung (%)</th>
                             <th>Rollover</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="12" style="text-align:center">Lade Daten...</td></tr>
+                        <tr><td colspan="13" style="text-align:center">Lade Daten...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -481,84 +601,319 @@
     </footer>
     
     <script>
-        // Inline common.js functions (workaround for GitHub Pages)
-        async function loadJSONData(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
-                throw error;
-            }
-        }
-        
-        function updateLastUpdate(timestamp, elementId = 'last-update') {
-            if (!timestamp) return;
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            try {
-                const date = new Date(timestamp);
-                element.innerHTML = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
-            } catch (error) {
-                console.error('Fehler beim Formatieren des Timestamps:', error);
-                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
-            }
-        }
-        
-        function updateServerStatus(status, system = null, elementId = 'server-status') {
-            if (!status) return;
-            const container = document.getElementById(elementId);
-            if (!container) return;
-            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
-            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
-            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
-            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
-            let html = `
-                <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
-                <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
-            `;
-            if (system) {
-                const ramVal = system.ram_usage_percent;
-                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
-                html += `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
-                const diskVal = system.disk_usage_percent;
-                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
-                html += `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
-            }
-            container.innerHTML = html;
-        }
-    </script>
-    <script>
         const OVERVIEW_URL = './overview.json';
         const SERVER_STATUS_URL = '../dashboard_analyse.json';
         
+        let pnlChart = null;
+        let fullChartData = [];
+        
+        // Helper functions
+        async function loadJSONData(url) {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        }
+        
+        function formatCurrency(num, decimals = 0) {
+            if (num === null || num === undefined) return '—';
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency', currency: 'USD',
+                minimumFractionDigits: decimals, maximumFractionDigits: decimals
+            }).format(num);
+        }
+        
+        function formatPnl(num) {
+            if (num === null || num === undefined) return '—';
+            const formatted = formatCurrency(num, 2);
+            const colorClass = num >= 0 ? 'positive' : 'negative';
+            return `<span class="${colorClass}">${formatted}</span>`;
+        }
+        
+        function getSourceBadge(fromIb) {
+            return fromIb 
+                ? '<span class="source-indicator source-ib">IB</span>' 
+                : '<span class="source-indicator source-db">DB</span>';
+        }
+        
+        // Clock update
         function updateClocks() {
             const now = new Date();
             const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            
             document.getElementById('clock-ch').innerText = 
                 new Intl.DateTimeFormat('de-CH', { ...options, timeZone: 'Europe/Zurich' }).format(now);
             document.getElementById('clock-chi').innerText = 
                 new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/Chicago' }).format(now);
         }
         
+        // Server status
+        function updateServerStatus(status) {
+            if (!status) return;
+            const container = document.getElementById('server-status');
+            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
+            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
+            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
+            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
+            container.innerHTML = `
+                <span class="status-badge ${gatewayClass}">${gatewayText}</span>
+                <span class="status-badge ${portClass}">${portText}</span>
+            `;
+        }
+        
+        // Metrics update
+        function updateMetrics(overview) {
+            if (!overview) return;
+            
+            const startDate = overview.realized_pnl_start_date 
+                ? new Date(overview.realized_pnl_start_date).toLocaleDateString('de-DE')
+                : '—';
+            
+            document.getElementById('metrics').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${formatCurrency(overview.konto_wert_nlv)}${getSourceBadge(overview.konto_wert_from_ib)}</div>
+                    <div class="stat-label">Konto-Wert</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.neuer_hebel ? parseFloat(overview.neuer_hebel).toFixed(3) + 'x' : '—'}</div>
+                    <div class="stat-label">Aktueller Hebel</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.mes_preis ? '$' + parseFloat(overview.mes_preis).toFixed(2) : '—'}${getSourceBadge(overview.mes_preis_from_ib)}</div>
+                    <div class="stat-label">MES Kurs</div>
+                    <div class="stat-sublabel">${overview.kontraktname || ''}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.avg_position_cost ? '$' + parseFloat(overview.avg_position_cost).toFixed(2) : '—'}${getSourceBadge(overview.avg_cost_from_ib)}</div>
+                    <div class="stat-label">Avg Position Cost</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${parseFloat(overview.unrealized_pnl || 0) >= 0 ? 'positive' : 'negative'}">${formatCurrency(overview.unrealized_pnl, 2)}${getSourceBadge(overview.unrealized_pnl_from_ib)}</div>
+                    <div class="stat-label">Unrealized P&L</div>
+                    <div class="stat-sublabel">Floating</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${parseFloat(overview.realized_pnl_gross_total || 0) >= 0 ? 'positive' : 'negative'}">${formatCurrency(overview.realized_pnl_gross_total, 2)}</div>
+                    <div class="stat-label">Realized P&L Gross</div>
+                    <div class="stat-sublabel">seit ${startDate}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number ${parseFloat(overview.realized_pnl_net_total || 0) >= 0 ? 'positive' : 'negative'}">${formatCurrency(overview.realized_pnl_net_total, 2)}</div>
+                    <div class="stat-label">Realized P&L Net</div>
+                    <div class="stat-sublabel">seit ${startDate}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${overview.offene_orders_anzahl ?? '0'}</div>
+                    <div class="stat-label">Offene Orders</div>
+                </div>
+            `;
+            
+            // Set date filter defaults
+            if (overview.realized_pnl_start_date) {
+                document.getElementById('startDate').value = overview.realized_pnl_start_date;
+            }
+            document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
+        }
+        
+        // Chart functions
+        function initChart(chartData) {
+            fullChartData = chartData;
+            
+            const ctx = document.getElementById('pnlChart').getContext('2d');
+            
+            if (pnlChart) {
+                pnlChart.destroy();
+            }
+            
+            pnlChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Realized P&L Gross (Kumulativ)',
+                            data: chartData.map(d => d.cumulative_gross),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Realized P&L Net (Kumulativ)',
+                            data: chartData.map(d => d.cumulative_net),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return new Date(context[0].label).toLocaleDateString('de-DE');
+                                },
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    const formatted = new Intl.NumberFormat('de-DE', {
+                                        style: 'currency', currency: 'USD'
+                                    }).format(value);
+                                    return `${context.dataset.label}: ${formatted}`;
+                                },
+                                afterBody: function(context) {
+                                    const dataIndex = context[0].dataIndex;
+                                    const dataPoint = fullChartData[dataIndex];
+                                    if (dataPoint) {
+                                        return [
+                                            '',
+                                            `Tages-Gross: ${formatCurrency(dataPoint.daily_gross, 2)}`,
+                                            `Tages-Net: ${formatCurrency(dataPoint.daily_net, 2)}`,
+                                            `Trades: ${dataPoint.trade_count}`
+                                        ];
+                                    }
+                                    return [];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'dd.MM'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString('de-DE');
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function filterChart() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            let filteredData = fullChartData;
+            
+            if (startDate) {
+                filteredData = filteredData.filter(d => d.date >= startDate);
+            }
+            if (endDate) {
+                filteredData = filteredData.filter(d => d.date <= endDate);
+            }
+            
+            // Recalculate cumulative values for filtered range
+            let cumulativeGross = 0;
+            let cumulativeNet = 0;
+            const recalculatedData = filteredData.map(d => {
+                cumulativeGross += d.daily_gross;
+                cumulativeNet += d.daily_net;
+                return {
+                    ...d,
+                    cumulative_gross: cumulativeGross,
+                    cumulative_net: cumulativeNet
+                };
+            });
+            
+            pnlChart.data.labels = recalculatedData.map(d => d.date);
+            pnlChart.data.datasets[0].data = recalculatedData.map(d => d.cumulative_gross);
+            pnlChart.data.datasets[1].data = recalculatedData.map(d => d.cumulative_net);
+            pnlChart.update();
+        }
+        
+        function resetChart() {
+            initChart(fullChartData);
+        }
+        
+        // Transactions update
+        function updateTransactions(transactions) {
+            const tbody = document.querySelector('#transactions tbody');
+            
+            if (!transactions || transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align:center">Keine Transaktionen</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = transactions.map(t => {
+                const formatPnlCell = (val) => {
+                    if (val === null || val === undefined) return '—';
+                    const num = parseFloat(val);
+                    const cls = num >= 0 ? 'pnl-positive' : 'pnl-negative';
+                    return `<span class="${cls}">${formatCurrency(num, 2)}</span>`;
+                };
+                
+                const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined 
+                    ? '$' + parseFloat(t.kosten_angepasst).toFixed(4) 
+                    : '—';
+                const rollover = t.is_rollover === 1 ? '✓' : '—';
+                
+                return `
+                    <tr>
+                        <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
+                        <td><strong>${t.aktion || '—'}</strong></td>
+                        <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
+                        <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
+                        <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                        <td class="text-right">${t.avg_position_cost_before ? '$' + parseFloat(t.avg_position_cost_before).toFixed(2) : '—'}</td>
+                        <td class="text-right">${t.avg_position_cost ? '$' + parseFloat(t.avg_position_cost).toFixed(2) : '—'}</td>
+                        <td class="text-right">${formatPnlCell(t.unrealized_pnl)}</td>
+                        <td class="text-right">${formatPnlCell(t.realized_pnl_gross)}</td>
+                        <td class="text-right">${formatPnlCell(t.realized_pnl_net)}</td>
+                        <td class="text-right">${kostenAngepasst}</td>
+                        <td>${t.status || '—'}</td>
+                        <td>${rollover}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Main load function
         async function loadDashboard() {
             try {
-                // Lade Overview-Daten
-                console.log('Lade Overview-Daten von:', OVERVIEW_URL);
                 const overviewData = await loadJSONData(OVERVIEW_URL);
-                console.log('Overview-Daten geladen:', overviewData);
                 updateMetrics(overviewData.overview);
                 updateTransactions(overviewData.recent_transactions);
-                updateLastUpdate(overviewData.timestamp);
                 
-                // Lade Server-Status
+                if (overviewData.realized_pnl_chart && overviewData.realized_pnl_chart.length > 0) {
+                    initChart(overviewData.realized_pnl_chart);
+                }
+                
+                // Update timestamp
+                if (overviewData.timestamp) {
+                    document.getElementById('last-update').innerHTML = 
+                        `Letzte Aktualisierung: ${new Date(overviewData.timestamp).toLocaleString('de-DE')}`;
+                }
+                
+                // Load server status
                 try {
-                    console.log('Lade Server-Status von:', SERVER_STATUS_URL);
                     const serverData = await loadJSONData(SERVER_STATUS_URL);
                     updateServerStatus(serverData.server_status);
                 } catch (e) {
@@ -567,120 +922,18 @@
                 
             } catch (error) {
                 console.error('Fehler beim Laden des Dashboards:', error);
-                // Zeige Fehler in der UI
-                const errorContainer = document.querySelector('.container');
-                if (errorContainer) {
-                    const errorDiv = document.createElement('div');
-                    errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 20px; text-align: center;';
-                    errorDiv.innerHTML = `
-                        <strong>⚠️ Fehler beim Laden der Daten</strong><br>
-                        ${error.message}<br>
-                        <small>URL: ${OVERVIEW_URL}<br>
-                        Bitte öffnen Sie die Browser-Konsole (F12) für weitere Details.</small>
-                    `;
-                    errorContainer.insertBefore(errorDiv, errorContainer.firstChild);
-                }
-            }
-        }
-        
-        function updateMetrics(overview) {
-            if (!overview) return;
-            
-            const formatCurrency = (num) => {
-                if (num === null || num === undefined) return '—';
-                return new Intl.NumberFormat('de-DE', {
-                    style: 'currency', currency: 'USD',
-                    minimumFractionDigits: 0, maximumFractionDigits: 0
-                }).format(num);
-            };
-            
-            const pnl30d = parseFloat(overview.total_pnl_30d || 0);
-            const pnlToday = parseFloat(overview.today_pnl || 0);
-            const ibIndicator = overview.konto_wert_from_ib ? 
-                '<span style="font-size: 10px; color: #4ade80; margin-left: 5px;">● IB</span>' : 
-                '<span style="font-size: 10px; color: #999; margin-left: 5px;">● DB</span>';
-            
-            document.getElementById('metrics').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${formatCurrency(overview.konto_wert_nlv)}${ibIndicator}</div>
-                    <div class="stat-label">Konto-Wert</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${overview.neuer_hebel ? parseFloat(overview.neuer_hebel).toFixed(3) + 'x' : '—'}</div>
-                    <div class="stat-label">Aktueller Hebel</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${overview.total_trades_30d || 0}</div>
-                    <div class="stat-label">Trades (30T)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number ${pnl30d >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl30d)}</div>
-                    <div class="stat-label">Total P&L (30T)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number ${pnlToday >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnlToday)}</div>
-                    <div class="stat-label">Heutiges P&L</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${overview.avg_fill_price ? '$' + parseFloat(overview.avg_fill_price).toFixed(2) : '—'}</div>
-                    <div class="stat-label">Ø Fill-Preis</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" style="font-size:18px">${overview.kontraktname || '—'}</div>
-                    <div class="stat-label">Kontraktname</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${overview.offene_orders_anzahl ?? '—'}</div>
-                    <div class="stat-label">Offene Orders</div>
-                </div>
-            `;
-        }
-        
-        function updateTransactions(transactions) {
-            const tbody = document.querySelector('#transactions tbody');
-            
-            if (!transactions || transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center">Keine Transaktionen</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = transactions.map(t => {
-                const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined 
-                    ? '$' + parseFloat(t.kosten_angepasst).toFixed(4) 
-                    : '—';
-                const hebel = t.leverage_new !== null && t.leverage_new !== undefined 
-                    ? parseFloat(t.leverage_new).toFixed(3) + 'x' 
-                    : '—';
-                const marginAuslastung = t.margin_auslastung !== null && t.margin_auslastung !== undefined 
-                    ? parseFloat(t.margin_auslastung).toFixed(2) + '%' 
-                    : '—';
-                const rollover = t.is_rollover === 1 ? '1' : '0';
-                const changedColumns = t.changed_columns || '—';
-                const reasonDetail = t.reason_detail || '—';
-                
-                return `
-                    <tr>
-                        <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
-                        <td><strong>${t.aktion || '—'}</strong></td>
-                        <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
-                        <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
-                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${reasonDetail}">${reasonDetail}</td>
-                        <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
-                        <td class="text-right">${kostenAngepasst}</td>
-                        <td>${t.status || '—'}</td>
-                        <td class="text-right">${hebel}</td>
-                        <td style="white-space: normal; word-wrap: break-word;">${changedColumns}</td>
-                        <td class="text-right">${marginAuslastung}</td>
-                        <td>${rollover}</td>
-                    </tr>
+                document.getElementById('metrics').innerHTML = `
+                    <div class="stat-card" style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.1);">
+                        <div class="stat-number" style="color: #ef4444;">⚠️ Fehler</div>
+                        <div class="stat-label">${error.message}</div>
+                    </div>
                 `;
-            }).join('');
+            }
         }
         
-        
+        // Initialize
         updateClocks();
         setInterval(updateClocks, 1000);
-        
         loadDashboard();
         setInterval(loadDashboard, 60000);
     </script>
