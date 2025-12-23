@@ -144,9 +144,9 @@
     <section class="hero">
         <div class="hero-content">
             <div class="breadcrumb">
-                <a href="../../dashboard/dashboard_analyse_home.html">Home</a>
+                <a href="../../dashboard_analyse.html">Home</a>
                 <span>›</span>
-                <a href="../overview/uebersicht.html">Paper Strategie 1</a>
+                <a href="../overview.html">Paper Strategie 1</a>
                 <span>›</span>
                 <span style="color:#fff">Trading Monitor</span>
             </div>
@@ -205,8 +205,35 @@
         <p>Paper Strategie 1 · Trading Monitor View</p>
     </footer>
 
-    <script src="../../../_shared/js/common.js"></script>
     <script>
+        // Inline common.js functions (workaround for GitHub Pages)
+        async function loadJSONData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
+                throw error;
+            }
+        }
+        
+        function updateLastUpdate(timestamp, elementId = 'last-update') {
+            if (!timestamp) return;
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            try {
+                const date = new Date(timestamp);
+                element.innerHTML = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
+            } catch (error) {
+                console.error('Fehler beim Formatieren des Timestamps:', error);
+                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
+            }
+        }
+        
         // Pfad zur JSON Datei mit den Trading Monitor Daten
         const DATA_URL = './trading_monitor.json';
 
@@ -271,12 +298,27 @@
                 return;
             }
 
+            // Mapping für deutsche Spaltenüberschriften
+            const columnNames = {
+                'id': 'ID',
+                'date_chi': 'Datum/Zeit (Chicago)',
+                'date_ch': 'Datum/Zeit (Zürich)',
+                'transaction_called': 'Transaktion Ausgeführt',
+                'reason_code': 'Grund',
+                'reason_detail': 'Grund-Details',
+                'leverage_old': 'Alter Hebel',
+                'leverage_new': 'Neuer Hebel',
+                'leverage_change': 'Hebel-Änderung',
+                'changed_columns': 'Geänderte Spalten',
+                'daily_trades_count': 'Anzahl tägliche Trades'
+            };
+
             // 1. Header Generierung
             const columns = Object.keys(data[0]);
             
             let headerHTML = '<tr>';
             columns.forEach(col => {
-                const niceName = col.replace(/_/g, ' ').toUpperCase();
+                const niceName = columnNames[col] || col.replace(/_/g, ' ').toUpperCase();
                 headerHTML += `<th>${niceName}</th>`;
             });
             headerHTML += '</tr>';
