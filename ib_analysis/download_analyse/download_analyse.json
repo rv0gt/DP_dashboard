@@ -3597,6 +3597,90 @@
             "weekday": 0,
             "year": 2025,
             "symbol": "MES"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "SPX"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "NDX"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "OEX"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "RUI"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "RUA"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "RUT"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "VXN"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "HGX"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "SOX"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "BX"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "CG"
+        },
+        {
+            "date": "2025-12-23",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2025,
+            "symbol": "KKR"
         }
     ],
     "config": {
@@ -3668,10 +3752,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2025-12-22"
+        "max_date": "2025-12-23"
     },
     "meta": {
-        "generated_at": "2025-12-23 15:10",
+        "generated_at": "2025-12-23 15:49",
         "source_file": "download_data_ib_min.py.log"
     }
 }
