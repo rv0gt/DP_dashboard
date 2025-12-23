@@ -322,7 +322,7 @@
     <section class="hero">
         <div class="hero-content">
             <div class="breadcrumb">
-                <a href="../../dashboard_analyse.html">← Zurück zur Übersicht</a>
+                <a href="../dashboard_analyse.html">← Zurück zur Übersicht</a>
             </div>
             <h1>Paper Strategie 1</h1>
             <div class="server-status" id="server-status">
@@ -397,23 +397,23 @@
     
     <section class="nav-section">
         <div class="nav-buttons">
-            <a href="../performance_analyse/performance_analyse.html" class="nav-btn">
+            <a href="performance_analyse/performance_analyse.html" class="nav-btn">
                 <span class="nav-btn-icon">📈</span>
                 Performance Analyse
             </a>
-            <a href="../margin_analyse/margin_analyse.html" class="nav-btn">
+            <a href="margin_analyse/margin_analyse.html" class="nav-btn">
                 <span class="nav-btn-icon">💰</span>
                 Margin Analyse
             </a>
-            <a href="../rollover_analyse/rollover_analyse.html" class="nav-btn">
+            <a href="rollover_analyse/rollover_analyse.html" class="nav-btn">
                 <span class="nav-btn-icon">🔄</span>
                 Rollover Analyse
             </a>
-            <a href="../data_table/data_table.html" class="nav-btn">
+            <a href="data_table/data_table.html" class="nav-btn">
                 <span class="nav-btn-icon">📋</span>
                 Data Table
             </a>
-            <a href="../trading_monitor/trading_monitor.html" class="nav-btn">
+            <a href="trading_monitor/trading_monitor.html" class="nav-btn">
                 <span class="nav-btn-icon">📊</span>
                 Trading Monitor
             </a>
@@ -450,10 +450,61 @@
         <p>Paper Strategie 1 · Trading Dashboard</p>
     </footer>
     
-    <script src="../../_shared/js/common.js"></script>
+    <script>
+        // Inline common.js functions (workaround for GitHub Pages)
+        async function loadJSONData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
+                throw error;
+            }
+        }
+        
+        function updateLastUpdate(timestamp, elementId = 'last-update') {
+            if (!timestamp) return;
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            try {
+                const date = new Date(timestamp);
+                element.innerHTML = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
+            } catch (error) {
+                console.error('Fehler beim Formatieren des Timestamps:', error);
+                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
+            }
+        }
+        
+        function updateServerStatus(status, system = null, elementId = 'server-status') {
+            if (!status) return;
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
+            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
+            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
+            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
+            let html = `
+                <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
+                <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
+            `;
+            if (system) {
+                const ramVal = system.ram_usage_percent;
+                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
+                html += `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
+                const diskVal = system.disk_usage_percent;
+                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
+                html += `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
+            }
+            container.innerHTML = html;
+        }
+    </script>
     <script>
         const OVERVIEW_URL = './overview.json';
-        const SERVER_STATUS_URL = '../../server_status.json';
+        const SERVER_STATUS_URL = '../dashboard_analyse.json';
         
         function updateClocks() {
             const now = new Date();
@@ -468,13 +519,16 @@
         async function loadDashboard() {
             try {
                 // Lade Overview-Daten
+                console.log('Lade Overview-Daten von:', OVERVIEW_URL);
                 const overviewData = await loadJSONData(OVERVIEW_URL);
+                console.log('Overview-Daten geladen:', overviewData);
                 updateMetrics(overviewData.overview);
                 updateTransactions(overviewData.recent_transactions);
                 updateLastUpdate(overviewData.timestamp);
                 
                 // Lade Server-Status
                 try {
+                    console.log('Lade Server-Status von:', SERVER_STATUS_URL);
                     const serverData = await loadJSONData(SERVER_STATUS_URL);
                     updateServerStatus(serverData.server_status);
                 } catch (e) {
@@ -482,7 +536,20 @@
                 }
                 
             } catch (error) {
-                console.error('Fehler:', error);
+                console.error('Fehler beim Laden des Dashboards:', error);
+                // Zeige Fehler in der UI
+                const errorContainer = document.querySelector('.container');
+                if (errorContainer) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 20px; text-align: center;';
+                    errorDiv.innerHTML = `
+                        <strong>⚠️ Fehler beim Laden der Daten</strong><br>
+                        ${error.message}<br>
+                        <small>URL: ${OVERVIEW_URL}<br>
+                        Bitte öffnen Sie die Browser-Konsole (F12) für weitere Details.</small>
+                    `;
+                    errorContainer.insertBefore(errorDiv, errorContainer.firstChild);
+                }
             }
         }
         
