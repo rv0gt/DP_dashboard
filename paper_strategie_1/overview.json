@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-12-24T22:10:07.167714",
+    "timestamp": "2025-12-24T23:10:06.773059",
     "overview": {
         "konto_wert_nlv": 1101711.54,
         "konto_wert_from_ib": true,
@@ -86,9 +86,9 @@
             "realized_pnl_net": null,
             "avg_position_cost_before": null,
             "avg_position_cost": null,
-            "reason_detail": "Hebel: 1.4235 -> 1.4235",
-            "leverage_new": 1.4235,
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "reason_detail": null,
+            "leverage_new": null,
+            "changed_columns": null,
             "is_rollover": 0,
             "margin_auslastung": 27.13483333,
             "kosten_angepasst": 60.56158971962617
@@ -111,9 +111,9 @@
             "realized_pnl_net": null,
             "avg_position_cost_before": null,
             "avg_position_cost": null,
-            "reason_detail": "Hebel: 1.4235 -> 1.4235",
-            "leverage_new": 1.4235,
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "reason_detail": null,
+            "leverage_new": null,
+            "changed_columns": null,
             "is_rollover": 0,
             "margin_auslastung": 27.13483333,
             "kosten_angepasst": 9.995
