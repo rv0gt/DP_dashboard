@@ -160,15 +160,15 @@
         function updateChart(history, current) {
             if (!history || history.length === 0) return;
             const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
-            const dataPoints = sorted.map(h => ({ x: parseDate(h.datum), y: h.tage_bis_verfall }));
+            const dataPoints = sorted.map(h => ({ x: parseDate(h.datum).getTime(), y: h.tage_bis_verfall }));
             const lastDate = dataPoints[dataPoints.length - 1].x;
-            const maxDate = new Date(lastDate.getTime() + 10 * 24 * 60 * 60 * 1000);
+            const maxDate = lastDate + 10 * 24 * 60 * 60 * 1000;
             let expiryDate = null;
             if (current?.kontrakt_verfall) {
-                expiryDate = parseDate(current.kontrakt_verfall);
+                expiryDate = new Date(current.kontrakt_verfall).getTime();
             } else if (sorted.length > 0) {
                 const last = sorted[sorted.length - 1];
-                expiryDate = new Date(parseDate(last.datum).getTime() + last.tage_bis_verfall * 24 * 60 * 60 * 1000);
+                expiryDate = parseDate(last.datum).getTime() + last.tage_bis_verfall * 24 * 60 * 60 * 1000;
             }
             const ctx = document.getElementById('expiryChart').getContext('2d');
             if (expiryChart) expiryChart.destroy();
@@ -216,7 +216,7 @@
                     scales: {
                         x: {
                             type: 'time',
-                            time: { unit: 'day', displayFormats: { day: 'dd.MM.yy' }, tooltipFormat: 'dd.MM.yyyy HH:mm' },
+                            time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' },
                             max: maxDate,
                             grid: { color: '#f0f0f0' },
                             title: { display: true, text: 'Datum' }
