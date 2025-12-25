@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-12-25T22:10:06.878329",
+    "timestamp": "2025-12-25T23:10:06.106156",
     "overview": {
         "konto_wert_nlv": 1101805.46,
         "konto_wert_from_ib": true,
@@ -86,9 +86,9 @@
             "realized_pnl_net": null,
             "avg_position_cost_before": null,
             "avg_position_cost": null,
-            "reason_detail": "Hebel: 0.8563 -> 0.8563",
-            "leverage_new": 0.8563,
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "reason_detail": null,
+            "leverage_new": null,
+            "changed_columns": null,
             "is_rollover": 0,
             "margin_auslastung": 8.3927,
             "kosten_angepasst": 36.87
