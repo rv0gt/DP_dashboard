@@ -153,18 +153,22 @@
             document.getElementById('last-rollover-cost').textContent = lastE?.rollover_kosten ? '$' + parseFloat(lastE.rollover_kosten).toFixed(2) : '—';
             document.getElementById('rollover-count').textContent = rd.events?.length || 0;
         }
+        function parseDate(str) {
+            if (!str) return null;
+            return new Date(str.replace(' ', 'T'));
+        }
         function updateChart(history, current) {
             if (!history || history.length === 0) return;
-            const sorted = [...history].sort((a, b) => new Date(a.datum) - new Date(b.datum));
-            const dataPoints = sorted.map(h => ({ x: new Date(h.datum), y: h.tage_bis_verfall }));
+            const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+            const dataPoints = sorted.map(h => ({ x: parseDate(h.datum), y: h.tage_bis_verfall }));
             const lastDate = dataPoints[dataPoints.length - 1].x;
             const maxDate = new Date(lastDate.getTime() + 10 * 24 * 60 * 60 * 1000);
             let expiryDate = null;
             if (current?.kontrakt_verfall) {
-                expiryDate = new Date(current.kontrakt_verfall);
+                expiryDate = parseDate(current.kontrakt_verfall);
             } else if (sorted.length > 0) {
                 const last = sorted[sorted.length - 1];
-                expiryDate = new Date(new Date(last.datum).getTime() + last.tage_bis_verfall * 24 * 60 * 60 * 1000);
+                expiryDate = new Date(parseDate(last.datum).getTime() + last.tage_bis_verfall * 24 * 60 * 60 * 1000);
             }
             const ctx = document.getElementById('expiryChart').getContext('2d');
             if (expiryChart) expiryChart.destroy();
