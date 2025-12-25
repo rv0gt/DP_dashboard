@@ -5,276 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Performance Analyse</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #fff;
-        }
-        
-        .hero {
-            background: #0a2540;
-            background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%);
-            padding: 50px 30px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
-            background-size: 40px 40px;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .breadcrumb {
-            margin-bottom: 20px;
-        }
-        
-        .breadcrumb a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #fff; }
+        .hero { background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%); padding: 50px 30px 40px; text-align: center; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E'); background-size: 40px 40px; }
+        .hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
+        .breadcrumb { margin-bottom: 20px; }
+        .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; }
         .breadcrumb a:hover { color: #fff; }
-        
-        .breadcrumb span {
-            color: rgba(255,255,255,0.5);
-            margin: 0 10px;
-        }
-        
-        .hero h1 {
-            font-size: 36px;
-            font-weight: 300;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        
-        .hero p {
-            color: rgba(255,255,255,0.7);
-            font-size: 16px;
-        }
-        
-        .stats-section {
-            background: linear-gradient(180deg, #0f3554 0%, #0a2540 100%);
-            padding: 40px 30px 50px;
-        }
-        
-        .stats-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px 15px;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.08);
-        }
-        
-        .stat-number {
-            font-size: 24px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
+        .breadcrumb span { color: rgba(255,255,255,0.5); margin: 0 10px; }
+        .hero h1 { font-size: 36px; font-weight: 300; color: #fff; margin-bottom: 10px; }
+        .hero p { color: rgba(255,255,255,0.7); font-size: 16px; }
+        .stats-section { background: linear-gradient(180deg, #0f3554 0%, #0a2540 100%); padding: 40px 30px 50px; }
+        .stats-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        .stat-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 15px; border-radius: 12px; text-align: center; transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.08); }
+        .stat-number { font-size: 24px; font-weight: 600; color: #fff; margin-bottom: 5px; }
+        .stat-label { font-size: 12px; color: rgba(255, 255, 255, 0.7); }
         .positive { color: #4ade80; }
         .negative { color: #f87171; }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px;
-        }
-        
-        .chart-section {
-            padding: 60px 30px;
-            background: #f8f9fa;
-        }
-        
-        .chart-section:nth-child(odd) {
-            background: #fff;
-        }
-        
-        .section-title {
-            font-size: 24px;
-            font-weight: 300;
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .chart-card {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .chart-section:nth-child(odd) .chart-card {
-            background: #f8f9fa;
-        }
-        
-        .chart-wrapper {
-            height: 350px;
-            position: relative;
-        }
-        
-        .chart-title {
-            font-size: 18px;
-            font-weight: 400;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
-        }
-        
-        .table-section {
-            padding: 60px 30px;
-            background: #fff;
-        }
-        
-        .table-container {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            background: #f8f9fa;
-            padding: 15px 12px;
-            text-align: left;
-            font-size: 13px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e9ecef;
-        }
-        
-        td {
-            padding: 14px 12px;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
-        }
-        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+        .chart-section { padding: 60px 30px; background: #f8f9fa; }
+        .chart-section:nth-child(odd) { background: #fff; }
+        .section-title { font-size: 24px; font-weight: 300; color: #333; margin-bottom: 30px; text-align: center; }
+        .chart-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; }
+        .chart-section:nth-child(odd) .chart-card { background: #f8f9fa; }
+        .chart-wrapper { height: 350px; position: relative; }
+        .chart-title { font-size: 18px; font-weight: 400; margin-bottom: 20px; text-align: center; color: #333; }
+        .table-section { padding: 60px 30px; background: #fff; }
+        .table-container { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 15px 12px; text-align: left; font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; border-bottom: 2px solid #e9ecef; }
+        td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
         tr:hover { background: #f8f9fa; }
         tr:last-child td { border-bottom: none; }
-        
-        .footer {
-            background: #333;
-            color: #fff;
-            padding: 25px 30px;
-            text-align: center;
-        }
-        
-        .footer p {
-            font-size: 13px;
-            color: #999;
-        }
-        
-        .last-update {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-top: 30px;
-        }
-        
-        @media (max-width: 1000px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .hero h1 { font-size: 28px; }
-            
-            .chart-wrapper {
-                height: 280px;
-            }
-        }
+        .footer { background: #333; color: #fff; padding: 25px 30px; text-align: center; }
+        .footer p { font-size: 13px; color: #999; }
+        .last-update { text-align: center; color: #666; font-size: 14px; margin-top: 30px; }
+        @media (max-width: 1000px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .hero h1 { font-size: 28px; } .chart-wrapper { height: 280px; } }
     </style>
 </head>
 <body>
     <section class="hero">
         <div class="hero-content">
             <div class="breadcrumb">
-                <a href="../../dashboard_analyse.html">Home</a>
-                <span>›</span>
-                <a href="../overview.html">Paper Strategie 1</a>
-                <span>›</span>
+                <a href="../../dashboard_analyse.html">Home</a><span>›</span>
+                <a href="../overview.html">Paper Strategie 1</a><span>›</span>
                 <span style="color:#fff">Performance Analyse</span>
             </div>
             <h1>Performance Analyse</h1>
             <p>Paper Strategie 1 - Konto-Entwicklung und Kostenanalyse</p>
         </div>
     </section>
-    
     <section class="stats-section">
         <div class="stats-grid" id="metrics">
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Startwert</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Aktueller Wert</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Rendite</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Kum. Kosten</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">—</div>
-                <div class="stat-label">Kum. Slippage</div>
-            </div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Startwert</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Aktueller Wert</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Rendite</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Kum. Kosten</div></div>
+            <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Kum. Slippage</div></div>
         </div>
     </section>
-    
     <section class="chart-section">
         <div class="container">
             <div style="margin-bottom: 40px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px;">
@@ -287,657 +81,225 @@
                     <button id="resetUnifiedFilter" style="padding: 8px 20px; font-size: 14px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer;">Reset</button>
                 </div>
             </div>
-            
             <h2 class="section-title">Konto-Entwicklung</h2>
-            
-            <div class="chart-card">
-                <div class="chart-title">Konto-Wert (absolut in USD)</div>
-                <div class="chart-wrapper">
-                    <canvas id="accountValueChart"></canvas>
-                </div>
-            </div>
-            
-            <div class="chart-card">
-                <div class="chart-title">Konto-Wert (% Veränderung seit Start)</div>
-                <div class="chart-wrapper">
-                    <canvas id="accountPctChart"></canvas>
-                </div>
-            </div>
+            <div class="chart-card"><div class="chart-title">Konto-Wert (absolut in USD)</div><div class="chart-wrapper"><canvas id="accountValueChart"></canvas></div></div>
+            <div class="chart-card"><div class="chart-title">Konto-Wert (% Veränderung seit Start)</div><div class="chart-wrapper"><canvas id="accountPctChart"></canvas></div></div>
         </div>
     </section>
-    
     <section class="chart-section">
         <div class="container">
             <h2 class="section-title">Kumulative Kosten</h2>
-            
-            <div class="chart-card">
-                <div class="chart-title">Transaktionskosten & Slippage (kumulativ)</div>
-                <div class="chart-wrapper">
-                    <canvas id="costsChart"></canvas>
-                </div>
-            </div>
+            <div class="chart-card"><div class="chart-title">Transaktionskosten & Slippage (kumulativ)</div><div class="chart-wrapper"><canvas id="costsChart"></canvas></div></div>
         </div>
     </section>
-    
     <section class="chart-section">
         <div class="container">
             <h2 class="section-title">📈 Realized P&L (Kumulativ)</h2>
-            
-            <div class="chart-card">
-                <div class="chart-title">Realized P&L Gross & Net (kumulativ)</div>
-                <div class="chart-wrapper">
-                    <canvas id="pnlChart"></canvas>
-                </div>
-            </div>
-            
+            <div class="chart-card"><div class="chart-title">Realized P&L Gross & Net (kumulativ)</div><div class="chart-wrapper"><canvas id="pnlChart"></canvas></div></div>
             <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
-                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;">
-                    <div style="width: 16px; height: 16px; background: #3b82f6; border-radius: 4px;"></div>
-                    <span>Realized P&L Gross</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;">
-                    <div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div>
-                    <span>Realized P&L Net</span>
-                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #3b82f6; border-radius: 4px;"></div><span>Realized P&L Gross</span></div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div><span>Realized P&L Net</span></div>
             </div>
         </div>
     </section>
-    
     <section class="table-section">
         <div class="container">
             <h2 class="section-title">Tägliche Übersicht</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead>
-                        <tr>
-                            <th>Datum</th>
-                            <th>Konto-Wert</th>
-                            <th>Veränderung %</th>
-                            <th>Kum. Kosten</th>
-                            <th>Kum. Slippage</th>
-                            <th>Total Kosten</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="6" style="text-align:center">Lade Daten...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Veränderung %</th><th>Kum. Kosten</th><th>Kum. Slippage</th><th>Total Kosten</th></tr></thead>
+                    <tbody><tr><td colspan="6" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
             <div class="last-update" id="last-update"></div>
         </div>
     </section>
-    
-    <footer class="footer">
-        <p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p>
-    </footer>
-    
+    <footer class="footer"><p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p></footer>
     <script>
         const DATA_URL = './performance_analyse.json';
         const OVERVIEW_URL = '../overview.json';
-        
-        // Inline common.js functions (workaround for GitHub Pages)
         async function loadJSONData(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
-                throw error;
-            }
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP Fehler ${response.status}`);
+            return response.json();
         }
-        
         function updateLastUpdate(timestamp, elementId = 'last-update') {
             if (!timestamp) return;
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            try {
-                const date = new Date(timestamp);
-                element.innerHTML = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
-            } catch (error) {
-                console.error('Fehler beim Formatieren des Timestamps:', error);
-                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
-            }
+            const el = document.getElementById(elementId);
+            if (el) el.innerHTML = `Letzte Aktualisierung: ${new Date(timestamp).toLocaleString('de-DE')}`;
+        }
+        function parseDate(str) {
+            if (!str) return null;
+            return new Date(str.replace(' ', 'T'));
         }
         let accountValueChart, accountPctChart, costsChart, pnlChart;
-        let fullHistory = []; // Speichere vollständige Historie
-        let fullPerfData = null; // Speichere vollständige Performance-Daten
-        let fullPnlChartData = []; // Speichere vollständige P&L Chart-Daten
-        
+        let fullHistory = [], fullPerfData = null, fullPnlChartData = [];
         async function loadData() {
             try {
-                console.log('Lade Performance-Daten von:', DATA_URL);
                 const data = await loadJSONData(DATA_URL);
-                console.log('Daten geladen:', data);
-                
                 const perfData = data.performance_data;
                 if (perfData) {
-                    console.log('Performance-Daten gefunden:', perfData);
                     fullHistory = perfData.history || [];
                     fullPerfData = perfData;
                     updateMetrics(perfData);
-                    
-                    // Setze Standard "Bis" Datum auf heute
                     const today = new Date().toISOString().split('T')[0];
                     const dateFilterTo = document.getElementById('dateFilterTo');
-                    if (dateFilterTo && !dateFilterTo.value) {
-                        dateFilterTo.value = today;
-                    }
-                    
+                    if (dateFilterTo && !dateFilterTo.value) dateFilterTo.value = today;
                     applyUnifiedFilter();
                     updateTable(perfData.history);
-                } else {
-                    console.warn('Keine performance_data im JSON gefunden');
                 }
                 updateLastUpdate(data.timestamp);
-                
-                // Lade P&L Chart-Daten aus overview.json
                 try {
                     const overviewData = await loadJSONData(OVERVIEW_URL);
                     if (overviewData.realized_pnl_chart && overviewData.realized_pnl_chart.length > 0) {
                         fullPnlChartData = overviewData.realized_pnl_chart;
                         initPnlChart(fullPnlChartData);
-                        // Wende initialen Filter an
                         applyUnifiedFilter();
                     }
-                } catch (e) {
-                    console.warn('Konnte P&L Chart-Daten nicht laden:', e);
-                }
-                
-            } catch (error) {
-                console.error('Fehler beim Laden der Performance-Daten:', error);
-                // Zeige Fehler in der UI
-                const errorContainer = document.querySelector('.container');
-                if (errorContainer) {
-                    const errorDiv = document.createElement('div');
-                    errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 20px; text-align: center;';
-                    errorDiv.innerHTML = `
-                        <strong>⚠️ Fehler beim Laden der Daten</strong><br>
-                        ${error.message}<br>
-                        <small>URL: ${DATA_URL}<br>
-                        Bitte öffnen Sie die Browser-Konsole (F12) für weitere Details.</small>
-                    `;
-                    errorContainer.insertBefore(errorDiv, errorContainer.firstChild);
-                }
-            }
+                } catch (e) { console.warn('Konnte P&L Chart-Daten nicht laden:', e); }
+            } catch (error) { console.error('Fehler:', error); }
         }
-        
         function applyUnifiedFilter() {
             const fromDateInput = document.getElementById('dateFilterFrom');
             const toDateInput = document.getElementById('dateFilterTo');
-            
             if (!fromDateInput || fullHistory.length === 0) return;
-            
-            const fromDate = fromDateInput.value;
-            const toDate = toDateInput.value;
-            
+            const fromDate = fromDateInput.value, toDate = toDateInput.value;
             if (!fromDate) return;
-            
-            // Filtere Historie basierend auf Von/Bis Datum
             let filteredHistory = fullHistory.filter(h => {
                 if (h.datum < fromDate) return false;
                 if (toDate && h.datum > toDate) return false;
                 return true;
             });
-            
-            if (filteredHistory.length === 0) {
-                console.warn('Keine Daten im ausgewählten Datumsbereich gefunden');
-                return;
-            }
-            
-            // Finde Startwerte für Neuberechnung
+            if (filteredHistory.length === 0) return;
             const startEntry = filteredHistory[0];
-            const startValue = startEntry.konto_wert;
-            const startBuyHoldPct = startEntry.buy_hold_pct || 0;
-            const startCosts = startEntry.kosten_kumulativ || 0;
-            const startSlippage = startEntry.slippage_kumulativ || 0;
-            
-            // Neuberechnung der Prozentwerte basierend auf neuem Startdatum
-            const recalculatedHistory = filteredHistory.map(h => {
-                const pctChange = ((h.konto_wert - startValue) / startValue * 100);
-                const buyHoldPctChange = (h.buy_hold_pct || 0) - startBuyHoldPct;
-                const costsDiff = (h.kosten_kumulativ || 0) - startCosts;
-                const slippageDiff = (h.slippage_kumulativ || 0) - startSlippage;
-                
-                return {
-                    ...h,
-                    konto_wert_pct: pctChange,
-                    buy_hold_pct: buyHoldPctChange,
-                    kosten_kumulativ: costsDiff,
-                    slippage_kumulativ: slippageDiff,
-                    total_kosten_kumulativ: costsDiff + slippageDiff
-                };
-            });
-            
-            // Aktualisiere die 3 oberen Charts
+            const startValue = startEntry.konto_wert, startBuyHoldPct = startEntry.buy_hold_pct || 0;
+            const startCosts = startEntry.kosten_kumulativ || 0, startSlippage = startEntry.slippage_kumulativ || 0;
+            const recalculatedHistory = filteredHistory.map(h => ({
+                ...h,
+                konto_wert_pct: ((h.konto_wert - startValue) / startValue * 100),
+                buy_hold_pct: (h.buy_hold_pct || 0) - startBuyHoldPct,
+                kosten_kumulativ: (h.kosten_kumulativ || 0) - startCosts,
+                slippage_kumulativ: (h.slippage_kumulativ || 0) - startSlippage,
+                total_kosten_kumulativ: ((h.kosten_kumulativ || 0) - startCosts) + ((h.slippage_kumulativ || 0) - startSlippage)
+            }));
             updateCharts(recalculatedHistory);
-            
-            // Aktualisiere P&L Chart
-            if (pnlChart && fullPnlChartData && fullPnlChartData.length > 0) {
+            if (pnlChart && fullPnlChartData.length > 0) {
                 let filteredPnlData = fullPnlChartData.filter(d => {
                     if (d.date < fromDate) return false;
                     if (toDate && d.date > toDate) return false;
                     return true;
                 });
-                
-                // Recalculate cumulative values for filtered range
-                let cumulativeGross = 0;
-                let cumulativeNet = 0;
-                const recalculatedPnlData = filteredPnlData.map(d => {
-                    cumulativeGross += d.daily_gross || 0;
-                    cumulativeNet += d.daily_net || 0;
-                    return {
-                        ...d,
-                        cumulative_gross: cumulativeGross,
-                        cumulative_net: cumulativeNet
-                    };
+                let cumGross = 0, cumNet = 0;
+                const recalcPnl = filteredPnlData.map(d => {
+                    cumGross += d.daily_gross || 0;
+                    cumNet += d.daily_net || 0;
+                    return { ...d, cumulative_gross: cumGross, cumulative_net: cumNet };
                 });
-                
-                pnlChart.data.labels = recalculatedPnlData.map(d => d.date);
-                pnlChart.data.datasets[0].data = recalculatedPnlData.map(d => d.cumulative_gross);
-                pnlChart.data.datasets[1].data = recalculatedPnlData.map(d => d.cumulative_net);
+                pnlChart.data.datasets[0].data = recalcPnl.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross }));
+                pnlChart.data.datasets[1].data = recalcPnl.map(d => ({ x: parseDate(d.date), y: d.cumulative_net }));
                 pnlChart.update();
             }
         }
-        
         function resetUnifiedFilter() {
             const fromDateInput = document.getElementById('dateFilterFrom');
             const toDateInput = document.getElementById('dateFilterTo');
-            
-            if (fromDateInput) {
-                fromDateInput.value = '2025-11-28';
-            }
-            if (toDateInput) {
-                toDateInput.value = new Date().toISOString().split('T')[0];
-            }
-            
+            if (fromDateInput) fromDateInput.value = '2025-11-28';
+            if (toDateInput) toDateInput.value = new Date().toISOString().split('T')[0];
             applyUnifiedFilter();
         }
-        
         function formatCurrency(num, decimals = 0) {
             if (num === null || num === undefined) return '—';
-            return new Intl.NumberFormat('de-DE', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }).format(num);
+            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD', minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
         }
-        
-        // P&L Chart functions
         function initPnlChart(chartData) {
             fullPnlChartData = chartData;
-            
             const ctx = document.getElementById('pnlChart');
-            if (!ctx) {
-                console.error('Canvas pnlChart nicht gefunden!');
-                return;
-            }
-            
-            const ctx2d = ctx.getContext('2d');
-            
-            if (pnlChart) {
-                pnlChart.destroy();
-            }
-            
-            pnlChart = new Chart(ctx2d, {
+            if (!ctx) return;
+            if (pnlChart) pnlChart.destroy();
+            pnlChart = new Chart(ctx.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: chartData.map(d => d.date),
                     datasets: [
-                        {
-                            label: 'Realized P&L Gross (Kumulativ)',
-                            data: chartData.map(d => d.cumulative_gross),
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointHoverRadius: 6
-                        },
-                        {
-                            label: 'Realized P&L Net (Kumulativ)',
-                            data: chartData.map(d => d.cumulative_net),
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            pointHoverRadius: 6
-                        }
+                        { label: 'Realized P&L Gross (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross })), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3, pointRadius: 2, pointHoverRadius: 6 },
+                        { label: 'Realized P&L Net (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_net })), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3, pointRadius: 2, pointHoverRadius: 6 }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: function(context) {
-                                    return new Date(context[0].label).toLocaleDateString('de-DE');
-                                },
-                                label: function(context) {
-                                    const value = context.parsed.y;
-                                    const formatted = new Intl.NumberFormat('de-DE', {
-                                        style: 'currency', currency: 'USD'
-                                    }).format(value);
-                                    return `${context.dataset.label}: ${formatted}`;
-                                },
-                                afterBody: function(context) {
-                                    const dataIndex = context[0].dataIndex;
-                                    const dataPoint = fullPnlChartData[dataIndex];
-                                    if (dataPoint) {
-                                        return [
-                                            '',
-                                            `Tages-Gross: ${formatCurrency(dataPoint.daily_gross, 2)}`,
-                                            `Tages-Net: ${formatCurrency(dataPoint.daily_net, 2)}`,
-                                            `Trades: ${dataPoint.trade_count}`
-                                        ];
-                                    }
-                                    return [];
-                                }
-                            }
-                        }
-                    },
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { title: ctx => new Date(ctx[0].parsed.x).toLocaleDateString('de-DE'), label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y, 2)}` } } },
                     scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                displayFormats: {
-                                    day: 'dd.MM'
-                                }
-                            },
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString('de-DE');
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        }
+                        x: { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { display: false } },
+                        y: { ticks: { callback: v => '$' + v.toLocaleString('de-DE') }, grid: { color: 'rgba(0, 0, 0, 0.05)' } }
                     }
                 }
             });
         }
-        
-        
         function updateMetrics(perfData) {
-            if (!perfData) {
-                console.warn('updateMetrics: Keine perfData übergeben');
-                return;
-            }
-            console.log('updateMetrics aufgerufen mit:', perfData);
-            
+            if (!perfData) return;
             const metricsEl = document.getElementById('metrics');
-            if (!metricsEl) {
-                console.error('Element #metrics nicht gefunden!');
-                return;
-            }
-            
+            if (!metricsEl) return;
             const returnPct = parseFloat(perfData.total_return_pct || 0);
             const returnClass = returnPct >= 0 ? 'positive' : 'negative';
-            const ibIndicator = perfData.current_value_from_ib ? 
-                '<span style="font-size: 10px; color: #4ade80; margin-left: 5px;">● IB</span>' : 
-                '<span style="font-size: 10px; color: #999; margin-left: 5px;">● DB</span>';
-            
+            const ibIndicator = perfData.current_value_from_ib ? '<span style="font-size: 10px; color: #4ade80; margin-left: 5px;">● IB</span>' : '<span style="font-size: 10px; color: #999; margin-left: 5px;">● DB</span>';
             metricsEl.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${formatCurrency(perfData.start_value)}</div>
-                    <div class="stat-label">Startwert</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${formatCurrency(perfData.current_value)}${ibIndicator}</div>
-                    <div class="stat-label">Aktueller Wert</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number ${returnClass}">${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2)}%</div>
-                    <div class="stat-label">Rendite</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number negative">${formatCurrency(perfData.total_costs)}</div>
-                    <div class="stat-label">Kum. Kosten</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number negative">${formatCurrency(perfData.total_slippage)}</div>
-                    <div class="stat-label">Kum. Slippage</div>
-                </div>
-            `;
+                <div class="stat-card"><div class="stat-number">${formatCurrency(perfData.start_value)}</div><div class="stat-label">Startwert</div></div>
+                <div class="stat-card"><div class="stat-number">${formatCurrency(perfData.current_value)}${ibIndicator}</div><div class="stat-label">Aktueller Wert</div></div>
+                <div class="stat-card"><div class="stat-number ${returnClass}">${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2)}%</div><div class="stat-label">Rendite</div></div>
+                <div class="stat-card"><div class="stat-number negative">${formatCurrency(perfData.total_costs)}</div><div class="stat-label">Kum. Kosten</div></div>
+                <div class="stat-card"><div class="stat-number negative">${formatCurrency(perfData.total_slippage)}</div><div class="stat-label">Kum. Slippage</div></div>`;
         }
-        
         function updateCharts(history) {
-            if (!history || history.length === 0) {
-                console.warn('updateCharts: Keine History-Daten');
-                return;
-            }
-            console.log('updateCharts aufgerufen mit', history.length, 'Einträgen');
-            
-            // Prüfe ob Chart.js geladen ist
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js ist nicht geladen!');
-                return;
-            }
-            
-            const labels = history.map(h => h.datum);
-            const values = history.map(h => h.konto_wert);
-            const pctValues = history.map(h => h.konto_wert_pct);
-            const buyHoldValues = history.map(h => h.buy_hold_pct || 0);
-            const costs = history.map(h => h.kosten_kumulativ);
-            const slippage = history.map(h => h.slippage_kumulativ);
-            const totalCosts = history.map(h => h.total_kosten_kumulativ);
-            
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } },
-                scales: {
-                    x: { grid: { color: '#f0f0f0' } },
-                    y: { grid: { color: '#f0f0f0' } }
-                }
-            };
-            
-            // Account Value Chart
-            const canvas1 = document.getElementById('accountValueChart');
-            if (!canvas1) {
-                console.error('Canvas accountValueChart nicht gefunden!');
-                return;
-            }
-            const ctx1 = canvas1.getContext('2d');
+            if (!history || history.length === 0) return;
+            const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+            const timeOpts = { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { color: '#f0f0f0' } };
+            const ctx1 = document.getElementById('accountValueChart').getContext('2d');
             if (accountValueChart) accountValueChart.destroy();
-            
             accountValueChart = new Chart(ctx1, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Konto-Wert (USD)',
-                        data: values,
-                        borderColor: '#0066cc',
-                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#0066cc'
-                    }]
-                },
-                options: {
-                    ...chartOptions,
-                    scales: {
-                        ...chartOptions.scales,
-                        y: {
-                            ...chartOptions.scales.y,
-                            ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' }
-                        }
-                    }
-                }
+                data: { datasets: [{ label: 'Konto-Wert (USD)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#0066cc' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
             });
-            
-            // Account Percentage Chart
             const ctx2 = document.getElementById('accountPctChart').getContext('2d');
             if (accountPctChart) accountPctChart.destroy();
-            
+            const lastPct = sorted[sorted.length - 1].konto_wert_pct;
             accountPctChart = new Chart(ctx2, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Strategie (%)',
-                            data: pctValues,
-                            borderColor: pctValues[pctValues.length - 1] >= 0 ? '#4ade80' : '#f87171',
-                            backgroundColor: pctValues[pctValues.length - 1] >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Buy & Hold MES (%)',
-                            data: buyHoldValues,
-                            borderColor: '#0066cc',
-                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 3,
-                            borderWidth: 2,
-                            borderDash: [5, 5]
-                        }
-                    ]
-                },
-                options: {
-                    ...chartOptions,
-                    scales: {
-                        ...chartOptions.scales,
-                        y: {
-                            ...chartOptions.scales.y,
-                            ticks: { callback: v => v.toFixed(2) + '%' }
-                        }
-                    }
-                }
+                data: { datasets: [
+                    { label: 'Strategie (%)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert_pct })), borderColor: lastPct >= 0 ? '#4ade80' : '#f87171', backgroundColor: lastPct >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
+                    { label: 'Buy & Hold MES (%)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.buy_hold_pct || 0 })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2, borderDash: [5, 5] }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toFixed(2) + '%' } } } }
             });
-            
-            // Costs Chart
             const ctx3 = document.getElementById('costsChart').getContext('2d');
             if (costsChart) costsChart.destroy();
-            
             costsChart = new Chart(ctx3, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Transaktionskosten',
-                            data: costs,
-                            borderColor: '#f87171',
-                            backgroundColor: 'rgba(248, 113, 113, 0.1)',
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Slippage',
-                            data: slippage,
-                            borderColor: '#fbbf24',
-                            backgroundColor: 'rgba(251, 191, 36, 0.1)',
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Total',
-                            data: totalCosts,
-                            borderColor: '#8b5cf6',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            fill: false,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    ...chartOptions,
-                    scales: {
-                        ...chartOptions.scales,
-                        y: {
-                            ...chartOptions.scales.y,
-                            ticks: { callback: v => '$' + v.toFixed(0) }
-                        }
-                    }
-                }
+                data: { datasets: [
+                    { label: 'Transaktionskosten', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.kosten_kumulativ })), borderColor: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0.3 },
+                    { label: 'Slippage', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.slippage_kumulativ })), borderColor: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', fill: true, tension: 0.3 },
+                    { label: 'Total', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.total_kosten_kumulativ })), borderColor: '#8b5cf6', borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0.3 }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + v.toFixed(0) } } } }
             });
         }
-        
         function updateTable(history) {
             const tbody = document.querySelector('#history-table tbody');
-            
-            if (!history || history.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Keine Daten</td></tr>';
-                return;
-            }
-            
-            // Reverse for newest first
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Keine Daten</td></tr>'; return; }
             const reversed = [...history].reverse();
-            
             tbody.innerHTML = reversed.map(h => {
                 const pctClass = h.konto_wert_pct >= 0 ? 'positive' : 'negative';
-                const pctSign = h.konto_wert_pct >= 0 ? '+' : '';
-                
-                return `
-                    <tr>
-                        <td>${h.datum}</td>
-                        <td>${formatCurrency(h.konto_wert)}</td>
-                        <td class="${pctClass}">${pctSign}${h.konto_wert_pct.toFixed(2)}%</td>
-                        <td class="negative">$${h.kosten_kumulativ.toFixed(2)}</td>
-                        <td class="negative">$${h.slippage_kumulativ.toFixed(2)}</td>
-                        <td class="negative"><strong>$${h.total_kosten_kumulativ.toFixed(2)}</strong></td>
-                    </tr>
-                `;
+                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${pctClass}">${h.konto_wert_pct >= 0 ? '+' : ''}${h.konto_wert_pct.toFixed(2)}%</td><td class="negative">$${h.kosten_kumulativ.toFixed(2)}</td><td class="negative">$${h.slippage_kumulativ.toFixed(2)}</td><td class="negative"><strong>$${h.total_kosten_kumulativ.toFixed(2)}</strong></td></tr>`;
             }).join('');
         }
-        
-        
-        // Event Listener für einheitlichen Datumsfilter
         document.addEventListener('DOMContentLoaded', function() {
-            const applyButton = document.getElementById('applyUnifiedFilter');
-            if (applyButton) {
-                applyButton.addEventListener('click', applyUnifiedFilter);
-            }
-            
-            const resetButton = document.getElementById('resetUnifiedFilter');
-            if (resetButton) {
-                resetButton.addEventListener('click', resetUnifiedFilter);
-            }
-            
-            const fromDateInput = document.getElementById('dateFilterFrom');
+            document.getElementById('applyUnifiedFilter')?.addEventListener('click', applyUnifiedFilter);
+            document.getElementById('resetUnifiedFilter')?.addEventListener('click', resetUnifiedFilter);
+            document.getElementById('dateFilterFrom')?.addEventListener('change', applyUnifiedFilter);
+            document.getElementById('dateFilterTo')?.addEventListener('change', applyUnifiedFilter);
             const toDateInput = document.getElementById('dateFilterTo');
-            
-            if (fromDateInput) {
-                fromDateInput.addEventListener('change', applyUnifiedFilter);
-            }
-            if (toDateInput) {
-                toDateInput.addEventListener('change', applyUnifiedFilter);
-            }
-            
-            // Setze Standard "Bis" Datum auf heute beim Laden
-            if (toDateInput && !toDateInput.value) {
-                toDateInput.value = new Date().toISOString().split('T')[0];
-            }
+            if (toDateInput && !toDateInput.value) toDateInput.value = new Date().toISOString().split('T')[0];
         });
-        
         loadData();
         setInterval(loadData, 60000);
     </script>
