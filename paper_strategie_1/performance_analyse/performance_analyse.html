@@ -159,18 +159,30 @@
                 } catch (e) { console.warn('Konnte P&L Chart-Daten nicht laden:', e); }
             } catch (error) { console.error('Fehler:', error); }
         }
+
+
         function applyUnifiedFilter() {
             const fromDateInput = document.getElementById('dateFilterFrom');
             const toDateInput = document.getElementById('dateFilterTo');
+            
             if (!fromDateInput || fullHistory.length === 0) return;
-            const fromDate = fromDateInput.value, toDate = toDateInput.value;
+            
+            const fromDate = fromDateInput.value;
+            const toDate = toDateInput.value;
+            
             if (!fromDate) return;
+
             let filteredHistory = fullHistory.filter(h => {
-                if (h.datum < fromDate) return false;
-                if (toDate && h.datum > toDate) return false;
+                // Wir vergleichen nur den Datums-Teil (die ersten 10 Zeichen: YYYY-MM-DD)
+                const recordDate = h.datum.substring(0, 10);
+                
+                if (recordDate < fromDate) return false;
+                if (toDate && recordDate > toDate) return false;
                 return true;
             });
+
             if (filteredHistory.length === 0) return;
+
             const startEntry = filteredHistory[0];
             const startValue = startEntry.konto_wert, startBuyHoldPct = startEntry.buy_hold_pct || 0;
             const startCosts = startEntry.kosten_kumulativ || 0, startSlippage = startEntry.slippage_kumulativ || 0;
