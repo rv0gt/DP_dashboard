@@ -1,13 +1,13 @@
 {
-    "timestamp": "2025-12-26T11:10:12.246354",
+    "timestamp": "2025-12-26T11:56:52.773377",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1102887.03,
+        "current_value": 1102936.42,
         "current_value_from_ib": true,
-        "total_return_pct": -1.71,
-        "total_costs": 287.68,
-        "total_slippage": 8073.12,
-        "total_all_costs": 8360.8,
+        "total_return_pct": -1.7,
+        "total_costs": 312.48,
+        "total_slippage": 8098.12,
+        "total_all_costs": 8410.6,
         "history": [
             {
                 "datum": "2025-11-28 13:34:27",
@@ -308,9 +308,9 @@
             },
             {
                 "datum": "2025-12-26 03:14:42",
-                "konto_wert": 1102887.03,
-                "konto_wert_pct": -1.71,
-                "buy_hold_pct": 1.78,
+                "konto_wert": 1102936.42,
+                "konto_wert_pct": -1.7,
+                "buy_hold_pct": 1.8,
                 "kosten_kumulativ": 286.44,
                 "slippage_kumulativ": 8071.87,
                 "total_kosten_kumulativ": 8358.31
@@ -341,6 +341,33 @@
                 "kosten_kumulativ": 287.68,
                 "slippage_kumulativ": 8073.12,
                 "total_kosten_kumulativ": 8360.8
+            },
+            {
+                "datum": "2025-12-26 04:36:39",
+                "konto_wert": 1103540.88,
+                "konto_wert_pct": -1.65,
+                "buy_hold_pct": 1.8,
+                "kosten_kumulativ": 287.68,
+                "slippage_kumulativ": 8073.12,
+                "total_kosten_kumulativ": 8360.8
+            },
+            {
+                "datum": "2025-12-26 04:53:41",
+                "konto_wert": 1102982.3,
+                "konto_wert_pct": -1.7,
+                "buy_hold_pct": 1.81,
+                "kosten_kumulativ": 300.08,
+                "slippage_kumulativ": 8085.62,
+                "total_kosten_kumulativ": 8385.7
+            },
+            {
+                "datum": "2025-12-26 04:54:01",
+                "konto_wert": 1102952.77,
+                "konto_wert_pct": -1.7,
+                "buy_hold_pct": 1.8,
+                "kosten_kumulativ": 312.48,
+                "slippage_kumulativ": 8098.12,
+                "total_kosten_kumulativ": 8410.6
             }
         ]
     }
