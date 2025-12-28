@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-12-28T12:10:10.948342",
+    "timestamp": "2025-12-28T13:10:11.166070",
     "performance_data": {
         "start_value": 1122022.32,
         "current_value": 1102934.77,
@@ -373,7 +373,7 @@
                 "datum": "2025-12-28",
                 "konto_wert": 1102934.77,
                 "konto_wert_pct": -1.7,
-                "buy_hold_pct": -100.01,
+                "buy_hold_pct": 1.74,
                 "kosten_kumulativ": 312.48,
                 "slippage_kumulativ": 8098.12,
                 "total_kosten_kumulativ": 8410.6
