@@ -4,10 +4,10 @@
             {
                 "sync_chi": "2025-12-29T15:59:59",
                 "sync_ch": "2025-12-29T22:59:59",
-                "mes": null,
-                "mes_sync_chi": null,
-                "es": null,
-                "es_sync_chi": null,
+                "mes": 6980.5,
+                "mes_sync_chi": "2025-12-28T17:50:00",
+                "es": 6980.5,
+                "es_sync_chi": "2025-12-28T17:50:00",
                 "spx": null,
                 "spx_sync_chi": null,
                 "vix": null,
@@ -1203,5 +1203,5 @@
             }
         ]
     },
-    "timestamp": "2025-12-29T00:10:11.260086"
+    "timestamp": "2025-12-29T01:10:11.772151"
 }
