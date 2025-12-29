@@ -1,16 +1,25 @@
 {
-    "timestamp": "2025-12-29T06:10:12.479300",
+    "timestamp": "2025-12-29T07:10:15.620348",
     "margin_data": {
         "current": {
-            "margin_benoetigt": 62201.69,
-            "maintenance_margin": 56546.99,
-            "margin_verfuegbar": 1038333.17,
-            "excess_liquidity": 1043987.87,
-            "margin_auslastung": 5.6396,
-            "konto_wert_nlv": 1102952.77,
-            "date_chi": "2025-12-26 04:54:01"
+            "margin_benoetigt": 101175.46,
+            "maintenance_margin": 91977.69,
+            "margin_verfuegbar": 998195.48,
+            "excess_liquidity": 1007393.25,
+            "margin_auslastung": 9.1812,
+            "konto_wert_nlv": 1101984.36,
+            "date_chi": "2025-12-29 00:10:09"
         },
         "history": [
+            {
+                "datum": "2025-12-29 00:10:09",
+                "margin_benoetigt": 101175.46,
+                "maintenance_margin": 91977.69,
+                "margin_verfuegbar": 998195.48,
+                "excess_liquidity": 1007393.25,
+                "margin_auslastung": 9.1812,
+                "konto_wert": 1101984.36
+            },
             {
                 "datum": "2025-12-26 04:54:01",
                 "margin_benoetigt": 62201.69,
@@ -328,42 +337,6 @@
             },
             {
                 "datum": "2025-11-29 07:10:41",
-                "margin_benoetigt": 128601.05,
-                "maintenance_margin": 116910.05,
-                "margin_verfuegbar": 991003.48,
-                "excess_liquidity": 1002694.48,
-                "margin_auslastung": 11.457,
-                "konto_wert": 1122470.81
-            },
-            {
-                "datum": "2025-11-29 07:03:25",
-                "margin_benoetigt": 128601.05,
-                "maintenance_margin": 116910.05,
-                "margin_verfuegbar": 991003.48,
-                "excess_liquidity": 1002694.48,
-                "margin_auslastung": 11.457,
-                "konto_wert": 1122470.81
-            },
-            {
-                "datum": "2025-11-29 06:49:13",
-                "margin_benoetigt": 128601.05,
-                "maintenance_margin": 116910.05,
-                "margin_verfuegbar": 991003.48,
-                "excess_liquidity": 1002694.48,
-                "margin_auslastung": 11.457,
-                "konto_wert": 1122470.81
-            },
-            {
-                "datum": "2025-11-29 06:46:13",
-                "margin_benoetigt": 128601.05,
-                "maintenance_margin": 116910.05,
-                "margin_verfuegbar": 991003.48,
-                "excess_liquidity": 1002694.48,
-                "margin_auslastung": 11.457,
-                "konto_wert": 1122470.81
-            },
-            {
-                "datum": "2025-11-29 06:34:19",
                 "margin_benoetigt": 128601.05,
                 "maintenance_margin": 116910.05,
                 "margin_verfuegbar": 991003.48,
