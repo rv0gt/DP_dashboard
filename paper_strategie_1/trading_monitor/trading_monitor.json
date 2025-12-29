@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 323,
+                "date_chi": "2025-12-29T16:10:02",
+                "date_ch": "2025-12-29T23:10:02",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_PAUSE",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 1
+            },
+            {
                 "id": 322,
                 "date_chi": "2025-12-29T15:10:03",
                 "date_ch": "2025-12-29T22:10:03",
@@ -4189,5 +4202,5 @@
             }
         ]
     },
-    "timestamp": "2025-12-29T22:10:12.268893"
+    "timestamp": "2025-12-29T23:10:11.168118"
 }
