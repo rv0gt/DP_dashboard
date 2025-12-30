@@ -1,17 +1,17 @@
 {
-    "timestamp": "2025-12-30T17:10:06.944470",
+    "timestamp": "2025-12-30T18:10:13.277782",
     "overview": {
-        "konto_wert_nlv": 1097754.91,
+        "konto_wert_nlv": 1096403.27,
         "konto_wert_from_ib": true,
-        "neuer_hebel": 2.0585,
-        "mes_preis": 6951.25,
+        "neuer_hebel": 1.6164,
+        "mes_preis": 6947.0,
         "mes_preis_from_ib": true,
         "avg_position_cost": 6940.10476923,
         "avg_cost_from_ib": true,
-        "unrealized_pnl": 3622.200000250041,
+        "unrealized_pnl": 1758.283846350032,
         "unrealized_pnl_from_ib": true,
-        "realized_pnl_gross_total": 10065.25,
-        "realized_pnl_net_total": 9993.0,
+        "realized_pnl_gross_total": 10600.42,
+        "realized_pnl_net_total": 10510.74,
         "realized_pnl_start_date": "2025-12-26",
         "kontraktname": "MES 20260320",
         "offene_orders_anzahl": 0
@@ -35,14 +35,39 @@
         },
         {
             "date": "2025-12-30",
-            "daily_gross": 0.0,
-            "daily_net": -3.74,
-            "cumulative_gross": 10065.25,
-            "cumulative_net": 9993.000000000002,
-            "trade_count": 1
+            "daily_gross": 535.17,
+            "daily_net": 514.0,
+            "cumulative_gross": 10600.42,
+            "cumulative_net": 10510.740000000002,
+            "trade_count": 2
         }
     ],
     "recent_transactions": [
+        {
+            "date_chi": "2025-12-30T11:10:09",
+            "aktion": "SELL",
+            "delta_zu_handeln": -14,
+            "ausgefuehrte_menge": 14,
+            "durchschnittspreis": 6947.75,
+            "kosten_transaktion": 8.68,
+            "slippage_kosten": 8.75,
+            "status": "Filled",
+            "order_typ": "MARKET",
+            "kontraktname": "MES 20260320",
+            "rollover_stattgefunden": 0,
+            "rollover_aktion": null,
+            "unrealized_pnl": 1822.03,
+            "realized_pnl_gross": 535.17,
+            "realized_pnl_net": 517.74,
+            "avg_position_cost_before": 6940.1,
+            "avg_position_cost": 6940.1,
+            "reason_detail": "Hebel: 2.071 -> 1.6322",
+            "leverage_new": 1.6322,
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "is_rollover": 0,
+            "margin_auslastung": 9.5402,
+            "kosten_angepasst": 1.2449999999999999
+        },
         {
             "date_chi": "2025-12-30T04:10:10",
             "aktion": "BUY",
@@ -61,11 +86,11 @@
             "realized_pnl_net": -3.74,
             "avg_position_cost_before": 6939.39,
             "avg_position_cost": 6940.1,
-            "reason_detail": "Hebel: 2.071 -> 2.071",
-            "leverage_new": 2.071,
+            "reason_detail": "Hebel: 2.071 -> 1.6322",
+            "leverage_new": 1.6322,
             "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
             "is_rollover": 0,
-            "margin_auslastung": 10.9749,
+            "margin_auslastung": 9.5402,
             "kosten_angepasst": 1.245
         },
         {
@@ -517,31 +542,6 @@
             "is_rollover": 0,
             "margin_auslastung": 5.3275,
             "kosten_angepasst": -3.755
-        },
-        {
-            "date_chi": "2025-12-08T18:10:07",
-            "aktion": "BUY",
-            "delta_zu_handeln": 8,
-            "ausgefuehrte_menge": 8,
-            "durchschnittspreis": 6872.31,
-            "kosten_transaktion": 4.96,
-            "slippage_kosten": 167.5,
-            "status": "Filled",
-            "order_typ": "MARKET",
-            "kontraktname": "MES 20251219",
-            "rollover_stattgefunden": 0,
-            "rollover_aktion": null,
-            "unrealized_pnl": null,
-            "realized_pnl_gross": null,
-            "realized_pnl_net": null,
-            "avg_position_cost_before": null,
-            "avg_position_cost": null,
-            "reason_detail": null,
-            "leverage_new": null,
-            "changed_columns": null,
-            "is_rollover": 0,
-            "margin_auslastung": 9.0674,
-            "kosten_angepasst": 21.5575
         }
     ]
 }
