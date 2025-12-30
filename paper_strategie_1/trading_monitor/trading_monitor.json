@@ -2,6 +2,45 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 338,
+                "date_chi": "2025-12-30T05:10:03",
+                "date_ch": "2025-12-30T12:10:03",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 2.071 -> 2.071",
+                "leverage_old": 2.071,
+                "leverage_new": 2.071,
+                "leverage_change": 0.0,
+                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+                "daily_trades_count": 1
+            },
+            {
+                "id": 337,
+                "date_chi": "2025-12-30T04:13:14",
+                "date_ch": "2025-12-30T11:13:14",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 2.071 -> 2.071",
+                "leverage_old": 2.071,
+                "leverage_new": 2.071,
+                "leverage_change": 0.0,
+                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+                "daily_trades_count": 1
+            },
+            {
+                "id": 336,
+                "date_chi": "2025-12-30T04:10:26",
+                "date_ch": "2025-12-30T11:10:26",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 2.071 -> 2.071",
+                "leverage_old": 2.071,
+                "leverage_new": 2.071,
+                "leverage_change": 0.0,
+                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+                "daily_trades_count": 1
+            },
+            {
                 "id": 335,
                 "date_chi": "2025-12-30T04:10:10",
                 "date_ch": "2025-12-30T11:10:10",
@@ -4358,5 +4397,5 @@
             }
         ]
     },
-    "timestamp": "2025-12-30T11:10:20.279214"
+    "timestamp": "2025-12-30T12:10:12.987989"
 }
