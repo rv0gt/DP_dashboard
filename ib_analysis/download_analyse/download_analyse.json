@@ -3926,6 +3926,83 @@
             "weekday": 1,
             "year": 2025,
             "symbol": "MES"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "SPX"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "NDX"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "OEX"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "RUI"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "RUA"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "RUT"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "VXN"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "HGX"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "SOX"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "APO"
+        },
+        {
+            "date": "2025-12-31",
+            "time": "08:30",
+            "weekday": 2,
+            "year": 2025,
+            "symbol": "CG"
         }
     ],
     "config": {
@@ -3997,10 +4074,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2025-12-30"
+        "max_date": "2025-12-31"
     },
     "meta": {
-        "generated_at": "2025-12-31 15:10",
+        "generated_at": "2025-12-31 16:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
