@@ -1,5 +1,5 @@
 {
-    "timestamp": "2025-12-31T16:10:09.296736",
+    "timestamp": "2025-12-31T17:10:09.111640",
     "margin_data": {
         "current": {
             "margin_benoetigt": 127444.1,
@@ -343,15 +343,6 @@
                 "excess_liquidity": 1007926.85,
                 "margin_auslastung": 10.4657,
                 "konto_wert": 1117416.17
-            },
-            {
-                "datum": "2025-12-01 17:10:06",
-                "margin_benoetigt": 102899.36,
-                "maintenance_margin": 93544.87,
-                "margin_verfuegbar": 1008766.64,
-                "excess_liquidity": 1018121.13,
-                "margin_auslastung": 9.2325,
-                "konto_wert": 1114530.03
             }
         ]
     }
