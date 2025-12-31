@@ -589,8 +589,9 @@
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
-                            <th>Grund-Details</th>
                             <th class="text-right">Fill-Preis</th>
+                            <th>Reason Detail</th>
+                            <th>Changed Columns</th>
                             <th class="text-right">Avg Cost (vorher)</th>
                             <th class="text-right">Avg Cost (nachher)</th>
                             <th class="text-right">Unrealized P&L</th>
@@ -599,7 +600,6 @@
                             <th class="text-right">Kosten</th>
                             <th>Status</th>
                             <th class="text-right">Hebel Neu</th>
-                            <th>Geänderte Spalten</th>
                             <th class="text-right">Margin (%)</th>
                             <th>Rollover</th>
                         </tr>
@@ -620,8 +620,10 @@
     <script>
         const OVERVIEW_URL = './overview.json';
         const SERVER_STATUS_URL = '../dashboard_analyse.json';
-        
+        const TRADING_MONITOR_URL = './trading_monitor/trading_monitor.json';
+
         let cachedOverviewData = null;
+        let cachedTradingMonitorData = null;
         
         // Helper functions
         async function loadJSONData(url) {
@@ -771,15 +773,37 @@
             `;
         }
         
+        // Find matching trading monitor entry by date_chi
+        function findTradingMonitorMatch(date_chi, tradingMonitorData) {
+            if (!tradingMonitorData || !date_chi) return null;
+
+            // Parse transaction date
+            const transactionDate = new Date(date_chi);
+
+            // Find the trading monitor entry with transaction_called=1 that matches closest
+            // Look for entries where date_chi matches (same minute)
+            for (const entry of tradingMonitorData) {
+                if (entry.transaction_called !== 1) continue;
+
+                const monitorDate = new Date(entry.date_chi);
+                // Check if within same minute
+                const diffMs = Math.abs(transactionDate - monitorDate);
+                if (diffMs < 60000) { // Within 1 minute
+                    return entry;
+                }
+            }
+            return null;
+        }
+
         // Transactions update
-        function updateTransactions(transactions) {
+        function updateTransactions(transactions, tradingMonitorData) {
             const tbody = document.querySelector('#transactions tbody');
-            
+
             if (!transactions || transactions.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="17" style="text-align:center">Keine Transaktionen</td></tr>';
                 return;
             }
-            
+
             tbody.innerHTML = transactions.map(t => {
                 const formatPnlCell = (val) => {
                     if (val === null || val === undefined) return '—';
@@ -787,28 +811,32 @@
                     const cls = num >= 0 ? 'pnl-positive' : 'pnl-negative';
                     return `<span class="${cls}">${formatCurrency(num, 2)}</span>`;
                 };
-                
-                const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined 
-                    ? '$' + parseFloat(t.kosten_angepasst).toFixed(4) 
+
+                const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined
+                    ? '$' + parseFloat(t.kosten_angepasst).toFixed(4)
                     : '—';
                 const rollover = t.is_rollover === 1 ? 'Ja' : 'Nein';
-                const hebel = t.leverage_new !== null && t.leverage_new !== undefined 
-                    ? parseFloat(t.leverage_new).toFixed(3) + 'x' 
+                const hebel = t.leverage_new !== null && t.leverage_new !== undefined
+                    ? parseFloat(t.leverage_new).toFixed(3) + 'x'
                     : '—';
-                const marginAuslastung = t.margin_auslastung !== null && t.margin_auslastung !== undefined 
-                    ? parseFloat(t.margin_auslastung).toFixed(2) + '%' 
+                const marginAuslastung = t.margin_auslastung !== null && t.margin_auslastung !== undefined
+                    ? parseFloat(t.margin_auslastung).toFixed(2) + '%'
                     : '—';
-                const changedColumns = t.changed_columns || '—';
-                const reasonDetail = t.reason_detail || '—';
-                
+
+                // Try to find matching trading monitor entry for reason_detail and changed_columns
+                const monitorMatch = findTradingMonitorMatch(t.date_chi, tradingMonitorData);
+                const reasonDetail = monitorMatch?.reason_detail || t.reason_detail || '—';
+                const changedColumns = monitorMatch?.changed_columns || t.changed_columns || '—';
+
                 return `
                     <tr>
                         <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
-                        <td>${reasonDetail}</td>
                         <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                        <td>${reasonDetail}</td>
+                        <td>${changedColumns}</td>
                         <td class="text-right">${t.avg_position_cost_before ? '$' + parseFloat(t.avg_position_cost_before).toFixed(2) : '—'}</td>
                         <td class="text-right">${t.avg_position_cost ? '$' + parseFloat(t.avg_position_cost).toFixed(2) : '—'}</td>
                         <td class="text-right">${formatPnlCell(t.unrealized_pnl)}</td>
@@ -817,7 +845,6 @@
                         <td class="text-right">${kostenAngepasst}</td>
                         <td>${t.status || '—'}</td>
                         <td class="text-right">${hebel}</td>
-                        <td>${changedColumns}</td>
                         <td class="text-right">${marginAuslastung}</td>
                         <td>${rollover}</td>
                     </tr>
