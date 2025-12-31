@@ -1,13 +1,13 @@
 {
-    "timestamp": "2025-12-31T11:10:15.517331",
+    "timestamp": "2025-12-31T12:10:18.279996",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1090545.11,
+        "current_value": 1092036.97,
         "current_value_from_ib": true,
-        "total_return_pct": -2.81,
-        "total_costs": 337.9,
-        "total_slippage": 8136.25,
-        "total_all_costs": 8474.15,
+        "total_return_pct": -2.67,
+        "total_costs": 372.62,
+        "total_slippage": 8171.25,
+        "total_all_costs": 8543.87,
         "history": [
             {
                 "datum": "2025-11-28 13:34:27",
@@ -415,13 +415,13 @@
                 "total_kosten_kumulativ": 8474.15
             },
             {
-                "datum": "2025-12-31",
-                "konto_wert": 1090545.11,
-                "konto_wert_pct": -2.81,
-                "buy_hold_pct": 0.98,
-                "kosten_kumulativ": 337.9,
-                "slippage_kumulativ": 8136.25,
-                "total_kosten_kumulativ": 8474.15
+                "datum": "2025-12-31 05:10:10",
+                "konto_wert": 1092036.97,
+                "konto_wert_pct": -2.67,
+                "buy_hold_pct": 1.02,
+                "kosten_kumulativ": 372.62,
+                "slippage_kumulativ": 8171.25,
+                "total_kosten_kumulativ": 8543.87
             }
         ]
     }
