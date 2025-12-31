@@ -1,14 +1,14 @@
 {
-  "timestamp": "2025-12-31T03:10:06.888372",
+  "timestamp": "2025-12-31T04:10:06.279131",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2025-12-31T03:10:06.907424",
+    "last_check": "2025-12-31T04:10:06.294449",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 23.2,
+    "ram_usage_percent": 23.0,
     "disk_usage_percent": 57,
-    "uptime_days": 24.5
+    "uptime_days": 24.6
   }
 }
