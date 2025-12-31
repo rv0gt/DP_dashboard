@@ -620,10 +620,8 @@
     <script>
         const OVERVIEW_URL = './overview.json';
         const SERVER_STATUS_URL = '../dashboard_analyse.json';
-        const TRADING_MONITOR_URL = './trading_monitor/trading_monitor.json';
 
         let cachedOverviewData = null;
-        let cachedTradingMonitorData = null;
         
         // Helper functions
         async function loadJSONData(url) {
@@ -773,30 +771,8 @@
             `;
         }
         
-        // Find matching trading monitor entry by date_chi
-        function findTradingMonitorMatch(date_chi, tradingMonitorData) {
-            if (!tradingMonitorData || !date_chi) return null;
-
-            // Parse transaction date
-            const transactionDate = new Date(date_chi);
-
-            // Find the trading monitor entry with transaction_called=1 that matches closest
-            // Look for entries where date_chi matches (same minute)
-            for (const entry of tradingMonitorData) {
-                if (entry.transaction_called !== 1) continue;
-
-                const monitorDate = new Date(entry.date_chi);
-                // Check if within same minute
-                const diffMs = Math.abs(transactionDate - monitorDate);
-                if (diffMs < 60000) { // Within 1 minute
-                    return entry;
-                }
-            }
-            return null;
-        }
-
         // Transactions update
-        function updateTransactions(transactions, tradingMonitorData) {
+        function updateTransactions(transactions) {
             const tbody = document.querySelector('#transactions tbody');
 
             if (!transactions || transactions.length === 0) {
@@ -823,10 +799,9 @@
                     ? parseFloat(t.margin_auslastung).toFixed(2) + '%'
                     : '—';
 
-                // Try to find matching trading monitor entry for reason_detail and changed_columns
-                const monitorMatch = findTradingMonitorMatch(t.date_chi, tradingMonitorData);
-                const reasonDetail = monitorMatch?.reason_detail || t.reason_detail || '—';
-                const changedColumns = monitorMatch?.changed_columns || t.changed_columns || '—';
+                // reason_detail und changed_columns kommen jetzt direkt aus overview.json
+                const reasonDetail = t.reason_detail || '—';
+                const changedColumns = t.changed_columns || '—';
 
                 return `
                     <tr>
@@ -857,16 +832,16 @@
             try {
                 const overviewData = await loadJSONData(OVERVIEW_URL);
                 cachedOverviewData = overviewData; // Cache for date picker updates
-                
+
                 updateMetrics(overviewData.overview, overviewData.realized_pnl_chart);
                 updateTransactions(overviewData.recent_transactions);
-                
+
                 // Update timestamp
                 if (overviewData.timestamp) {
-                    document.getElementById('last-update').innerHTML = 
+                    document.getElementById('last-update').innerHTML =
                         `Letzte Aktualisierung: ${new Date(overviewData.timestamp).toLocaleString('de-DE')}`;
                 }
-                
+
                 // Load server status
                 try {
                     const serverData = await loadJSONData(SERVER_STATUS_URL);
