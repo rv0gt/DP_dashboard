@@ -109,8 +109,8 @@
             <h2 class="section-title">Tägliche Übersicht</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Veränderung %</th><th>Hebel alt</th><th>Kosten/Kontrakt</th><th>Slippage/Kontrakt</th><th>Total/Kontrakt</th></tr></thead>
-                    <tbody><tr><td colspan="7" style="text-align:center">Lade Daten...</td></tr></tbody>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Kosten/Kontrakt</th><th>Slippage/Kontrakt</th><th>Total/Kontrakt</th></tr></thead>
+                    <tbody><tr><td colspan="10" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
             <div class="last-update" id="last-update"></div>
@@ -180,32 +180,37 @@
         function applyUnifiedFilter() {
             const fromDateInput = document.getElementById('dateFilterFrom');
             const toDateInput = document.getElementById('dateFilterTo');
-            
+
             if (!fromDateInput || fullHistory.length === 0) return;
-            
+
             const fromDate = fromDateInput.value;
             const toDate = toDateInput.value;
-            
-            if (!fromDate) return;
 
-            let filteredHistory = fullHistory.filter(h => {
-                // Wir vergleichen nur den Datums-Teil (die ersten 10 Zeichen: YYYY-MM-DD)
-                const recordDate = h.datum.substring(0, 10);
-                
-                if (recordDate < fromDate) return false;
-                if (toDate && recordDate > toDate) return false;
-                return true;
-            });
+            // Wenn kein Filter gesetzt ist, verwende alle Daten
+            let filteredHistory;
+            if (!fromDate) {
+                filteredHistory = fullHistory;
+            } else {
+                filteredHistory = fullHistory.filter(h => {
+                    // Wir vergleichen nur den Datums-Teil (die ersten 10 Zeichen: YYYY-MM-DD)
+                    const recordDate = h.datum.substring(0, 10);
+
+                    if (recordDate < fromDate) return false;
+                    if (toDate && recordDate > toDate) return false;
+                    return true;
+                });
+            }
 
             if (filteredHistory.length === 0) return;
 
             const startEntry = filteredHistory[0];
-            const startValue = startEntry.konto_wert, startBuyHoldPct = startEntry.buy_hold_pct || 0;
+            const startValue = startEntry.konto_wert;
+            const startMesPreis = startEntry.mes_preis || 0;
             const startCosts = startEntry.kosten_kumulativ || 0, startSlippage = startEntry.slippage_kumulativ || 0;
             const recalculatedHistory = filteredHistory.map(h => ({
                 ...h,
                 konto_wert_pct: ((h.konto_wert - startValue) / startValue * 100),
-                buy_hold_pct: (h.buy_hold_pct || 0) - startBuyHoldPct,
+                buy_hold_pct: startMesPreis > 0 ? (((h.mes_preis || 0) - startMesPreis) / startMesPreis * 100) : 0,
                 kosten_kumulativ: (h.kosten_kumulativ || 0) - startCosts,
                 slippage_kumulativ: (h.slippage_kumulativ || 0) - startSlippage,
                 total_kosten_kumulativ: ((h.kosten_kumulativ || 0) - startCosts) + ((h.slippage_kumulativ || 0) - startSlippage),
@@ -217,11 +222,16 @@
             }));
             updateCharts(recalculatedHistory);
             if (pnlChart && fullPnlChartData.length > 0) {
-                let filteredPnlData = fullPnlChartData.filter(d => {
-                    if (d.date < fromDate) return false;
-                    if (toDate && d.date > toDate) return false;
-                    return true;
-                });
+                let filteredPnlData;
+                if (!fromDate) {
+                    filteredPnlData = fullPnlChartData;
+                } else {
+                    filteredPnlData = fullPnlChartData.filter(d => {
+                        if (d.date < fromDate) return false;
+                        if (toDate && d.date > toDate) return false;
+                        return true;
+                    });
+                }
                 let cumGross = 0, cumNet = 0;
                 const recalcPnl = filteredPnlData.map(d => {
                     cumGross += d.daily_gross || 0;
@@ -328,12 +338,12 @@
 
                                 const prevKontoWert = sorted[idx - 1].konto_wert || 0;
                                 const currKontoWert = h.konto_wert || 0;
-                                const prevBuyHold = sorted[idx - 1].buy_hold_pct || 0;
-                                const currBuyHold = h.buy_hold_pct || 0;
+                                const prevMesPreis = sorted[idx - 1].mes_preis || 0;
+                                const currMesPreis = h.mes_preis || 0;
 
                                 // Veränderung zum letzten Messpunkt berechnen
                                 const deltaStrategie = prevKontoWert !== 0 ? ((currKontoWert - prevKontoWert) / prevKontoWert * 100) : 0;
-                                const deltaBuyHold = currBuyHold - prevBuyHold; // bereits in %
+                                const deltaBuyHold = prevMesPreis !== 0 ? ((currMesPreis - prevMesPreis) / prevMesPreis * 100) : 0;
 
                                 // Verhältnis berechnen
                                 const ratio = deltaBuyHold !== 0 ? (deltaStrategie / deltaBuyHold) : null;
@@ -391,15 +401,51 @@
         }
         function updateTable(history) {
             const tbody = document.querySelector('#history-table tbody');
-            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Keine Daten</td></tr>'; return; }
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center">Keine Daten</td></tr>'; return; }
             const reversed = [...history].reverse();
-            tbody.innerHTML = reversed.map(h => {
-                const pctClass = h.konto_wert_pct >= 0 ? 'positive' : 'negative';
+            tbody.innerHTML = reversed.map((h, idx) => {
                 const hebel = h.aktueller_hebel !== null && h.aktueller_hebel !== undefined ? h.aktueller_hebel.toFixed(3) + 'x' : '—';
                 const kostenProKontrakt = h.kosten_pro_kontrakt > 0 ? '$' + h.kosten_pro_kontrakt.toFixed(4) : '—';
                 const slippageProKontrakt = h.slippage_pro_kontrakt > 0 ? '$' + h.slippage_pro_kontrakt.toFixed(4) : '—';
                 const totalProKontrakt = h.total_kosten_pro_kontrakt > 0 ? '$' + h.total_kosten_pro_kontrakt.toFixed(4) : '—';
-                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${pctClass}">${h.konto_wert_pct >= 0 ? '+' : ''}${h.konto_wert_pct.toFixed(2)}%</td><td>${hebel}</td><td class="negative">${kostenProKontrakt}</td><td class="negative">${slippageProKontrakt}</td><td class="negative"><strong>${totalProKontrakt}</strong></td></tr>`;
+                const mesPreis = h.mes_preis ? '$' + h.mes_preis.toFixed(2) : '—';
+
+                // Berechne Deltas und Verhältnis
+                let deltaKonto = '—', deltaMes = '—', verhaeltnis = '—';
+                let deltaKontoClass = '', deltaMesClass = '', verhaeltnisClass = '';
+
+                // Wir brauchen den zeitlich früheren Wert (nächster in reversed array)
+                if (idx < reversed.length - 1) {
+                    const prev = reversed[idx + 1]; // Zeitlich früher
+                    const prevKonto = prev.konto_wert || 0;
+                    const currKonto = h.konto_wert || 0;
+                    const prevMes = prev.mes_preis || 0;
+                    const currMes = h.mes_preis || 0;
+
+                    if (prevKonto > 0) {
+                        const deltaKontoPct = ((currKonto - prevKonto) / prevKonto * 100);
+                        deltaKontoClass = deltaKontoPct >= 0 ? 'positive' : 'negative';
+                        deltaKonto = (deltaKontoPct >= 0 ? '+' : '') + deltaKontoPct.toFixed(2) + '%';
+                    }
+
+                    if (prevMes > 0) {
+                        const deltaMesPct = ((currMes - prevMes) / prevMes * 100);
+                        deltaMesClass = deltaMesPct >= 0 ? 'positive' : 'negative';
+                        deltaMes = (deltaMesPct >= 0 ? '+' : '') + deltaMesPct.toFixed(2) + '%';
+                    }
+
+                    if (prevKonto > 0 && prevMes > 0) {
+                        const deltaKontoPct = ((currKonto - prevKonto) / prevKonto * 100);
+                        const deltaMesPct = ((currMes - prevMes) / prevMes * 100);
+                        if (deltaMesPct !== 0) {
+                            const ratio = deltaKontoPct / deltaMesPct;
+                            verhaeltnisClass = ratio >= 1 ? 'positive' : 'negative';
+                            verhaeltnis = ratio.toFixed(2) + 'x';
+                        }
+                    }
+                }
+
+                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td class="negative">${kostenProKontrakt}</td><td class="negative">${slippageProKontrakt}</td><td class="negative"><strong>${totalProKontrakt}</strong></td></tr>`;
             }).join('');
         }
         function updateTransactionsTable(transactions) {
