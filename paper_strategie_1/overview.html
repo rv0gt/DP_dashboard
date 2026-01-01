@@ -589,21 +589,20 @@
                             <th>Aktion</th>
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
-                            <th class="text-right">Fill-Preis</th>
+                            <th>Status</th>
+                            <th class="text-right">Hebel Neu</th>
+                            <th class="text-right">Kosten/ Kontrakt</th>
+                            <th class="text-right">Margin (%)</th>
+                            <th>Rollover</th>
                             <th>Reason Code</th>
                             <th>Changed Columns</th>
                             <th class="text-right">Unrealized P&L</th>
                             <th class="text-right">Realized Gross</th>
                             <th class="text-right">Realized Net</th>
-                            <th class="text-right">Kosten</th>
-                            <th>Status</th>
-                            <th class="text-right">Hebel Neu</th>
-                            <th class="text-right">Margin (%)</th>
-                            <th>Rollover</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="15" style="text-align:center">Lade Daten...</td></tr>
+                        <tr><td colspan="14" style="text-align:center">Lade Daten...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -774,7 +773,7 @@
             const tbody = document.querySelector('#transactions tbody');
 
             if (!transactions || transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="15" style="text-align:center">Keine Transaktionen</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="14" style="text-align:center">Keine Transaktionen</td></tr>';
                 return;
             }
 
@@ -807,17 +806,16 @@
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
-                        <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                        <td>${t.status || '—'}</td>
+                        <td class="text-right">${hebel}</td>
+                        <td class="text-right">${kostenAngepasst}</td>
+                        <td class="text-right">${marginAuslastung}</td>
+                        <td>${rollover}</td>
                         <td>${reasonCode}</td>
                         <td>${changedColumns}</td>
                         <td class="text-right">${formatPnlCell(t.unrealized_pnl)}</td>
                         <td class="text-right">${formatPnlCell(t.realized_pnl_gross)}</td>
                         <td class="text-right">${formatPnlCell(t.realized_pnl_net)}</td>
-                        <td class="text-right">${kostenAngepasst}</td>
-                        <td>${t.status || '—'}</td>
-                        <td class="text-right">${hebel}</td>
-                        <td class="text-right">${marginAuslastung}</td>
-                        <td>${rollover}</td>
                     </tr>
                 `;
             }).join('');
