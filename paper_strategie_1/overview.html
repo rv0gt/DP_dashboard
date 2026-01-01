@@ -590,10 +590,8 @@
                             <th class="text-right">Delta</th>
                             <th class="text-right">Ausgeführt</th>
                             <th class="text-right">Fill-Preis</th>
-                            <th>Reason Detail</th>
+                            <th>Reason Code</th>
                             <th>Changed Columns</th>
-                            <th class="text-right">Avg Cost (vorher)</th>
-                            <th class="text-right">Avg Cost (nachher)</th>
                             <th class="text-right">Unrealized P&L</th>
                             <th class="text-right">Realized Gross</th>
                             <th class="text-right">Realized Net</th>
@@ -605,7 +603,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="17" style="text-align:center">Lade Daten...</td></tr>
+                        <tr><td colspan="15" style="text-align:center">Lade Daten...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -776,7 +774,7 @@
             const tbody = document.querySelector('#transactions tbody');
 
             if (!transactions || transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="17" style="text-align:center">Keine Transaktionen</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="15" style="text-align:center">Keine Transaktionen</td></tr>';
                 return;
             }
 
@@ -799,8 +797,8 @@
                     ? parseFloat(t.margin_auslastung).toFixed(2) + '%'
                     : '—';
 
-                // reason_detail und changed_columns kommen jetzt direkt aus overview.json
-                const reasonDetail = t.reason_detail || '—';
+                // reason_code und changed_columns kommen jetzt direkt aus overview.json
+                const reasonCode = t.reason_code || '—';
                 const changedColumns = t.changed_columns || '—';
 
                 return `
@@ -810,10 +808,8 @@
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
                         <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
                         <td class="text-right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
-                        <td>${reasonDetail}</td>
+                        <td>${reasonCode}</td>
                         <td>${changedColumns}</td>
-                        <td class="text-right">${t.avg_position_cost_before ? '$' + parseFloat(t.avg_position_cost_before).toFixed(2) : '—'}</td>
-                        <td class="text-right">${t.avg_position_cost ? '$' + parseFloat(t.avg_position_cost).toFixed(2) : '—'}</td>
                         <td class="text-right">${formatPnlCell(t.unrealized_pnl)}</td>
                         <td class="text-right">${formatPnlCell(t.realized_pnl_gross)}</td>
                         <td class="text-right">${formatPnlCell(t.realized_pnl_net)}</td>

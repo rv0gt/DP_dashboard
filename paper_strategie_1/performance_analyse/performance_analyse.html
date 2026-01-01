@@ -114,6 +114,17 @@
             <div class="last-update" id="last-update"></div>
         </div>
     </section>
+    <section class="table-section">
+        <div class="container">
+            <h2 class="section-title">Transaktionsdetails mit Avg Cost</h2>
+            <div class="table-container" style="overflow-x: auto;">
+                <table id="transactions-table">
+                    <thead><tr><th>Zeitpunkt (CHI)</th><th>Aktion</th><th>Ausgeführt</th><th>Fill-Preis</th><th>Avg Cost (vorher)</th><th>Avg Cost (nachher)</th><th>Realized Gross</th><th>Realized Net</th><th>Status</th></tr></thead>
+                    <tbody><tr><td colspan="9" style="text-align:center">Lade Daten...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
     <footer class="footer"><p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p></footer>
     <script>
         const DATA_URL = './performance_analyse.json';
@@ -155,6 +166,9 @@
                         fullPnlChartData = overviewData.realized_pnl_chart;
                         initPnlChart(fullPnlChartData);
                         applyUnifiedFilter();
+                    }
+                    if (overviewData.recent_transactions && overviewData.recent_transactions.length > 0) {
+                        updateTransactionsTable(overviewData.recent_transactions);
                     }
                 } catch (e) { console.warn('Konnte P&L Chart-Daten nicht laden:', e); }
             } catch (error) { console.error('Fehler:', error); }
@@ -302,6 +316,29 @@
             tbody.innerHTML = reversed.map(h => {
                 const pctClass = h.konto_wert_pct >= 0 ? 'positive' : 'negative';
                 return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${pctClass}">${h.konto_wert_pct >= 0 ? '+' : ''}${h.konto_wert_pct.toFixed(2)}%</td><td class="negative">$${h.kosten_kumulativ.toFixed(2)}</td><td class="negative">$${h.slippage_kumulativ.toFixed(2)}</td><td class="negative"><strong>$${h.total_kosten_kumulativ.toFixed(2)}</strong></td></tr>`;
+            }).join('');
+        }
+        function updateTransactionsTable(transactions) {
+            const tbody = document.querySelector('#transactions-table tbody');
+            if (!transactions || transactions.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center">Keine Transaktionen</td></tr>'; return; }
+            tbody.innerHTML = transactions.map(t => {
+                const formatPnlCell = (val) => {
+                    if (val === null || val === undefined) return '—';
+                    const num = parseFloat(val);
+                    const cls = num >= 0 ? 'positive' : 'negative';
+                    return `<span class="${cls}">${formatCurrency(num, 2)}</span>`;
+                };
+                return `<tr>
+                    <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
+                    <td><strong>${t.aktion || '—'}</strong></td>
+                    <td style="text-align:right">${t.ausgefuehrte_menge ?? '—'}</td>
+                    <td style="text-align:right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                    <td style="text-align:right">${t.avg_position_cost_before ? '$' + parseFloat(t.avg_position_cost_before).toFixed(2) : '—'}</td>
+                    <td style="text-align:right">${t.avg_position_cost ? '$' + parseFloat(t.avg_position_cost).toFixed(2) : '—'}</td>
+                    <td style="text-align:right">${formatPnlCell(t.realized_pnl_gross)}</td>
+                    <td style="text-align:right">${formatPnlCell(t.realized_pnl_net)}</td>
+                    <td>${t.status || '—'}</td>
+                </tr>`;
             }).join('');
         }
         document.addEventListener('DOMContentLoaded', function() {
