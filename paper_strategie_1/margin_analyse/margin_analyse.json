@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-01T17:10:09.454781",
+    "timestamp": "2026-01-01T18:10:08.903268",
     "margin_data": {
         "current": {
             "margin_benoetigt": 236945.02,
@@ -8,7 +8,8 @@
             "excess_liquidity": 859559.44,
             "margin_auslastung": 21.9828,
             "konto_wert_nlv": 1077866.28,
-            "date_chi": "2025-12-31 17:10:38"
+            "date_chi": "2025-12-31 17:10:38",
+            "aktueller_hebel": 3.8694
         },
         "history": [
             {
@@ -18,7 +19,8 @@
                 "margin_verfuegbar": 837912.85,
                 "excess_liquidity": 859559.44,
                 "margin_auslastung": 21.9828,
-                "konto_wert": 1077866.28
+                "konto_wert": 1077866.28,
+                "aktueller_hebel": 3.8694
             },
             {
                 "datum": "2025-12-31 05:10:10",
@@ -27,7 +29,8 @@
                 "margin_verfuegbar": 962037.24,
                 "excess_liquidity": 973660.78,
                 "margin_auslastung": 11.6655,
-                "konto_wert": 1092484.02
+                "konto_wert": 1092484.02,
+                "aktueller_hebel": 2.0608
             },
             {
                 "datum": "2025-12-30 17:10:09",
@@ -36,7 +39,8 @@
                 "margin_verfuegbar": 994355.04,
                 "excess_liquidity": 1003428.13,
                 "margin_auslastung": 9.0813,
-                "konto_wert": 1096871.16
+                "konto_wert": 1096871.16,
+                "aktueller_hebel": 1.6149
             },
             {
                 "datum": "2025-12-30 11:10:09",
@@ -45,7 +49,8 @@
                 "margin_verfuegbar": 1004217.58,
                 "excess_liquidity": 1012311.63,
                 "margin_auslastung": 8.1055,
-                "konto_wert": 1095953.91
+                "konto_wert": 1095953.91,
+                "aktueller_hebel": 2.0602
             },
             {
                 "datum": "2025-12-30 04:10:10",
@@ -54,7 +59,8 @@
                 "margin_verfuegbar": 974703.34,
                 "excess_liquidity": 985669.69,
                 "margin_auslastung": 10.9749,
-                "konto_wert": 1098125.81
+                "konto_wert": 1098125.81,
+                "aktueller_hebel": 1.9635
             },
             {
                 "datum": "2025-12-29 17:10:09",
@@ -63,7 +69,8 @@
                 "margin_verfuegbar": 980502.36,
                 "excess_liquidity": 990911.64,
                 "margin_auslastung": 10.4229,
-                "konto_wert": 1097506.65
+                "konto_wert": 1097506.65,
+                "aktueller_hebel": 1.8697
             },
             {
                 "datum": "2025-12-29 00:10:09",
@@ -72,7 +79,8 @@
                 "margin_verfuegbar": 998195.48,
                 "excess_liquidity": 1007393.25,
                 "margin_auslastung": 9.1812,
-                "konto_wert": 1101984.36
+                "konto_wert": 1101984.36,
+                "aktueller_hebel": 1.645
             },
             {
                 "datum": "2025-12-26 04:54:01",
@@ -81,7 +89,8 @@
                 "margin_verfuegbar": 1038333.17,
                 "excess_liquidity": 1043987.87,
                 "margin_auslastung": 5.6396,
-                "konto_wert": 1102952.77
+                "konto_wert": 1102952.77,
+                "aktueller_hebel": 1.0127
             },
             {
                 "datum": "2025-12-26 04:53:41",
@@ -90,7 +99,8 @@
                 "margin_verfuegbar": 999486.64,
                 "excess_liquidity": 1008675.53,
                 "margin_auslastung": 9.164,
-                "konto_wert": 1102982.3
+                "konto_wert": 1102982.3,
+                "aktueller_hebel": 1.6458
             },
             {
                 "datum": "2025-12-26 04:36:39",
@@ -99,7 +109,8 @@
                 "margin_verfuegbar": 1000017.7,
                 "excess_liquidity": 1009208.97,
                 "margin_auslastung": 9.1618,
-                "konto_wert": 1103540.88
+                "konto_wert": 1103540.88,
+                "aktueller_hebel": 1.6447
             },
             {
                 "datum": "2025-12-26 03:44:34",
@@ -108,7 +119,8 @@
                 "margin_verfuegbar": 1000857.15,
                 "excess_liquidity": 1009871.05,
                 "margin_auslastung": 8.994,
-                "konto_wert": 1102427.75
+                "konto_wert": 1102427.75,
+                "aktueller_hebel": 1.6142
             },
             {
                 "datum": "2025-12-26 03:42:54",
@@ -117,7 +129,8 @@
                 "margin_verfuegbar": 998968.18,
                 "excess_liquidity": 1008160.02,
                 "margin_auslastung": 9.171,
-                "konto_wert": 1102496.37
+                "konto_wert": 1102496.37,
+                "aktueller_hebel": 1.6457
             },
             {
                 "datum": "2025-12-26 03:18:37",
@@ -126,7 +139,8 @@
                 "margin_verfuegbar": 999580.58,
                 "excess_liquidity": 1008773.05,
                 "margin_auslastung": 9.1647,
-                "konto_wert": 1103093.89
+                "konto_wert": 1103093.89,
+                "aktueller_hebel": 1.645
             },
             {
                 "datum": "2025-12-26 03:14:42",
@@ -135,7 +149,8 @@
                 "margin_verfuegbar": 999671.79,
                 "excess_liquidity": 1008861.13,
                 "margin_auslastung": 9.1629,
-                "konto_wert": 1103173.1
+                "konto_wert": 1103173.1,
+                "aktueller_hebel": 1.6447
             },
             {
                 "datum": "2025-12-24 17:10:38",
@@ -144,7 +159,8 @@
                 "margin_verfuegbar": 1000139.23,
                 "excess_liquidity": 1009162.29,
                 "margin_auslastung": 9.009,
-                "konto_wert": 1101711.54
+                "konto_wert": 1101711.54,
+                "aktueller_hebel": 1.6156
             },
             {
                 "datum": "2025-12-23 17:10:08",
@@ -153,7 +169,8 @@
                 "margin_verfuegbar": 988618.22,
                 "excess_liquidity": 997724.69,
                 "margin_auslastung": 9.1354,
-                "konto_wert": 1090459.06
+                "konto_wert": 1090459.06,
+                "aktueller_hebel": 1.6268
             },
             {
                 "datum": "2025-12-23 08:19:39",
@@ -162,7 +179,8 @@
                 "margin_verfuegbar": 981720.42,
                 "excess_liquidity": 990864.0,
                 "margin_auslastung": 9.2137,
-                "konto_wert": 1083804.58
+                "konto_wert": 1083804.58,
+                "aktueller_hebel": 1.627
             },
             {
                 "datum": "2025-12-23 08:04:15",
@@ -171,7 +189,8 @@
                 "margin_verfuegbar": 981198.63,
                 "excess_liquidity": 990335.8,
                 "margin_auslastung": 9.2123,
-                "konto_wert": 1083211.42
+                "konto_wert": 1083211.42,
+                "aktueller_hebel": 1.6285
             },
             {
                 "datum": "2025-12-23 08:03:17",
@@ -180,7 +199,8 @@
                 "margin_verfuegbar": 981198.63,
                 "excess_liquidity": 990335.8,
                 "margin_auslastung": 9.2123,
-                "konto_wert": 1083211.42
+                "konto_wert": 1083211.42,
+                "aktueller_hebel": 1.6288
             },
             {
                 "datum": "2025-12-22 17:10:06",
@@ -189,7 +209,8 @@
                 "margin_verfuegbar": 986372.69,
                 "excess_liquidity": 995566.63,
                 "margin_auslastung": 9.2407,
-                "konto_wert": 1088927.8
+                "konto_wert": 1088927.8,
+                "aktueller_hebel": 1.623
             },
             {
                 "datum": "2025-12-22 00:10:13",
@@ -198,7 +219,8 @@
                 "margin_verfuegbar": 1026668.86,
                 "excess_liquidity": 1031614.47,
                 "margin_auslastung": 4.9579,
-                "konto_wert": 1082254.71
+                "konto_wert": 1082254.71,
+                "aktueller_hebel": 0.8611
             },
             {
                 "datum": "2025-12-19 15:22:42",
@@ -207,7 +229,8 @@
                 "margin_verfuegbar": 1028534.71,
                 "excess_liquidity": 1033534.88,
                 "margin_auslastung": 5.0165,
-                "konto_wert": 1084779.2
+                "konto_wert": 1084779.2,
+                "aktueller_hebel": 0.8574
             },
             {
                 "datum": "2025-12-18 17:10:07",
@@ -216,7 +239,8 @@
                 "margin_verfuegbar": 984646.04,
                 "excess_liquidity": 992943.16,
                 "margin_auslastung": 8.3927,
-                "konto_wert": 1076726.84
+                "konto_wert": 1076726.84,
+                "aktueller_hebel": 1.4262
             },
             {
                 "datum": "2025-12-17 17:10:09",
@@ -225,7 +249,8 @@
                 "margin_verfuegbar": 772112.68,
                 "excess_liquidity": 799525.69,
                 "margin_auslastung": 27.9734,
-                "konto_wert": 1074217.36
+                "konto_wert": 1074217.36,
+                "aktueller_hebel": 4.8058
             },
             {
                 "datum": "2025-12-17 05:14:12",
@@ -234,7 +259,8 @@
                 "margin_verfuegbar": 823682.07,
                 "excess_liquidity": 851230.01,
                 "margin_auslastung": 26.8165,
-                "konto_wert": 1127772.53
+                "konto_wert": 1127772.53,
+                "aktueller_hebel": 4.6367
             },
             {
                 "datum": "2025-12-17 05:10:07",
@@ -243,7 +269,8 @@
                 "margin_verfuegbar": 827013.65,
                 "excess_liquidity": 854333.17,
                 "margin_auslastung": 26.6146,
-                "konto_wert": 1129135.94
+                "konto_wert": 1129135.94,
+                "aktueller_hebel": 4.6008
             },
             {
                 "datum": "2025-12-16 18:10:07",
@@ -252,7 +279,8 @@
                 "margin_verfuegbar": 810101.71,
                 "excess_liquidity": 837184.46,
                 "margin_auslastung": 26.8504,
-                "konto_wert": 1109520.15
+                "konto_wert": 1109520.15,
+                "aktueller_hebel": 4.6577
             },
             {
                 "datum": "2025-12-16 17:10:08",
@@ -261,7 +289,8 @@
                 "margin_verfuegbar": 1057991.76,
                 "excess_liquidity": 1063192.05,
                 "margin_auslastung": 5.1225,
-                "konto_wert": 1116703.0
+                "konto_wert": 1116703.0,
+                "aktueller_hebel": 0.8897
             },
             {
                 "datum": "2025-12-16 14:50:17",
@@ -270,7 +299,8 @@
                 "margin_verfuegbar": 1077034.0,
                 "excess_liquidity": 1080672.08,
                 "margin_auslastung": 3.5777,
-                "konto_wert": 1118560.56
+                "konto_wert": 1118560.56,
+                "aktueller_hebel": 0.8902
             },
             {
                 "datum": "2025-12-16 14:35:33",
@@ -279,7 +309,8 @@
                 "margin_verfuegbar": 1076840.54,
                 "excess_liquidity": 1080490.23,
                 "margin_auslastung": 3.581,
-                "konto_wert": 1118397.43
+                "konto_wert": 1118397.43,
+                "aktueller_hebel": 0.8892
             },
             {
                 "datum": "2025-12-15 18:10:06",
@@ -288,7 +319,8 @@
                 "margin_verfuegbar": 1057743.35,
                 "excess_liquidity": 1062953.63,
                 "margin_auslastung": 5.1345,
-                "konto_wert": 1116227.27
+                "konto_wert": 1116227.27,
+                "aktueller_hebel": 0.8931
             },
             {
                 "datum": "2025-12-15 00:10:10",
@@ -297,7 +329,8 @@
                 "margin_verfuegbar": 1013318.92,
                 "excess_liquidity": 1022977.99,
                 "margin_auslastung": 9.4803,
-                "konto_wert": 1120738.38
+                "konto_wert": 1120738.38,
+                "aktueller_hebel": 1.6647
             },
             {
                 "datum": "2025-12-10 18:10:07",
@@ -306,7 +339,8 @@
                 "margin_verfuegbar": 1004883.61,
                 "excess_liquidity": 1016567.93,
                 "margin_auslastung": 11.3313,
-                "konto_wert": 1134267.18
+                "konto_wert": 1134267.18,
+                "aktueller_hebel": 1.972
             },
             {
                 "datum": "2025-12-09 16:10:37",
@@ -315,7 +349,8 @@
                 "margin_verfuegbar": 1129604.19,
                 "excess_liquidity": 1129604.19,
                 "margin_auslastung": 0.0,
-                "konto_wert": 1130356.68
+                "konto_wert": 1130356.68,
+                "aktueller_hebel": 0.0
             },
             {
                 "datum": "2025-12-09 15:10:24",
@@ -324,7 +359,8 @@
                 "margin_verfuegbar": 1032020.81,
                 "excess_liquidity": 1040870.71,
                 "margin_auslastung": 8.614,
-                "konto_wert": 1130121.99
+                "konto_wert": 1130121.99,
+                "aktueller_hebel": 1.4846
             },
             {
                 "datum": "2025-12-09 14:10:10",
@@ -333,7 +369,8 @@
                 "margin_verfuegbar": 1048003.37,
                 "excess_liquidity": 1055587.43,
                 "margin_auslastung": 7.3685,
-                "konto_wert": 1132180.36
+                "konto_wert": 1132180.36,
+                "aktueller_hebel": 1.8163
             },
             {
                 "datum": "2025-12-08 18:10:07",
@@ -342,7 +379,8 @@
                 "margin_verfuegbar": 1033897.78,
                 "excess_liquidity": 1043274.11,
                 "margin_auslastung": 9.0674,
-                "konto_wert": 1137473.72
+                "konto_wert": 1137473.72,
+                "aktueller_hebel": 1.5699
             }
         ]
     }

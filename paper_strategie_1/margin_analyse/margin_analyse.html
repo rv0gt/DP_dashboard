@@ -84,8 +84,8 @@
             <h2 class="section-title">Margin-Historie</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Margin Benötigt</th><th>Maintenance</th><th>Verfügbar</th><th>Excess Liquidity</th><th>Auslastung</th></tr></thead>
-                    <tbody><tr><td colspan="7" style="text-align:center">Lade Daten...</td></tr></tbody>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Margin Benötigt</th><th>Maintenance</th><th>Verfügbar</th><th>Excess Liquidity</th><th>Auslastung</th><th>Aktueller Hebel</th></tr></thead>
+                    <tbody><tr><td colspan="8" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
             <div class="last-update" id="last-update"></div>
@@ -139,27 +139,48 @@
         function updateChart(history) {
             if (!history || history.length === 0) return;
             const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
-            const dataPoints = sorted.map(h => ({ x: parseDate(h.datum), y: h.margin_auslastung }));
+            const auslastungData = sorted.map(h => ({ x: parseDate(h.datum), y: h.margin_auslastung }));
+            const hebelData = sorted.map(h => ({ x: parseDate(h.datum), y: h.aktueller_hebel }));
             const ctx = document.getElementById('utilizationChart').getContext('2d');
             if (utilizationChart) utilizationChart.destroy();
             utilizationChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    datasets: [{
-                        label: 'Auslastung %',
-                        data: dataPoints,
-                        borderColor: '#0066cc',
-                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
-                        fill: true,
-                        tension: 0.1,
-                        pointRadius: 4,
-                        pointBackgroundColor: dataPoints.map(p => p.y > 80 ? '#f87171' : p.y > 50 ? '#fbbf24' : '#4ade80')
-                    }]
+                    datasets: [
+                        {
+                            label: 'Margin Auslastung %',
+                            data: auslastungData,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 4,
+                            pointBackgroundColor: auslastungData.map(p => p.y > 80 ? '#f87171' : p.y > 50 ? '#fbbf24' : '#4ade80'),
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Hebel Neu',
+                            data: hebelData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
                     scales: {
                         x: {
                             type: 'time',
@@ -167,18 +188,35 @@
                             grid: { color: '#f0f0f0' },
                             title: { display: true, text: 'Datum' }
                         },
-                        y: { grid: { color: '#f0f0f0' }, max: 100, ticks: { callback: v => v + '%' }, title: { display: true, text: 'Auslastung' } }
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: '#f0f0f0' },
+                            max: 100,
+                            ticks: { callback: v => v + '%' },
+                            title: { display: true, text: 'Margin Auslastung %' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: v => v.toFixed(1) + 'x' },
+                            title: { display: true, text: 'Hebel' }
+                        }
                     }
                 }
             });
         }
         function updateTable(history) {
             const tbody = document.querySelector('#history-table tbody');
-            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Keine Daten</td></tr>'; return; }
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Keine Daten</td></tr>'; return; }
             tbody.innerHTML = history.map(h => {
                 const auslastung = parseFloat(h.margin_auslastung || 0);
                 let barColor = auslastung > 80 ? '#f87171' : auslastung > 50 ? '#fbbf24' : '#4ade80';
-                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td>${formatCurrency(h.margin_benoetigt)}</td><td>${formatCurrency(h.maintenance_margin)}</td><td>${formatCurrency(h.margin_verfuegbar)}</td><td>${formatCurrency(h.excess_liquidity)}</td><td><div style="display:flex;align-items:center;gap:10px"><div class="progress-bar" style="width:80px"><div class="progress-fill" style="width:${auslastung}%;background:${barColor}"></div></div><span>${auslastung.toFixed(1)}%</span></div></td></tr>`;
+                const hebel = h.aktueller_hebel !== null && h.aktueller_hebel !== undefined ? parseFloat(h.aktueller_hebel).toFixed(3) + 'x' : '—';
+                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td>${formatCurrency(h.margin_benoetigt)}</td><td>${formatCurrency(h.maintenance_margin)}</td><td>${formatCurrency(h.margin_verfuegbar)}</td><td>${formatCurrency(h.excess_liquidity)}</td><td><div style="display:flex;align-items:center;gap:10px"><div class="progress-bar" style="width:80px"><div class="progress-fill" style="width:${auslastung}%;background:${barColor}"></div></div><span>${auslastung.toFixed(1)}%</span></div></td><td style="text-align:right">${hebel}</td></tr>`;
             }).join('');
         }
         loadData();
