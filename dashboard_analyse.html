@@ -120,7 +120,7 @@
             font-size: 15px;
             color: #666;
             line-height: 1.6;
-            margin-bottom: 15px; /* Added spacing */
+            margin-bottom: 15px;
         }
         
         .strategy-status {
@@ -146,39 +146,107 @@
             color: #856404;
         }
         
-        .server-status {
-            background: #fff;
-            border-radius: 12px;
-            padding: 25px 30px;
-            margin-bottom: 40px;
-            border: 1px solid #e9ecef;
+        /* Verbesserter Server Status Bereich */
+        .server-status-wrapper {
+            background: linear-gradient(135deg, #0a2540 0%, #1a4a6e 100%);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 8px 32px rgba(10, 37, 64, 0.3);
+        }
+        
+        .server-status-header {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .status-badge {
-            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 600;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
         }
         
-        .status-online { background: #d4edda; color: #155724; }
-        .status-offline { background: #f8d7da; color: #721c24; }
+        .server-status-header h3 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
         
-        .status-dot {
-            width: 10px;
-            height: 10px;
+        .pulse-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+            animation: pulse 2s infinite;
+        }
+        
+        .pulse-indicator.offline {
+            background: #f87171;
+            box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+        
+        .server-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        .status-tile {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        
+        .status-tile:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .status-tile .label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .status-tile .value {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .status-tile .value.online {
+            color: #4ade80;
+        }
+        
+        .status-tile .value.offline {
+            color: #f87171;
+        }
+        
+        .status-tile .value.warning {
+            color: #fbbf24;
+        }
+        
+        .status-icon {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: currentColor;
         }
 
-        /* Divider für die neuen Sektionen */
         .section-divider {
             height: 1px;
             background-color: #e9ecef;
@@ -197,13 +265,6 @@
             font-size: 13px;
             color: #999;
         }
-        
-        .last-update {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-top: 40px;
-        }
     </style>
 </head>
 <body>
@@ -216,8 +277,17 @@
     
     <section class="strategies-section">
         <div class="container">
-            <div class="server-status" id="server-status">
-                <span class="status-badge status-offline"><span class="status-dot"></span> Lade Status...</span>
+            <div class="server-status-wrapper">
+                <div class="server-status-header">
+                    <div class="pulse-indicator" id="pulse-indicator"></div>
+                    <h3>Server Status</h3>
+                </div>
+                <div class="server-status" id="server-status">
+                    <div class="status-tile">
+                        <div class="label">Gateway</div>
+                        <div class="value offline"><span class="status-icon"></span> Laden...</div>
+                    </div>
+                </div>
             </div>
             
             <h2 class="section-title">Strategien</h2>
@@ -271,8 +341,6 @@
                     <span class="strategy-status status-inactive">Inaktiv</span>
                 </div>
             </div>
-            
-            <div class="last-update" id="last-update"></div>
         </div>
     </section>
     
@@ -281,62 +349,96 @@
     </footer>
     
     <script>
-        // Inline common.js functions (workaround for GitHub Pages)
         async function loadJSONData(url) {
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
                 }
-                const data = await response.json();
-                return data;
+                return await response.json();
             } catch (error) {
                 console.error(`Fehler beim Laden der Daten von ${url}:`, error);
                 throw error;
             }
         }
         
-        function updateLastUpdate(timestamp, elementId = 'last-update', uptimeDays = null) {
-            if (!timestamp) return;
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            try {
-                const date = new Date(timestamp);
-                let html = `Letzte Aktualisierung: ${date.toLocaleString('de-DE')}`;
-                if (uptimeDays !== null && uptimeDays !== undefined) {
-                    const uptimeText = uptimeDays >= 1 
-                        ? `${uptimeDays.toFixed(1)} Tage` 
-                        : `${(uptimeDays * 24).toFixed(1)} Stunden`;
-                    html += ` · Server Uptime: ${uptimeText}`;
-                }
-                element.innerHTML = html;
-            } catch (error) {
-                console.error('Fehler beim Formatieren des Timestamps:', error);
-                element.innerHTML = `Letzte Aktualisierung: ${timestamp}`;
-            }
+        function createStatusTile(label, value, statusClass) {
+            return `
+                <div class="status-tile">
+                    <div class="label">${label}</div>
+                    <div class="value ${statusClass}"><span class="status-icon"></span> ${value}</div>
+                </div>
+            `;
         }
         
-        function updateServerStatus(status, system = null, elementId = 'server-status') {
+        function updateServerStatus(status, system, timestamp) {
             if (!status) return;
-            const container = document.getElementById(elementId);
+            
+            const container = document.getElementById('server-status');
+            const pulseIndicator = document.getElementById('pulse-indicator');
             if (!container) return;
-            const gatewayClass = status.gateway_running ? 'status-online' : 'status-offline';
-            const gatewayText = status.gateway_running ? '✓ Gateway Online' : '✗ Gateway Offline';
-            const portClass = status.port_4002_listening ? 'status-online' : 'status-offline';
-            const portText = status.port_4002_listening ? '✓ Port 4002 Aktiv' : '✗ Port 4002 Inaktiv';
-            let html = `
-                <span class="status-badge ${gatewayClass}"><span class="status-dot"></span> ${gatewayText}</span>
-                <span class="status-badge ${portClass}"><span class="status-dot"></span> ${portText}</span>
-            `;
+            
+            let html = '';
+            
+            // Gateway Status
+            const gatewayOnline = status.gateway_running;
+            html += createStatusTile(
+                'Gateway',
+                gatewayOnline ? 'Online' : 'Offline',
+                gatewayOnline ? 'online' : 'offline'
+            );
+            
+            // Port Status
+            const portActive = status.port_4002_listening;
+            html += createStatusTile(
+                'Port 4002',
+                portActive ? 'Aktiv' : 'Inaktiv',
+                portActive ? 'online' : 'offline'
+            );
+            
             if (system) {
+                // RAM
                 const ramVal = system.ram_usage_percent;
-                const ramClass = ramVal > 85 ? 'status-offline' : 'status-online';
-                html += `<span class="status-badge ${ramClass}"><span class="status-dot"></span> RAM: ${ramVal}%</span>`;
+                const ramClass = ramVal > 85 ? 'offline' : 'online';
+                html += createStatusTile('RAM', `${ramVal}%`, ramClass);
+                
+                // Disk
                 const diskVal = system.disk_usage_percent;
-                const diskClass = diskVal > 85 ? 'status-offline' : 'status-online';
-                html += `<span class="status-badge ${diskClass}"><span class="status-dot"></span> Disk: ${diskVal}%</span>`;
+                const diskClass = diskVal > 85 ? 'offline' : 'online';
+                html += createStatusTile('Disk', `${diskVal}%`, diskClass);
+                
+                // Uptime - grün wenn >= 5 Tage
+                const uptimeDays = system.uptime_days;
+                if (uptimeDays !== null && uptimeDays !== undefined) {
+                    const uptimeClass = uptimeDays >= 5 ? 'online' : 'warning';
+                    const uptimeText = uptimeDays >= 1 
+                        ? `${uptimeDays.toFixed(1)}d` 
+                        : `${(uptimeDays * 24).toFixed(1)}h`;
+                    html += createStatusTile('Uptime', uptimeText, uptimeClass);
+                }
             }
+            
+            // Letzte Aktualisierung - grün wenn < 65 Minuten
+            if (timestamp) {
+                const lastUpdate = new Date(timestamp);
+                const now = new Date();
+                const diffMinutes = (now - lastUpdate) / (1000 * 60);
+                const updateClass = diffMinutes < 65 ? 'online' : 'offline';
+                
+                const timeStr = lastUpdate.toLocaleTimeString('de-DE', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                html += createStatusTile('Aktualisiert', timeStr, updateClass);
+            }
+            
             container.innerHTML = html;
+            
+            // Pulse Indicator
+            const allOnline = gatewayOnline && portActive;
+            if (pulseIndicator) {
+                pulseIndicator.classList.toggle('offline', !allOnline);
+            }
         }
         
         function updateIBStatus(ibData, elementId = 'ib-status') {
@@ -360,25 +462,17 @@
             try {
                 const data = await loadJSONData(DATA_URL);
                 
-                updateServerStatus(data.server_status, data.system_status);
+                updateServerStatus(data.server_status, data.system_status, data.timestamp);
                 
-                // Falls im JSON vorhanden, IB Status aktualisieren
                 if (data.ib_status) {
                     updateIBStatus(data.ib_status);
                 }
-
-                const uptimeDays = data.system_status?.uptime_days;
-                updateLastUpdate(data.timestamp, 'last-update', uptimeDays);
                 
             } catch (error) {
                 console.error('Fehler beim Laden des Status:', error);
                 const statusContainer = document.getElementById('server-status');
                 if (statusContainer) {
-                    statusContainer.innerHTML = `
-                        <span class="status-badge status-offline">
-                            <span class="status-dot"></span> Fehler beim Laden: ${error.message}
-                        </span>
-                    `;
+                    statusContainer.innerHTML = createStatusTile('Fehler', error.message, 'offline');
                 }
             }
         }
