@@ -785,9 +785,18 @@
                     return `<span class="${cls}">${formatCurrency(num, 2)}</span>`;
                 };
 
-                const kostenAngepasst = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined
-                    ? '$' + parseFloat(t.kosten_angepasst).toFixed(4)
-                    : '—';
+                const kostenVal = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined ? parseFloat(t.kosten_angepasst) : null;
+                const kostenAngepasst = kostenVal !== null ? '$' + kostenVal.toFixed(4) : '—';
+                // Farbe für Kosten/Kontrakt: rot wenn > 2, orange wenn > 1.45 aber <= 2
+                let kostenStyle = '';
+                if (kostenVal !== null) {
+                    if (kostenVal > 2) {
+                        kostenStyle = 'style="color: #f87171;"';
+                    } else if (kostenVal > 1.45) {
+                        kostenStyle = 'style="color: #f97316;"';
+                    }
+                }
+
                 const rollover = t.is_rollover === 1 ? 'Ja' : 'Nein';
                 const hebel = t.leverage_new !== null && t.leverage_new !== undefined
                     ? parseFloat(t.leverage_new).toFixed(3) + 'x'
@@ -800,15 +809,24 @@
                 const reasonCode = t.reason_code || '—';
                 const changedColumns = t.changed_columns || '—';
 
+                // Status: rot wenn nicht "Filled"
+                const statusVal = t.status || '—';
+                const statusStyle = statusVal !== 'Filled' ? 'style="color: #f87171;"' : '';
+
+                // Ausgeführt: rot wenn |Delta| ungleich Ausgeführt
+                const deltaVal = t.delta_zu_handeln !== null && t.delta_zu_handeln !== undefined ? Math.abs(parseFloat(t.delta_zu_handeln)) : null;
+                const ausgefuehrtVal = t.ausgefuehrte_menge !== null && t.ausgefuehrte_menge !== undefined ? parseFloat(t.ausgefuehrte_menge) : null;
+                const ausgefuehrtStyle = (deltaVal !== null && ausgefuehrtVal !== null && deltaVal !== ausgefuehrtVal) ? 'style="color: #f87171;"' : '';
+
                 return `
                     <tr>
                         <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
                         <td><strong>${t.aktion || '—'}</strong></td>
                         <td class="text-right">${t.delta_zu_handeln ?? '—'}</td>
-                        <td class="text-right">${t.ausgefuehrte_menge ?? '—'}</td>
-                        <td>${t.status || '—'}</td>
+                        <td class="text-right" ${ausgefuehrtStyle}>${t.ausgefuehrte_menge ?? '—'}</td>
+                        <td ${statusStyle}>${statusVal}</td>
                         <td class="text-right">${hebel}</td>
-                        <td class="text-right">${kostenAngepasst}</td>
+                        <td class="text-right" ${kostenStyle}>${kostenAngepasst}</td>
                         <td class="text-right">${marginAuslastung}</td>
                         <td>${rollover}</td>
                         <td>${reasonCode}</td>
