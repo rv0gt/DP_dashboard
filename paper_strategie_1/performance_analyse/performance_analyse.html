@@ -6,6 +6,8 @@
     <title>Paper Strategie 1 - Performance Analyse</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #fff; }
@@ -33,6 +35,10 @@
         .chart-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; }
         .chart-section:nth-child(odd) .chart-card { background: #f8f9fa; }
         .chart-wrapper { height: 350px; position: relative; }
+        .chart-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px; }
+        .chart-controls button { padding: 6px 12px; font-size: 12px; background: #e5e7eb; color: #374151; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .chart-controls button:hover { background: #d1d5db; }
+        .chart-hint { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 8px; }
         .chart-title { font-size: 18px; font-weight: 400; margin-bottom: 20px; text-align: center; color: #333; }
         .table-section { padding: 60px 30px; background: #fff; }
         .table-container { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
@@ -82,22 +88,47 @@
                 </div>
             </div>
             <h2 class="section-title">Konto-Entwicklung</h2>
-            <div class="chart-card"><div class="chart-title">Konto-Wert (absolut in USD)</div><div class="chart-wrapper"><canvas id="accountValueChart"></canvas></div></div>
-            <div class="chart-card"><div class="chart-title">Konto-Wert (% Veränderung seit Start)</div><div class="chart-wrapper"><canvas id="accountPctChart"></canvas></div></div>
+            <div class="chart-card">
+                <div class="chart-title">Konto-Wert (absolut in USD)</div>
+                <div class="chart-controls"><button onclick="accountValueChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="accountValueChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Konto-Wert (% Veränderung seit Start)</div>
+                <div class="chart-controls"><button onclick="accountPctChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="accountPctChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
             <h2 class="section-title">Hebel-Entwicklung</h2>
-            <div class="chart-card"><div class="chart-title">Hebel alt (Zeitverlauf)</div><div class="chart-wrapper"><canvas id="hebelChart"></canvas></div></div>
+            <div class="chart-card">
+                <div class="chart-title">Hebel alt (Zeitverlauf)</div>
+                <div class="chart-controls"><button onclick="hebelChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="hebelChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
         </div>
     </section>
     <section class="chart-section">
         <div class="container">
             <h2 class="section-title">Kosten pro Kontrakt</h2>
-            <div class="chart-card"><div class="chart-title">Transaktionskosten & Slippage (pro Kontrakt)</div><div class="chart-wrapper"><canvas id="costsChart"></canvas></div></div>
+            <div class="chart-card">
+                <div class="chart-title">Transaktionskosten & Slippage (pro Kontrakt)</div>
+                <div class="chart-controls"><button onclick="costsChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="costsChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
         </div>
     </section>
     <section class="chart-section">
         <div class="container">
-            <h2 class="section-title">📈 Realized P&L (Kumulativ)</h2>
-            <div class="chart-card"><div class="chart-title">Realized P&L Gross & Net (kumulativ)</div><div class="chart-wrapper"><canvas id="pnlChart"></canvas></div></div>
+            <h2 class="section-title">Realized P&L (Kumulativ)</h2>
+            <div class="chart-card">
+                <div class="chart-title">Realized P&L Gross & Net (kumulativ)</div>
+                <div class="chart-controls"><button onclick="pnlChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="pnlChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
             <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #3b82f6; border-radius: 4px;"></div><span>Realized P&L Gross</span></div>
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div><span>Realized P&L Net</span></div>
@@ -109,7 +140,7 @@
             <h2 class="section-title">Tägliche Übersicht</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Kosten/Kontrakt</th><th>Slippage/Kontrakt</th><th>Total/Kontrakt</th></tr></thead>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Kosten/ Kontrakt</th><th>Slippage/ Kontrakt</th><th>Total/ Kontrakt</th></tr></thead>
                     <tbody><tr><td colspan="10" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
@@ -129,6 +160,50 @@
     </section>
     <footer class="footer"><p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p></footer>
     <script>
+        // Crosshair Plugin für vertikale Linie beim Hover
+        const crosshairPlugin = {
+            id: 'crosshair',
+            afterDraw: (chart) => {
+                if (chart.tooltip?._active?.length) {
+                    const ctx = chart.ctx;
+                    const x = chart.tooltip._active[0].element.x;
+                    const topY = chart.scales.y.top;
+                    const bottomY = chart.scales.y.bottom;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, topY);
+                    ctx.lineTo(x, bottomY);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        };
+        Chart.register(crosshairPlugin);
+
+        // Gemeinsame Zoom-Optionen für alle Charts
+        const zoomOptions = {
+            pan: {
+                enabled: true,
+                mode: 'x',
+                modifierKey: null
+            },
+            zoom: {
+                wheel: { enabled: true, modifierKey: null },
+                pinch: { enabled: true },
+                drag: { enabled: false },
+                mode: 'x',
+                onZoomComplete: ({chart}) => {
+                    chart.update('none');
+                }
+            },
+            limits: {
+                x: { minRange: 86400000 } // Min 1 Tag
+            }
+        };
+
         const DATA_URL = './performance_analyse.json';
         const OVERVIEW_URL = '../overview.json';
         async function loadJSONData(url) {
@@ -263,14 +338,18 @@
                 type: 'line',
                 data: {
                     datasets: [
-                        { label: 'Realized P&L Gross (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross })), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3, pointRadius: 2, pointHoverRadius: 6 },
-                        { label: 'Realized P&L Net (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_net })), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3, pointRadius: 2, pointHoverRadius: 6 }
+                        { label: 'Realized P&L Gross (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross })), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0, pointRadius: 2, pointHoverRadius: 6 },
+                        { label: 'Realized P&L Net (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_net })), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0, pointRadius: 2, pointHoverRadius: 6 }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { title: ctx => new Date(ctx[0].parsed.x).toLocaleDateString('de-DE'), label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y, 2)}` } } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { title: ctx => new Date(ctx[0].parsed.x).toLocaleDateString('de-DE'), label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y, 2)}` } },
+                        zoom: zoomOptions
+                    },
                     scales: {
                         x: { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { display: false } },
                         y: { ticks: { callback: v => '$' + v.toLocaleString('de-DE') }, grid: { color: 'rgba(0, 0, 0, 0.05)' } }
@@ -300,8 +379,8 @@
             if (accountValueChart) accountValueChart.destroy();
             accountValueChart = new Chart(ctx1, {
                 type: 'line',
-                data: { datasets: [{ label: 'Konto-Wert (USD)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#0066cc' }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
+                data: { datasets: [{ label: 'Konto-Wert (USD)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: true, tension: 0, pointRadius: 4, pointHoverRadius: 8, pointBackgroundColor: '#0066cc' }] },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
             });
             const ctx2 = document.getElementById('accountPctChart').getContext('2d');
             if (accountPctChart) accountPctChart.destroy();
@@ -309,10 +388,10 @@
             accountPctChart = new Chart(ctx2, {
                 type: 'line',
                 data: { datasets: [
-                    { label: 'Strategie (%)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert_pct })), borderColor: lastPct >= 0 ? '#4ade80' : '#f87171', backgroundColor: lastPct >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2 },
-                    { label: 'Buy & Hold MES (%)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.buy_hold_pct || 0 })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2, borderDash: [5, 5] }
+                    { label: 'Strategie (%)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert_pct })), borderColor: lastPct >= 0 ? '#4ade80' : '#f87171', backgroundColor: lastPct >= 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0, pointRadius: 4, pointHoverRadius: 8, borderWidth: 2 },
+                    { label: 'Buy & Hold MES (%)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.buy_hold_pct || 0 })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: false, tension: 0, pointRadius: 3, pointHoverRadius: 7, borderWidth: 2, borderDash: [5, 5] }
                 ] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toFixed(2) + '%' } } } }
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toFixed(2) + '%' } } } }
             });
             const ctx3 = document.getElementById('hebelChart').getContext('2d');
             if (hebelChart) hebelChart.destroy();
@@ -326,7 +405,7 @@
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             fill: true,
-                            tension: 0.3,
+                            tension: 0,
                             pointRadius: 3,
                             borderWidth: 2,
                             yAxisID: 'y'
@@ -353,7 +432,7 @@
                             borderColor: '#f59e0b',
                             backgroundColor: 'rgba(245, 158, 11, 0.1)',
                             fill: false,
-                            tension: 0.3,
+                            tension: 0,
                             pointRadius: 3,
                             borderWidth: 2,
                             borderDash: [5, 5],
@@ -365,7 +444,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { position: 'top' } },
+                    plugins: { legend: { position: 'top' }, zoom: zoomOptions },
                     scales: {
                         x: timeOpts,
                         y: {
@@ -392,11 +471,11 @@
             costsChart = new Chart(ctx4, {
                 type: 'line',
                 data: { datasets: [
-                    { label: 'Transaktionskosten / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0.3, pointRadius: 3 },
-                    { label: 'Slippage / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.slippage_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', fill: true, tension: 0.3, pointRadius: 3 },
-                    { label: 'Total / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.total_kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#8b5cf6', borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0.3, pointRadius: 4 }
+                    { label: 'Transaktionskosten / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0, pointRadius: 3, pointHoverRadius: 7 },
+                    { label: 'Slippage / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.slippage_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', fill: true, tension: 0, pointRadius: 3, pointHoverRadius: 7 },
+                    { label: 'Total / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.total_kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#8b5cf6', borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0, pointRadius: 4, pointHoverRadius: 8 }
                 ] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + v.toFixed(2) } } } }
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + v.toFixed(2) } } } }
             });
         }
         function updateTable(history) {
@@ -445,7 +524,15 @@
                     }
                 }
 
-                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td class="negative">${kostenProKontrakt}</td><td class="negative">${slippageProKontrakt}</td><td class="negative"><strong>${totalProKontrakt}</strong></td></tr>`;
+                // Farbe für Total/Kontrakt: rot wenn > $2, orange wenn zwischen $1.25 und $2
+                let totalKostenClass = '';
+                if (h.total_kosten_pro_kontrakt > 2) {
+                    totalKostenClass = 'negative';
+                } else if (h.total_kosten_pro_kontrakt >= 1.25) {
+                    totalKostenClass = 'style="color: #f97316;"'; // orange
+                }
+                const totalStyle = h.total_kosten_pro_kontrakt > 2 ? 'class="negative"' : (h.total_kosten_pro_kontrakt >= 1.25 ? 'style="color: #f97316;"' : '');
+                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td>${kostenProKontrakt}</td><td>${slippageProKontrakt}</td><td ${totalStyle}>${totalProKontrakt}</td></tr>`;
             }).join('');
         }
         function updateTransactionsTable(transactions) {

@@ -6,6 +6,8 @@
     <title>Paper Strategie 1 - Margin Analyse</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #fff; }
@@ -32,6 +34,10 @@
         .section-title { font-size: 24px; font-weight: 300; color: #333; margin-bottom: 30px; text-align: center; }
         .chart-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; }
         .chart-wrapper { height: 350px; position: relative; }
+        .chart-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px; }
+        .chart-controls button { padding: 6px 12px; font-size: 12px; background: #e5e7eb; color: #374151; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .chart-controls button:hover { background: #d1d5db; }
+        .chart-hint { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 8px; }
         .table-section { padding: 60px 30px; background: #fff; }
         .table-container { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
@@ -73,9 +79,11 @@
         <div class="container">
             <h2 class="section-title">Margin Auslastung (30 Tage)</h2>
             <div class="chart-card">
+                <div class="chart-controls"><button onclick="utilizationChart?.resetZoom()">Reset Zoom</button></div>
                 <div class="chart-wrapper">
                     <canvas id="utilizationChart"></canvas>
                 </div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
             </div>
         </div>
     </section>
@@ -93,6 +101,50 @@
     </section>
     <footer class="footer"><p>Paper Strategie 1 - Margin Analyse · Trading Dashboard</p></footer>
     <script>
+        // Crosshair Plugin für vertikale Linie beim Hover
+        const crosshairPlugin = {
+            id: 'crosshair',
+            afterDraw: (chart) => {
+                if (chart.tooltip?._active?.length) {
+                    const ctx = chart.ctx;
+                    const x = chart.tooltip._active[0].element.x;
+                    const topY = chart.scales.y.top;
+                    const bottomY = chart.scales.y.bottom;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, topY);
+                    ctx.lineTo(x, bottomY);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        };
+        Chart.register(crosshairPlugin);
+
+        // Gemeinsame Zoom-Optionen für alle Charts
+        const zoomOptions = {
+            pan: {
+                enabled: true,
+                mode: 'x',
+                modifierKey: null
+            },
+            zoom: {
+                wheel: { enabled: true, modifierKey: null },
+                pinch: { enabled: true },
+                drag: { enabled: false },
+                mode: 'x',
+                onZoomComplete: ({chart}) => {
+                    chart.update('none');
+                }
+            },
+            limits: {
+                x: { minRange: 86400000 } // Min 1 Tag
+            }
+        };
+
         const DATA_URL = './margin_analyse.json';
         async function loadJSONData(url) {
             const response = await fetch(url);
@@ -153,8 +205,9 @@
                             borderColor: '#0066cc',
                             backgroundColor: 'rgba(0, 102, 204, 0.1)',
                             fill: true,
-                            tension: 0.1,
+                            tension: 0,
                             pointRadius: 4,
+                            pointHoverRadius: 8,
                             pointBackgroundColor: auslastungData.map(p => p.y > 80 ? '#f87171' : p.y > 50 ? '#fbbf24' : '#4ade80'),
                             yAxisID: 'y'
                         },
@@ -164,8 +217,9 @@
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             fill: false,
-                            tension: 0.1,
+                            tension: 0,
                             pointRadius: 3,
+                            pointHoverRadius: 7,
                             borderWidth: 2,
                             yAxisID: 'y1'
                         }
@@ -179,7 +233,8 @@
                         legend: {
                             display: true,
                             position: 'top'
-                        }
+                        },
+                        zoom: zoomOptions
                     },
                     scales: {
                         x: {
