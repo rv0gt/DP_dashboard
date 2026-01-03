@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-03T08:10:12.200507",
+    "timestamp": "2026-01-03T09:10:18.389533",
     "performance_data": {
         "start_value": 1122022.32,
         "current_value": 1081598.72,
@@ -699,8 +699,8 @@
                 "datum": "2026-01-03",
                 "konto_wert": 1081598.72,
                 "konto_wert_pct": -3.6,
-                "buy_hold_pct": 0.63,
-                "mes_preis": 6900.75,
+                "buy_hold_pct": -100.01,
+                "mes_preis": -1.0,
                 "aktueller_hebel": null,
                 "kosten_kumulativ": 393.08,
                 "slippage_kumulativ": 8191.87,
