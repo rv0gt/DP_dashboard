@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-03T23:10:11.853257",
+    "timestamp": "2026-01-04T00:10:11.361886",
     "performance_data": {
         "start_value": 1122022.32,
         "current_value": 1081768.75,
@@ -745,7 +745,7 @@
                 "zeitslippage": -0.12
             },
             {
-                "datum": "2026-01-03",
+                "datum": "2026-01-04",
                 "konto_wert": 1081768.75,
                 "konto_wert_pct": -3.59,
                 "buy_hold_pct": 0.63,
