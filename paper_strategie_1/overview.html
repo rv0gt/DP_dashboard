@@ -591,7 +591,7 @@
                             <th class="text-right">Ausgeführt</th>
                             <th>Status</th>
                             <th class="text-right">Hebel Neu</th>
-                            <th class="text-right">Kosten/ Kontrakt</th>
+                            <th class="text-right">Kosten/ Kontraktkurs</th>
                             <th class="text-right">Margin (%)</th>
                             <th>Rollover</th>
                             <th>Reason Code</th>
@@ -785,16 +785,18 @@
                     return `<span class="${cls}">${formatCurrency(num, 2)}</span>`;
                 };
 
-                const kostenVal = t.kosten_angepasst !== null && t.kosten_angepasst !== undefined ? parseFloat(t.kosten_angepasst) : null;
-                const kostenAngepasst = kostenVal !== null ? '$' + kostenVal.toFixed(4) : '—';
-                // Farbe für Kosten/Kontrakt: rot wenn > 2, orange wenn > 1.45 aber <= 2
+                // Total/ Kontraktkurs berechnen: (kosten + slippage) / 5
+                const kostenRaw = t.kosten_transaktion !== null && t.kosten_transaktion !== undefined ? parseFloat(t.kosten_transaktion) : 0;
+                const slippageRaw = t.slippage_kosten !== null && t.slippage_kosten !== undefined ? parseFloat(t.slippage_kosten) : 0;
+                const ausgefuehrt = t.ausgefuehrte_menge !== null && t.ausgefuehrte_menge !== undefined ? parseFloat(t.ausgefuehrte_menge) : 0;
+                const totalProKontraktVal = ausgefuehrt > 0 ? ((kostenRaw + slippageRaw) / ausgefuehrt) / 5 : 0;
+                const kostenAngepasst = totalProKontraktVal > 0 ? '$' + totalProKontraktVal.toFixed(4) : '—';
+                // Farbe für Total/Kontraktkurs: rot wenn > $0.38, orange wenn > $0.25
                 let kostenStyle = '';
-                if (kostenVal !== null) {
-                    if (kostenVal > 2) {
-                        kostenStyle = 'style="color: #f87171;"';
-                    } else if (kostenVal > 1.45) {
-                        kostenStyle = 'style="color: #f97316;"';
-                    }
+                if (totalProKontraktVal > 0.38) {
+                    kostenStyle = 'style="color: #f87171;"';
+                } else if (totalProKontraktVal > 0.25) {
+                    kostenStyle = 'style="color: #f97316;"';
                 }
 
                 const rollover = t.is_rollover === 1 ? 'Ja' : 'Nein';

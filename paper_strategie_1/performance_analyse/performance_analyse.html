@@ -111,9 +111,9 @@
     </section>
     <section class="chart-section">
         <div class="container">
-            <h2 class="section-title">Kosten pro Kontrakt</h2>
+            <h2 class="section-title">Kosten pro Kontraktkurs</h2>
             <div class="chart-card">
-                <div class="chart-title">Transaktionskosten & Slippage (pro Kontrakt)</div>
+                <div class="chart-title">Transaktionskosten & Slippage (pro Kontraktkurs)</div>
                 <div class="chart-controls"><button onclick="costsChart?.resetZoom()">Reset Zoom</button></div>
                 <div class="chart-wrapper"><canvas id="costsChart"></canvas></div>
                 <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
@@ -140,7 +140,7 @@
             <h2 class="section-title">Tägliche Übersicht</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Kosten/ Kontrakt</th><th>Slippage/ Kontrakt</th><th>Total/ Kontrakt</th></tr></thead>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Kosten/ Kontraktkurs</th><th>Slippage/ Kontraktkurs</th><th>Total/ Kontraktkurs</th></tr></thead>
                     <tbody><tr><td colspan="10" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
@@ -484,9 +484,12 @@
             const reversed = [...history].reverse();
             tbody.innerHTML = reversed.map((h, idx) => {
                 const hebel = h.aktueller_hebel !== null && h.aktueller_hebel !== undefined ? h.aktueller_hebel.toFixed(3) + 'x' : '—';
-                const kostenProKontrakt = h.kosten_pro_kontrakt > 0 ? '$' + h.kosten_pro_kontrakt.toFixed(4) : '—';
-                const slippageProKontrakt = h.slippage_pro_kontrakt > 0 ? '$' + h.slippage_pro_kontrakt.toFixed(4) : '—';
-                const totalProKontrakt = h.total_kosten_pro_kontrakt > 0 ? '$' + h.total_kosten_pro_kontrakt.toFixed(4) : '—';
+                const kostenProKontraktVal = h.kosten_pro_kontrakt > 0 ? h.kosten_pro_kontrakt : 0;
+                const slippageProKontraktVal = h.slippage_pro_kontrakt > 0 ? h.slippage_pro_kontrakt : 0;
+                const totalProKontraktVal = kostenProKontraktVal + slippageProKontraktVal;
+                const kostenProKontrakt = kostenProKontraktVal > 0 ? '$' + kostenProKontraktVal.toFixed(4) : '—';
+                const slippageProKontrakt = slippageProKontraktVal > 0 ? '$' + slippageProKontraktVal.toFixed(4) : '—';
+                const totalProKontrakt = totalProKontraktVal > 0 ? '$' + totalProKontraktVal.toFixed(4) : '—';
                 const mesPreis = h.mes_preis ? '$' + h.mes_preis.toFixed(2) : '—';
 
                 // Berechne Deltas und Verhältnis
@@ -524,14 +527,8 @@
                     }
                 }
 
-                // Farbe für Total/Kontrakt: rot wenn > $2, orange wenn zwischen $1.25 und $2
-                let totalKostenClass = '';
-                if (h.total_kosten_pro_kontrakt > 2) {
-                    totalKostenClass = 'negative';
-                } else if (h.total_kosten_pro_kontrakt >= 1.25) {
-                    totalKostenClass = 'style="color: #f97316;"'; // orange
-                }
-                const totalStyle = h.total_kosten_pro_kontrakt > 2 ? 'class="negative"' : (h.total_kosten_pro_kontrakt >= 1.25 ? 'style="color: #f97316;"' : '');
+                // Farbe für Total/Kontraktkurs: rot wenn > $0.38, orange wenn > $0.25
+                const totalStyle = totalProKontraktVal > 0.38 ? 'class="negative"' : (totalProKontraktVal > 0.25 ? 'style="color: #f97316;"' : '');
                 return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td>${kostenProKontrakt}</td><td>${slippageProKontrakt}</td><td ${totalStyle}>${totalProKontrakt}</td></tr>`;
             }).join('');
         }
