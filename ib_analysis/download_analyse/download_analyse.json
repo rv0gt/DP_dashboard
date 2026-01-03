@@ -4077,7 +4077,7 @@
         "max_date": "2025-12-31"
     },
     "meta": {
-        "generated_at": "2026-01-03 14:10",
+        "generated_at": "2026-01-03 15:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
