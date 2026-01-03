@@ -140,8 +140,8 @@
             <h2 class="section-title">Tägliche Übersicht</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Kosten/ Kontraktkurs</th><th>Slippage/ Kontraktkurs</th><th>Total/ Kontraktkurs</th></tr></thead>
-                    <tbody><tr><td colspan="10" style="text-align:center">Lade Daten...</td></tr></tbody>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Fees/ Kontraktkurs</th><th>Slippage/ Kontraktkurs</th><th>Kosten/ Kontraktkurs</th><th>Zeitslippage</th></tr></thead>
+                    <tbody><tr><td colspan="11" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
             <div class="last-update" id="last-update"></div>
@@ -480,7 +480,7 @@
         }
         function updateTable(history) {
             const tbody = document.querySelector('#history-table tbody');
-            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center">Keine Daten</td></tr>'; return; }
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="11" style="text-align:center">Keine Daten</td></tr>'; return; }
             const reversed = [...history].reverse();
             tbody.innerHTML = reversed.map((h, idx) => {
                 const hebel = h.aktueller_hebel !== null && h.aktueller_hebel !== undefined ? h.aktueller_hebel.toFixed(3) + 'x' : '—';
@@ -529,7 +529,17 @@
 
                 // Farbe für Total/Kontraktkurs: rot wenn > $0.38, orange wenn > $0.25
                 const totalStyle = totalProKontraktVal > 0.38 ? 'class="negative"' : (totalProKontraktVal > 0.25 ? 'style="color: #f97316;"' : '');
-                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td>${kostenProKontrakt}</td><td>${slippageProKontrakt}</td><td ${totalStyle}>${totalProKontrakt}</td></tr>`;
+
+                // Zeitslippage: positiv = grün (gut), negativ = rot (schlecht)
+                const zeitslippageVal = h.zeitslippage;
+                let zeitslippage = '—';
+                let zeitslippageClass = '';
+                if (zeitslippageVal !== null && zeitslippageVal !== undefined) {
+                    zeitslippageClass = zeitslippageVal >= 0 ? 'positive' : 'negative';
+                    zeitslippage = (zeitslippageVal >= 0 ? '+' : '') + '$' + zeitslippageVal.toFixed(4);
+                }
+
+                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td>${kostenProKontrakt}</td><td>${slippageProKontrakt}</td><td ${totalStyle}>${totalProKontrakt}</td><td class="${zeitslippageClass}">${zeitslippage}</td></tr>`;
             }).join('');
         }
         function updateTransactionsTable(transactions) {
