@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Performance Analyse</title>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #fff; }
@@ -41,10 +41,10 @@
         .chart-hint { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 8px; }
         .chart-title { font-size: 18px; font-weight: 400; margin-bottom: 20px; text-align: center; color: #333; }
         .table-section { padding: 60px 30px; background: #fff; }
-        .table-container { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
+        .table-container { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; overflow: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #f8f9fa; padding: 15px 12px; text-align: left; font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; border-bottom: 2px solid #e9ecef; }
-        td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        th { background: #f8f9fa; padding: 15px 12px; text-align: left; font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; border-bottom: 2px solid #e9ecef; white-space: nowrap; }
+        td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; font-size: 14px; white-space: nowrap; }
         tr:hover { background: #f8f9fa; }
         tr:last-child td { border-bottom: none; }
         .footer { background: #333; color: #fff; padding: 25px 30px; text-align: center; }
@@ -100,11 +100,16 @@
                 <div class="chart-wrapper"><canvas id="accountPctChart"></canvas></div>
                 <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
             </div>
-            <h2 class="section-title">Hebel-Entwicklung</h2>
             <div class="chart-card">
-                <div class="chart-title">Hebel alt (Zeitverlauf)</div>
+                <div class="chart-title">Neuer Hebel (Zeitverlauf)</div>
                 <div class="chart-controls"><button onclick="hebelChart?.resetZoom()">Reset Zoom</button></div>
                 <div class="chart-wrapper"><canvas id="hebelChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Δ Konto vs Δ MES × Hebel (Vergleich)</div>
+                <div class="chart-controls"><button onclick="deltaCompareChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="deltaCompareChart"></canvas></div>
                 <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
             </div>
         </div>
@@ -140,8 +145,8 @@
             <h2 class="section-title">Tägliche Übersicht</h2>
             <div class="table-container">
                 <table id="history-table">
-                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Verhältnis</th><th>Hebel alt</th><th>Fees/ Kontraktkurs</th><th>Slippage/ Kontraktkurs</th><th>Kosten/ Kontraktkurs</th><th>Zeitslippage</th></tr></thead>
-                    <tbody><tr><td colspan="11" style="text-align:center">Lade Daten...</td></tr></tbody>
+                    <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Neuer Hebel</th><th>Δ MES×Hebel (t-1)</th><th>Differenz</th><th>Diff × Konto</th><th>Fees/ Kontraktkurs</th><th>Slippage/ Kontraktkurs</th><th>Kosten/ Kontraktkurs</th><th>Zeitslippage</th></tr></thead>
+                    <tbody><tr><td colspan="13" style="text-align:center">Lade Daten...</td></tr></tbody>
                 </table>
             </div>
             <div class="last-update" id="last-update"></div>
@@ -160,47 +165,57 @@
     </section>
     <footer class="footer"><p>Paper Strategie 1 - Performance Analyse · Trading Dashboard</p></footer>
     <script>
-        // Crosshair Plugin für vertikale Linie beim Hover
-        const crosshairPlugin = {
-            id: 'crosshair',
+        // Globale Variable für synchronisiertes Crosshair
+        let syncedCharts = [];
+        let currentHoverX = null;
+
+        // Crosshair Plugin für vertikale Linie beim Hover - synchronisiert über mehrere Charts
+        const syncedCrosshairPlugin = {
+            id: 'syncedCrosshair',
             afterDraw: (chart) => {
-                if (chart.tooltip?._active?.length) {
+                if (currentHoverX !== null && syncedCharts.includes(chart)) {
                     const ctx = chart.ctx;
-                    const x = chart.tooltip._active[0].element.x;
-                    const topY = chart.scales.y.top;
-                    const bottomY = chart.scales.y.bottom;
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(x, topY);
-                    ctx.lineTo(x, bottomY);
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-                    ctx.setLineDash([5, 5]);
-                    ctx.stroke();
-                    ctx.restore();
+                    const xScale = chart.scales.x;
+                    const x = xScale.getPixelForValue(currentHoverX);
+
+                    if (x >= xScale.left && x <= xScale.right) {
+                        const topY = chart.scales.y.top;
+                        const bottomY = chart.scales.y.bottom;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(x, topY);
+                        ctx.lineTo(x, bottomY);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                        ctx.setLineDash([5, 5]);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
                 }
             }
         };
-        Chart.register(crosshairPlugin);
+        Chart.register(syncedCrosshairPlugin);
 
-        // Gemeinsame Zoom-Optionen für alle Charts
+        // Gemeinsame Zoom-Optionen für alle Charts - mit funktionierendem Drag und Doppelklick
         const zoomOptions = {
             pan: {
                 enabled: true,
                 mode: 'x',
-                modifierKey: null
+                threshold: 5
             },
             zoom: {
-                wheel: { enabled: true, modifierKey: null },
+                wheel: {
+                    enabled: true,
+                    speed: 0.1
+                },
                 pinch: { enabled: true },
-                drag: { enabled: false },
-                mode: 'x',
-                onZoomComplete: ({chart}) => {
-                    chart.update('none');
-                }
+                drag: {
+                    enabled: false
+                },
+                mode: 'x'
             },
             limits: {
-                x: { minRange: 86400000 } // Min 1 Tag
+                x: { minRange: 86400000 }
             }
         };
 
@@ -220,8 +235,9 @@
             if (!str) return null;
             return new Date(str.replace(' ', 'T'));
         }
-        let accountValueChart, accountPctChart, hebelChart, costsChart, pnlChart;
+        let accountValueChart, accountPctChart, hebelChart, deltaCompareChart, costsChart, pnlChart;
         let fullHistory = [], fullPerfData = null, fullPnlChartData = [];
+
         async function loadData() {
             try {
                 const data = await loadJSONData(DATA_URL);
@@ -261,15 +277,12 @@
             const fromDate = fromDateInput.value;
             const toDate = toDateInput.value;
 
-            // Wenn kein Filter gesetzt ist, verwende alle Daten
             let filteredHistory;
             if (!fromDate) {
                 filteredHistory = fullHistory;
             } else {
                 filteredHistory = fullHistory.filter(h => {
-                    // Wir vergleichen nur den Datums-Teil (die ersten 10 Zeichen: YYYY-MM-DD)
                     const recordDate = h.datum.substring(0, 10);
-
                     if (recordDate < fromDate) return false;
                     if (toDate && recordDate > toDate) return false;
                     return true;
@@ -289,11 +302,10 @@
                 kosten_kumulativ: (h.kosten_kumulativ || 0) - startCosts,
                 slippage_kumulativ: (h.slippage_kumulativ || 0) - startSlippage,
                 total_kosten_kumulativ: ((h.kosten_kumulativ || 0) - startCosts) + ((h.slippage_kumulativ || 0) - startSlippage),
-                // Per-Kontrakt Kosten bleiben unverändert
                 kosten_pro_kontrakt: h.kosten_pro_kontrakt,
                 slippage_pro_kontrakt: h.slippage_pro_kontrakt,
                 total_kosten_pro_kontrakt: h.total_kosten_pro_kontrakt,
-                aktueller_hebel: h.aktueller_hebel
+                neuer_hebel: h.neuer_hebel
             }));
             updateCharts(recalculatedHistory);
             if (pnlChart && fullPnlChartData.length > 0) {
@@ -356,6 +368,9 @@
                     }
                 }
             });
+
+            // Doppelklick zum Reset
+            ctx.ondblclick = () => pnlChart?.resetZoom();
         }
         function updateMetrics(perfData) {
             if (!perfData) return;
@@ -371,10 +386,35 @@
                 <div class="stat-card"><div class="stat-number negative">${formatCurrency(perfData.total_costs)}</div><div class="stat-label">Kum. Kosten</div></div>
                 <div class="stat-card"><div class="stat-number negative">${formatCurrency(perfData.total_slippage)}</div><div class="stat-label">Kum. Slippage</div></div>`;
         }
+
+        // Funktion um synchronisiertes Hover zu handhaben
+        function setupSyncedHover(chart) {
+            chart.canvas.addEventListener('mousemove', (e) => {
+                const rect = chart.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const xScale = chart.scales.x;
+                if (x >= xScale.left && x <= xScale.right) {
+                    currentHoverX = xScale.getValueForPixel(x);
+                    syncedCharts.forEach(c => {
+                        if (c !== chart) c.update('none');
+                    });
+                }
+            });
+            chart.canvas.addEventListener('mouseleave', () => {
+                currentHoverX = null;
+                syncedCharts.forEach(c => c.update('none'));
+            });
+        }
+
         function updateCharts(history) {
             if (!history || history.length === 0) return;
             const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
             const timeOpts = { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { color: '#f0f0f0' } };
+
+            // Reset synced charts array
+            syncedCharts = [];
+
+            // Chart 1: Konto-Wert absolut
             const ctx1 = document.getElementById('accountValueChart').getContext('2d');
             if (accountValueChart) accountValueChart.destroy();
             accountValueChart = new Chart(ctx1, {
@@ -382,6 +422,9 @@
                 data: { datasets: [{ label: 'Konto-Wert (USD)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: true, tension: 0, pointRadius: 4, pointHoverRadius: 8, pointBackgroundColor: '#0066cc' }] },
                 options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
             });
+            document.getElementById('accountValueChart').ondblclick = () => accountValueChart?.resetZoom();
+
+            // Chart 2: Konto-Wert % - wird synchronisiert mit Hebel
             const ctx2 = document.getElementById('accountPctChart').getContext('2d');
             if (accountPctChart) accountPctChart.destroy();
             const lastPct = sorted[sorted.length - 1].konto_wert_pct;
@@ -393,6 +436,11 @@
                 ] },
                 options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toFixed(2) + '%' } } } }
             });
+            document.getElementById('accountPctChart').ondblclick = () => accountPctChart?.resetZoom();
+            syncedCharts.push(accountPctChart);
+            setupSyncedHover(accountPctChart);
+
+            // Chart 3: Hebel - synchronisiert mit Konto-Wert %
             const ctx3 = document.getElementById('hebelChart').getContext('2d');
             if (hebelChart) hebelChart.destroy();
             hebelChart = new Chart(ctx3, {
@@ -400,8 +448,8 @@
                 data: {
                     datasets: [
                         {
-                            label: 'Hebel alt',
-                            data: sorted.map(h => ({ x: parseDate(h.datum), y: h.aktueller_hebel })).filter(p => p.y !== null),
+                            label: 'Neuer Hebel',
+                            data: sorted.map(h => ({ x: parseDate(h.datum), y: h.neuer_hebel })).filter(p => p.y !== null),
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             fill: true,
@@ -413,18 +461,16 @@
                         {
                             label: 'Verhältnis Δ Strategie / Δ Buy&Hold',
                             data: sorted.map((h, idx) => {
-                                if (idx === 0) return { x: parseDate(h.datum), y: null }; // Erster Punkt hat keinen Vorgänger
+                                if (idx === 0) return { x: parseDate(h.datum), y: null };
 
                                 const prevKontoWert = sorted[idx - 1].konto_wert || 0;
                                 const currKontoWert = h.konto_wert || 0;
                                 const prevMesPreis = sorted[idx - 1].mes_preis || 0;
                                 const currMesPreis = h.mes_preis || 0;
 
-                                // Veränderung zum letzten Messpunkt berechnen
                                 const deltaStrategie = prevKontoWert !== 0 ? ((currKontoWert - prevKontoWert) / prevKontoWert * 100) : 0;
                                 const deltaBuyHold = prevMesPreis !== 0 ? ((currMesPreis - prevMesPreis) / prevMesPreis * 100) : 0;
 
-                                // Verhältnis berechnen
                                 const ratio = deltaBuyHold !== 0 ? (deltaStrategie / deltaBuyHold) : null;
 
                                 return { x: parseDate(h.datum), y: ratio };
@@ -466,9 +512,120 @@
                     }
                 }
             });
-            const ctx4 = document.getElementById('costsChart').getContext('2d');
+            document.getElementById('hebelChart').ondblclick = () => hebelChart?.resetZoom();
+            syncedCharts.push(hebelChart);
+            setupSyncedHover(hebelChart);
+
+            // Chart 4: Delta Vergleich - Δ Konto vs Δ MES × Hebel
+            const ctx4Compare = document.getElementById('deltaCompareChart').getContext('2d');
+            if (deltaCompareChart) deltaCompareChart.destroy();
+
+            // Berechne Δ Konto, Δ MES × Hebel und Differenz
+            const deltaData = sorted.map((h, idx) => {
+                if (idx === 0) return null;
+
+                const prev = sorted[idx - 1];
+                const prevKonto = prev.konto_wert || 0;
+                const currKonto = h.konto_wert || 0;
+                const prevMes = prev.mes_preis || 0;
+                const currMes = h.mes_preis || 0;
+                const hebel = prev.neuer_hebel || 0; // Hebel t-1
+
+                const deltaKontoPct = prevKonto !== 0 ? ((currKonto - prevKonto) / prevKonto * 100) : 0;
+                const deltaMesPct = prevMes !== 0 ? ((currMes - prevMes) / prevMes * 100) : 0;
+                const deltaMesHebelPct = deltaMesPct * hebel;
+                const differenz = deltaKontoPct - deltaMesHebelPct;
+
+                return {
+                    x: parseDate(h.datum),
+                    deltaKonto: deltaKontoPct,
+                    deltaMesHebel: deltaMesHebelPct,
+                    differenz: differenz
+                };
+            }).filter(d => d !== null);
+
+            deltaCompareChart = new Chart(ctx4Compare, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Δ Konto (%)',
+                            data: deltaData.map(d => ({ x: d.x, y: d.deltaKonto })),
+                            borderColor: '#4ade80',
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Δ MES × Hebel (%)',
+                            data: deltaData.map(d => ({ x: d.x, y: d.deltaMesHebel })),
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Differenz (%)',
+                            data: deltaData.map(d => ({ x: d.x, y: d.differenz })),
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 2,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        zoom: zoomOptions,
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(4)}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: timeOpts,
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: '#f0f0f0' },
+                            ticks: { callback: v => v.toFixed(2) + '%' },
+                            title: { display: true, text: 'Δ Konto / Δ MES×Hebel' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: v => v.toFixed(2) + '%' },
+                            title: { display: true, text: 'Differenz' }
+                        }
+                    }
+                }
+            });
+            document.getElementById('deltaCompareChart').ondblclick = () => deltaCompareChart?.resetZoom();
+            syncedCharts.push(deltaCompareChart);
+            setupSyncedHover(deltaCompareChart);
+
+            // Chart 5: Kosten
+            const ctx5 = document.getElementById('costsChart').getContext('2d');
             if (costsChart) costsChart.destroy();
-            costsChart = new Chart(ctx4, {
+            costsChart = new Chart(ctx5, {
                 type: 'line',
                 data: { datasets: [
                     { label: 'Transaktionskosten / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0, pointRadius: 3, pointHoverRadius: 7 },
@@ -477,13 +634,15 @@
                 ] },
                 options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + v.toFixed(2) } } } }
             });
+            document.getElementById('costsChart').ondblclick = () => costsChart?.resetZoom();
         }
+
         function updateTable(history) {
             const tbody = document.querySelector('#history-table tbody');
-            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="11" style="text-align:center">Keine Daten</td></tr>'; return; }
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="13" style="text-align:center">Keine Daten</td></tr>'; return; }
             const reversed = [...history].reverse();
             tbody.innerHTML = reversed.map((h, idx) => {
-                const hebel = h.aktueller_hebel !== null && h.aktueller_hebel !== undefined ? h.aktueller_hebel.toFixed(3) + 'x' : '—';
+                const hebel = h.neuer_hebel !== null && h.neuer_hebel !== undefined ? h.neuer_hebel.toFixed(3) + 'x' : '—';
                 const kostenProKontraktVal = h.kosten_pro_kontrakt > 0 ? h.kosten_pro_kontrakt : 0;
                 const slippageProKontraktVal = h.slippage_pro_kontrakt > 0 ? h.slippage_pro_kontrakt : 0;
                 const totalProKontraktVal = kostenProKontraktVal + slippageProKontraktVal;
@@ -492,9 +651,10 @@
                 const totalProKontrakt = totalProKontraktVal > 0 ? '$' + totalProKontraktVal.toFixed(4) : '—';
                 const mesPreis = h.mes_preis ? '$' + h.mes_preis.toFixed(2) : '—';
 
-                // Berechne Deltas und Verhältnis
-                let deltaKonto = '—', deltaMes = '—', verhaeltnis = '—';
-                let deltaKontoClass = '', deltaMesClass = '', verhaeltnisClass = '';
+                // Berechne Deltas
+                let deltaKonto = '—', deltaMes = '—', deltaMesHebel = '—', differenz = '—', diffKonto = '—';
+                let deltaKontoClass = '', deltaMesClass = '', deltaMesHebelClass = '', differenzClass = '', diffKontoClass = '';
+                let deltaKontoPctVal = 0, deltaMesPctVal = 0, deltaMesHebelPctVal = 0, differenzVal = 0;
 
                 // Wir brauchen den zeitlich früheren Wert (nächster in reversed array)
                 if (idx < reversed.length - 1) {
@@ -503,27 +663,35 @@
                     const currKonto = h.konto_wert || 0;
                     const prevMes = prev.mes_preis || 0;
                     const currMes = h.mes_preis || 0;
+                    const prevHebel = prev.neuer_hebel || 0; // Hebel t-1 für Berechnung
 
                     if (prevKonto > 0) {
-                        const deltaKontoPct = ((currKonto - prevKonto) / prevKonto * 100);
-                        deltaKontoClass = deltaKontoPct >= 0 ? 'positive' : 'negative';
-                        deltaKonto = (deltaKontoPct >= 0 ? '+' : '') + deltaKontoPct.toFixed(2) + '%';
+                        deltaKontoPctVal = ((currKonto - prevKonto) / prevKonto * 100);
+                        deltaKontoClass = deltaKontoPctVal >= 0 ? 'positive' : 'negative';
+                        deltaKonto = (deltaKontoPctVal >= 0 ? '+' : '') + deltaKontoPctVal.toFixed(2) + '%';
                     }
 
                     if (prevMes > 0) {
-                        const deltaMesPct = ((currMes - prevMes) / prevMes * 100);
-                        deltaMesClass = deltaMesPct >= 0 ? 'positive' : 'negative';
-                        deltaMes = (deltaMesPct >= 0 ? '+' : '') + deltaMesPct.toFixed(2) + '%';
+                        deltaMesPctVal = ((currMes - prevMes) / prevMes * 100);
+                        deltaMesClass = deltaMesPctVal >= 0 ? 'positive' : 'negative';
+                        deltaMes = (deltaMesPctVal >= 0 ? '+' : '') + deltaMesPctVal.toFixed(2) + '%';
+
+                        // Δ MES × Hebel
+                        deltaMesHebelPctVal = deltaMesPctVal * prevHebel;
+                        deltaMesHebelClass = deltaMesHebelPctVal >= 0 ? 'positive' : 'negative';
+                        deltaMesHebel = (deltaMesHebelPctVal >= 0 ? '+' : '') + deltaMesHebelPctVal.toFixed(2) + '%';
                     }
 
+                    // Differenz = Δ Konto - Δ MES × Hebel
                     if (prevKonto > 0 && prevMes > 0) {
-                        const deltaKontoPct = ((currKonto - prevKonto) / prevKonto * 100);
-                        const deltaMesPct = ((currMes - prevMes) / prevMes * 100);
-                        if (deltaMesPct !== 0) {
-                            const ratio = deltaKontoPct / deltaMesPct;
-                            verhaeltnisClass = ratio >= 1 ? 'positive' : 'negative';
-                            verhaeltnis = ratio.toFixed(2) + 'x';
-                        }
+                        differenzVal = deltaKontoPctVal - deltaMesHebelPctVal;
+                        differenzClass = differenzVal >= 0 ? 'positive' : 'negative';
+                        differenz = (differenzVal >= 0 ? '+' : '') + differenzVal.toFixed(4) + '%';
+
+                        // Differenz × Kontowert
+                        const diffKontoVal = (differenzVal / 100) * currKonto;
+                        diffKontoClass = diffKontoVal >= 0 ? 'positive' : 'negative';
+                        diffKonto = formatCurrency(diffKontoVal, 2);
                     }
                 }
 
@@ -536,12 +704,13 @@
                 let zeitslippageClass = '';
                 if (zeitslippageVal !== null && zeitslippageVal !== undefined) {
                     zeitslippageClass = zeitslippageVal >= 0 ? 'positive' : 'negative';
-                    zeitslippage = (zeitslippageVal >= 0 ? '+' : '') + '$' + zeitslippageVal.toFixed(4);
+                    zeitslippage = (zeitslippageVal >= 0 ? '+' : '') + '$' + Math.abs(zeitslippageVal).toFixed(4);
                 }
 
-                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td class="${verhaeltnisClass}">${verhaeltnis}</td><td>${hebel}</td><td>${kostenProKontrakt}</td><td>${slippageProKontrakt}</td><td ${totalStyle}>${totalProKontrakt}</td><td class="${zeitslippageClass}">${zeitslippage}</td></tr>`;
+                return `<tr><td>${h.datum}</td><td>${formatCurrency(h.konto_wert)}</td><td class="${deltaKontoClass}">${deltaKonto}</td><td>${mesPreis}</td><td class="${deltaMesClass}">${deltaMes}</td><td>${hebel}</td><td class="${deltaMesHebelClass}">${deltaMesHebel}</td><td class="${differenzClass}">${differenz}</td><td class="${diffKontoClass}">${diffKonto}</td><td>${kostenProKontrakt}</td><td>${slippageProKontrakt}</td><td ${totalStyle}>${totalProKontrakt}</td><td class="${zeitslippageClass}">${zeitslippage}</td></tr>`;
             }).join('');
         }
+
         function updateTransactionsTable(transactions) {
             const tbody = document.querySelector('#transactions-table tbody');
             if (!transactions || transactions.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center">Keine Transaktionen</td></tr>'; return; }
