@@ -199,8 +199,7 @@
             },
             zoom: {
                 wheel: {
-                    enabled: true,
-                    speed: 0.1
+                    enabled: false // Mausrad-Zoom deaktiviert - wird für horizontales Scrollen verwendet
                 },
                 pinch: { enabled: true },
                 drag: {
@@ -212,6 +211,59 @@
                 x: { minRange: 86400000 }
             }
         };
+
+        // Zoom-Optionen für accountPctChart mit onPan-Callback
+        const zoomOptionsPct = {
+            pan: {
+                enabled: true,
+                mode: 'x',
+                threshold: 5,
+                onPan: function() {
+                    recalculatePctFromVisibleRange();
+                }
+            },
+            zoom: {
+                wheel: {
+                    enabled: false
+                },
+                pinch: { enabled: true },
+                drag: {
+                    enabled: false
+                },
+                mode: 'x',
+                onZoom: function() {
+                    recalculatePctFromVisibleRange();
+                }
+            },
+            limits: {
+                x: { minRange: 86400000 }
+            }
+        };
+
+        // Funktion um Mausrad-Scrollen (horizontales Panning) zu einem Chart hinzuzufügen
+        function setupWheelPan(chart, onPanCallback) {
+            chart.canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const xScale = chart.scales.x;
+                if (!xScale) return;
+
+                // deltaY für vertikales Mausrad (positiv = nach unten = nach rechts scrollen)
+                // Normalisiere delta auf -1 bis 1 Bereich für sanftes Scrollen
+                const rawDelta = e.deltaY;
+                const normalizedDelta = Math.sign(rawDelta) * Math.min(Math.abs(rawDelta) / 100, 1);
+
+                // Pan in Pixeln - ca. 20 Pixel pro Scroll-Schritt
+                const pixelAmount = normalizedDelta * 20;
+
+                // Wende Pan an (negative Werte = nach links, positive = nach rechts)
+                chart.pan({ x: -pixelAmount }, undefined, 'default');
+
+                // Callback nach dem Pan aufrufen (für dynamische Neuberechnung)
+                if (onPanCallback) {
+                    onPanCallback();
+                }
+            }, { passive: false });
+        }
 
         const DATA_URL = './performance_analyse.json';
         const OVERVIEW_URL = '../overview.json';
@@ -231,6 +283,47 @@
         }
         let accountValueChart, accountPctChart, deltaCompareChart, costsChart, pnlChart;
         let fullHistory = [], fullPerfData = null, fullPnlChartData = [];
+        let sortedChartData = []; // Sortierte Daten für dynamische Neuberechnung
+
+        // Funktion um Performance-Daten basierend auf sichtbarem Bereich neu zu berechnen
+        function recalculatePctFromVisibleRange() {
+            if (!accountPctChart || sortedChartData.length === 0) return;
+
+            const xScale = accountPctChart.scales.x;
+            if (!xScale) return;
+
+            const visibleMin = xScale.min;
+
+            // Finde den ersten sichtbaren Datenpunkt
+            let startIdx = 0;
+            for (let i = 0; i < sortedChartData.length; i++) {
+                const dataTime = parseDate(sortedChartData[i].datum).getTime();
+                if (dataTime >= visibleMin) {
+                    startIdx = i;
+                    break;
+                }
+            }
+
+            const startEntry = sortedChartData[startIdx];
+            const startValue = startEntry.konto_wert;
+            const startMesPreis = startEntry.mes_preis || 0;
+
+            // Berechne neue Prozent-Werte relativ zum sichtbaren Start
+            const newStrategyData = sortedChartData.map(h => ({
+                x: parseDate(h.datum),
+                y: ((h.konto_wert - startValue) / startValue * 100)
+            }));
+
+            const newBuyHoldData = sortedChartData.map(h => ({
+                x: parseDate(h.datum),
+                y: startMesPreis > 0 ? (((h.mes_preis || 0) - startMesPreis) / startMesPreis * 100) : 0
+            }));
+
+            // Update Chart-Daten
+            accountPctChart.data.datasets[0].data = newStrategyData;
+            accountPctChart.data.datasets[1].data = newBuyHoldData;
+            accountPctChart.update('none');
+        }
 
         async function loadData() {
             try {
@@ -285,7 +378,9 @@
 
             if (filteredHistory.length === 0) return;
 
-            const startEntry = filteredHistory[0];
+            // Sortiere nach Datum um den zeitlich ersten Eintrag zu finden
+            const sortedFiltered = [...filteredHistory].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+            const startEntry = sortedFiltered[0];
             const startValue = startEntry.konto_wert;
             const startMesPreis = startEntry.mes_preis || 0;
             const startCosts = startEntry.kosten_kumulativ || 0, startSlippage = startEntry.slippage_kumulativ || 0;
@@ -365,6 +460,7 @@
 
             // Doppelklick zum Reset
             ctx.ondblclick = () => pnlChart?.resetZoom();
+            setupWheelPan(pnlChart);
         }
         function updateMetrics(perfData) {
             if (!perfData) return;
@@ -403,6 +499,7 @@
         function updateCharts(history) {
             if (!history || history.length === 0) return;
             const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+            sortedChartData = sorted; // Speichere für dynamische Neuberechnung
             const timeOpts = { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { color: '#f0f0f0' } };
 
             // Reset synced charts array
@@ -417,6 +514,7 @@
                 options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
             });
             document.getElementById('accountValueChart').ondblclick = () => accountValueChart?.resetZoom();
+            setupWheelPan(accountValueChart);
 
             // Chart 2: Konto-Wert % mit integriertem Hebel auf sekundärer Y-Achse
             const ctx2 = document.getElementById('accountPctChart').getContext('2d');
@@ -499,7 +597,7 @@
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { position: 'top' },
-                        zoom: zoomOptions,
+                        zoom: zoomOptionsPct,
                         tooltip: {
                             callbacks: {
                                 label: (context) => {
@@ -534,7 +632,13 @@
                     }
                 }
             });
-            document.getElementById('accountPctChart').ondblclick = () => accountPctChart?.resetZoom();
+            document.getElementById('accountPctChart').ondblclick = () => {
+                accountPctChart?.resetZoom();
+                // Nach Reset: Neuberechnung mit Original-Startpunkt
+                setTimeout(recalculatePctFromVisibleRange, 50);
+            };
+            setupWheelPan(accountPctChart, recalculatePctFromVisibleRange);
+
             syncedCharts.push(accountPctChart);
             setupSyncedHover(accountPctChart);
 
@@ -641,6 +745,7 @@
                 }
             });
             document.getElementById('deltaCompareChart').ondblclick = () => deltaCompareChart?.resetZoom();
+            setupWheelPan(deltaCompareChart);
             syncedCharts.push(deltaCompareChart);
             setupSyncedHover(deltaCompareChart);
 
@@ -657,6 +762,7 @@
                 options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + v.toFixed(2) } } } }
             });
             document.getElementById('costsChart').ondblclick = () => costsChart?.resetZoom();
+            setupWheelPan(costsChart);
         }
 
         function updateTable(history) {
