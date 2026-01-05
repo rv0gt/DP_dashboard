@@ -4003,6 +4003,41 @@
             "weekday": 2,
             "year": 2025,
             "symbol": "CG"
+        },
+        {
+            "date": "2026-01-05",
+            "time": "01:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "YM"
+        },
+        {
+            "date": "2026-01-05",
+            "time": "01:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2026-01-05",
+            "time": "01:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "ES"
+        },
+        {
+            "date": "2026-01-05",
+            "time": "01:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "MES"
+        },
+        {
+            "date": "2026-01-05",
+            "time": "01:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "EURUSD"
         }
     ],
     "config": {
@@ -4017,6 +4052,7 @@
             "BX",
             "CG",
             "EMD",
+            "EURUSD",
             "HGX",
             "JPM",
             "KKR",
@@ -4046,26 +4082,28 @@
             "BX": "#3498db",
             "CG": "#16a085",
             "EMD": "#c0392b",
-            "HGX": "#0066cc",
-            "JPM": "#e74c3c",
-            "KKR": "#2ecc71",
-            "MSFT": "#f39c12",
-            "NDX": "#9b59b6",
-            "NVDA": "#1abc9c",
-            "OEX": "#e67e22",
-            "QQQ": "#3498db",
-            "RUA": "#16a085",
-            "RUI": "#c0392b",
-            "RUT": "#0066cc",
-            "SOX": "#e74c3c",
-            "TYX": "#2ecc71",
-            "VIX": "#f39c12",
-            "VXN": "#9b59b6",
-            "XOM": "#1abc9c",
-            "YM": "#e67e22"
+            "EURUSD": "#0066cc",
+            "HGX": "#e74c3c",
+            "JPM": "#2ecc71",
+            "KKR": "#f39c12",
+            "MSFT": "#9b59b6",
+            "NDX": "#1abc9c",
+            "NVDA": "#e67e22",
+            "OEX": "#3498db",
+            "QQQ": "#16a085",
+            "RUA": "#c0392b",
+            "RUI": "#0066cc",
+            "RUT": "#e74c3c",
+            "SOX": "#2ecc71",
+            "TYX": "#f39c12",
+            "VIX": "#9b59b6",
+            "VXN": "#1abc9c",
+            "XOM": "#e67e22",
+            "YM": "#3498db"
         },
         "years": [
-            2025
+            2025,
+            2026
         ],
         "priority": [
             "ES",
@@ -4074,10 +4112,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2025-12-31"
+        "max_date": "2026-01-05"
     },
     "meta": {
-        "generated_at": "2026-01-05 07:10",
+        "generated_at": "2026-01-05 08:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
