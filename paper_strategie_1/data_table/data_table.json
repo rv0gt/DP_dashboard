@@ -4,10 +4,10 @@
             {
                 "sync_chi": "2026-01-06T15:59:59",
                 "sync_ch": "2026-01-06T22:59:59",
-                "mes": 6953.75,
-                "mes_sync_chi": "2026-01-05T22:49:00",
-                "es": 6953.75,
-                "es_sync_chi": "2026-01-05T22:49:00",
+                "mes": 6953.0,
+                "mes_sync_chi": "2026-01-05T23:49:00",
+                "es": 6953.25,
+                "es_sync_chi": "2026-01-05T23:49:00",
                 "spx": null,
                 "spx_sync_chi": null,
                 "vix": null,
@@ -20,8 +20,8 @@
                 "BAMLH0A0HYM2_sync_chi": null,
                 "BAMLC0A3CAEY": null,
                 "BAMLC0A3CAEY_sync_chi": null,
-                "pc_ratio_volume": null,
-                "pc_ratio_volume_sync_chi": null,
+                "pc_ratio_volume": 0.885941,
+                "pc_ratio_volume_sync_chi": "2026-01-06T00:01:00",
                 "debit_balances_margin_accounts": null,
                 "debit_balances_margin_accounts_sync_chi": null
             },
@@ -1203,5 +1203,5 @@
             }
         ]
     },
-    "timestamp": "2026-01-06T06:10:20.789250"
+    "timestamp": "2026-01-06T07:10:11.311715"
 }
