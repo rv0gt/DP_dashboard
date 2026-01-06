@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 516,
+                "date_chi": "2026-01-06T10:10:03",
+                "date_ch": "2026-01-06T17:10:03",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 1.6322 -> 1.6322",
+                "leverage_old": 1.6322,
+                "leverage_new": 1.6322,
+                "leverage_change": 0.0,
+                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+                "daily_trades_count": 1
+            },
+            {
                 "id": 515,
                 "date_chi": "2026-01-06T09:10:02",
                 "date_ch": "2026-01-06T16:10:02",
@@ -6698,5 +6711,5 @@
             }
         ]
     },
-    "timestamp": "2026-01-06T16:10:11.681797"
+    "timestamp": "2026-01-06T17:10:12.073096"
 }
