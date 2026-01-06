@@ -1,17 +1,27 @@
 {
-    "timestamp": "2026-01-06T23:10:09.077373",
+    "timestamp": "2026-01-07T00:10:29.591316",
     "margin_data": {
         "current": {
-            "margin_benoetigt": 203082.37,
-            "maintenance_margin": 184620.34,
-            "margin_verfuegbar": 905502.02,
-            "excess_liquidity": 923964.06,
-            "margin_auslastung": 18.2646,
-            "konto_wert_nlv": 1111891.51,
-            "date_chi": "2026-01-06 01:10:22",
-            "aktueller_hebel": 3.2536
+            "margin_benoetigt": 129004.77,
+            "maintenance_margin": 117277.07,
+            "margin_verfuegbar": 1274760.15,
+            "excess_liquidity": 1286487.86,
+            "margin_auslastung": 9.1603,
+            "konto_wert_nlv": 1408296.78,
+            "date_chi": "2026-01-06 17:10:23",
+            "aktueller_hebel": 1.2903
         },
         "history": [
+            {
+                "datum": "2026-01-06 17:10:23",
+                "margin_benoetigt": 129004.77,
+                "maintenance_margin": 117277.07,
+                "margin_verfuegbar": 1274760.15,
+                "excess_liquidity": 1286487.86,
+                "margin_auslastung": 9.1603,
+                "konto_wert": 1408296.78,
+                "aktueller_hebel": 1.2903
+            },
             {
                 "datum": "2026-01-06 01:10:22",
                 "margin_benoetigt": 203082.37,
