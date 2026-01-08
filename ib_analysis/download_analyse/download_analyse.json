@@ -4255,6 +4255,69 @@
             "weekday": 2,
             "year": 2026,
             "symbol": "MES"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "SPX"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "NDX"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "OEX"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "RUI"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "RUA"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "RUT"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "VXN"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "HGX"
+        },
+        {
+            "date": "2026-01-08",
+            "time": "08:30",
+            "weekday": 3,
+            "year": 2026,
+            "symbol": "SOX"
         }
     ],
     "config": {
@@ -4329,10 +4392,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2026-01-07"
+        "max_date": "2026-01-08"
     },
     "meta": {
-        "generated_at": "2026-01-08 15:10",
+        "generated_at": "2026-01-08 16:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
