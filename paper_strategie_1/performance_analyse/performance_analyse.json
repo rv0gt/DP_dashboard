@@ -1,10 +1,10 @@
 {
-    "timestamp": "2026-01-09T14:10:11.865526",
+    "timestamp": "2026-01-09T15:10:11.539147",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1398872.1,
+        "current_value": 1405332.34,
         "current_value_from_ib": true,
-        "total_return_pct": 24.67,
+        "total_return_pct": 25.25,
         "total_costs": 524.52,
         "total_slippage": 8369.37,
         "total_all_costs": 8893.89,
@@ -896,9 +896,9 @@
             },
             {
                 "datum": "2026-01-09 00:10:23",
-                "konto_wert": 1398872.1,
-                "konto_wert_pct": 24.67,
-                "buy_hold_pct": 1.67,
+                "konto_wert": 1405332.34,
+                "konto_wert_pct": 25.25,
+                "buy_hold_pct": 1.89,
                 "mes_preis": 6963.5,
                 "neuer_hebel": 2.2712,
                 "kosten_kumulativ": 524.52,
