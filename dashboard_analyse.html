@@ -16,43 +16,184 @@
         
         .hero {
             background: #0a2540;
-            background: linear-gradient(180deg, #0a2540 0%, #0f3554 100%);
-            padding: 80px 30px;
+            background: linear-gradient(135deg, #0a2540 0%, #0d3a5c 50%, #134e7a 100%);
+            padding: 0;
             text-align: center;
-            min-height: 40vh;
+            min-height: 45vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
         }
-        
+
         .hero::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
-            background-size: 40px 40px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 102, 204, 0.3), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0, 163, 255, 0.15), transparent),
+                url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: auto, auto, 40px 40px;
+            animation: subtleFloat 20s ease-in-out infinite;
         }
-        
+
+        @keyframes subtleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, rgba(10, 37, 64, 0.8), transparent);
+            pointer-events: none;
+        }
+
         .hero-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 30px 60px;
             position: relative;
             z-index: 1;
-            max-width: 800px;
         }
-        
+
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         .hero h1 {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 300;
             color: #fff;
-            margin-bottom: 15px;
+            margin-bottom: 24px;
+            line-height: 1.1;
             letter-spacing: -0.5px;
         }
-        
+
         .hero p {
-            font-size: 20px;
+            font-size: 22px;
             color: rgba(255, 255, 255, 0.8);
             font-weight: 300;
+            line-height: 1.5;
+        }
+
+        /* Server Status Section - direkt unter Hero */
+        .server-status-section {
+            background: linear-gradient(135deg, #0d3a5c 0%, #134e7a 100%);
+            padding: 40px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .server-status-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .server-status-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .server-status-header h3 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .pulse-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        .pulse-indicator.offline {
+            background: #f87171;
+            box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        .server-status {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .status-tile {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 14px 10px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .status-tile:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .status-tile .label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .status-tile .value {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-tile .value.online {
+            color: #4ade80;
+        }
+
+        .status-tile .value.offline {
+            color: #f87171;
+        }
+
+        .status-tile .value.warning {
+            color: #fbbf24;
+        }
+
+        .status-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
         }
         
         .strategies-section {
@@ -77,24 +218,100 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
+            perspective: 1200px;
         }
         
         .strategy-card {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
+            background:
+                linear-gradient(165deg,
+                    rgba(255, 255, 255, 1) 0%,
+                    rgba(250, 252, 255, 1) 40%,
+                    rgba(245, 249, 255, 1) 100%
+                );
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 28px;
             padding: 40px 30px;
             text-align: center;
-            transition: all 0.3s ease;
             cursor: pointer;
             text-decoration: none;
             display: block;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(0, 102, 204, 0.03),
+                0 1px 1px rgba(0, 0, 0, 0.01),
+                0 2px 4px rgba(0, 0, 0, 0.02),
+                0 8px 16px rgba(0, 0, 0, 0.03),
+                0 24px 48px rgba(0, 102, 204, 0.04),
+                0 48px 96px rgba(0, 102, 204, 0.02);
+            transition:
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.5s ease;
         }
-        
+
+        /* Animierter Top-Akzent */
+        .strategy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #0066cc 15%,
+                #00a8ff 35%,
+                #00d4ff 50%,
+                #00a8ff 65%,
+                #0066cc 85%,
+                transparent 100%
+            );
+            background-size: 300% 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+        }
+
+        /* Glasmorphismus-Overlay */
+        .strategy-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(
+                    125deg,
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(255, 255, 255, 0.2) 25%,
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(0, 102, 204, 0.02) 75%,
+                    rgba(0, 168, 255, 0.04) 100%
+                );
+            pointer-events: none;
+            border-radius: 28px;
+            opacity: 0;
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         .strategy-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-            border-color: #0066cc;
+            transform: translateY(-20px) rotateX(3deg) scale(1.01);
+            box-shadow:
+                0 0 0 1px rgba(0, 102, 204, 0.08),
+                0 2px 4px rgba(0, 102, 204, 0.04),
+                0 8px 16px rgba(0, 102, 204, 0.06),
+                0 16px 32px rgba(0, 102, 204, 0.08),
+                0 32px 64px rgba(0, 102, 204, 0.1),
+                0 64px 128px rgba(0, 102, 204, 0.06);
+            border-color: rgba(0, 168, 255, 0.2);
+        }
+
+        .strategy-card:hover::before {
+            opacity: 1;
+        }
+
+        .strategy-card:hover::after {
+            opacity: 1;
         }
         
         .strategy-icon {
@@ -146,107 +363,6 @@
             color: #856404;
         }
         
-        /* Verbesserter Server Status Bereich */
-        .server-status-wrapper {
-            background: linear-gradient(135deg, #0a2540 0%, #1a4a6e 100%);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 50px;
-            box-shadow: 0 8px 32px rgba(10, 37, 64, 0.3);
-        }
-        
-        .server-status-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .server-status-header h3 {
-            color: #fff;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-        
-        .pulse-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #4ade80;
-            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
-            animation: pulse 2s infinite;
-        }
-        
-        .pulse-indicator.offline {
-            background: #f87171;
-            box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7);
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
-        
-        .server-status {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }
-        
-        .status-tile {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-        
-        .status-tile:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .status-tile .label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-        
-        .status-tile .value {
-            font-size: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .status-tile .value.online {
-            color: #4ade80;
-        }
-        
-        .status-tile .value.offline {
-            color: #f87171;
-        }
-        
-        .status-tile .value.warning {
-            color: #fbbf24;
-        }
-        
-        .status-icon {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
         .section-divider {
             height: 1px;
             background-color: #e9ecef;
@@ -270,26 +386,30 @@
 <body>
     <section class="hero">
         <div class="hero-content">
-            <h1>Trading Dashboard</h1>
-            <p>Übersicht aller Handelsstrategien & Systeme</p>
+            <div class="hero-container">
+                <h1>Trading Dashboard</h1>
+                <p>Übersicht aller Handelsstrategien & Systeme</p>
+            </div>
         </div>
     </section>
-    
-    <section class="strategies-section">
-        <div class="container">
-            <div class="server-status-wrapper">
-                <div class="server-status-header">
-                    <div class="pulse-indicator" id="pulse-indicator"></div>
-                    <h3>Server Status</h3>
-                </div>
-                <div class="server-status" id="server-status">
-                    <div class="status-tile">
-                        <div class="label">Gateway</div>
-                        <div class="value offline"><span class="status-icon"></span> Laden...</div>
-                    </div>
+
+    <section class="server-status-section">
+        <div class="server-status-container">
+            <div class="server-status-header">
+                <div class="pulse-indicator" id="pulse-indicator"></div>
+                <h3>Server Status</h3>
+            </div>
+            <div class="server-status" id="server-status">
+                <div class="status-tile">
+                    <div class="label">Gateway</div>
+                    <div class="value offline"><span class="status-icon"></span> Laden...</div>
                 </div>
             </div>
-            
+        </div>
+    </section>
+
+    <section class="strategies-section">
+        <div class="container">
             <h2 class="section-title">Strategien</h2>
             
             <div class="strategies-grid">
