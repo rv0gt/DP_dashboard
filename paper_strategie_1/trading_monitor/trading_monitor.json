@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 667,
+                "date_chi": "2026-01-12T17:10:23",
+                "date_ch": "2026-01-13T00:10:23",
+                "transaction_called": 1,
+                "reason_code": "ZEITFENSTER_17_18",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: 1.7002 -> 1.4808",
+                "leverage_old": 1.7002,
+                "leverage_new": 1.4808,
+                "leverage_change": 0.2194,
+                "changed_columns": null,
+                "daily_trades_count": 3
+            },
+            {
                 "id": 666,
                 "date_chi": "2026-01-12T16:10:03",
                 "date_ch": "2026-01-12T23:10:03",
@@ -8661,5 +8674,5 @@
             }
         ]
     },
-    "timestamp": "2026-01-12T23:10:12.348446"
+    "timestamp": "2026-01-13T00:10:30.705580"
 }
