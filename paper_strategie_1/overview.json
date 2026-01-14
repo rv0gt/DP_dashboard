@@ -1,17 +1,17 @@
 {
-    "timestamp": "2026-01-14T06:10:06.863743",
+    "timestamp": "2026-01-14T07:10:27.702576",
     "overview": {
-        "konto_wert_nlv": 1415988.97,
+        "konto_wert_nlv": 1413782.11,
         "konto_wert_from_ib": true,
-        "neuer_hebel": 1.703,
-        "mes_preis": 7000.75,
-        "mes_preis_from_ib": false,
-        "avg_position_cost": 6970.04066667,
+        "neuer_hebel": 1.8287,
+        "mes_preis": 6986.0,
+        "mes_preis_from_ib": true,
+        "avg_position_cost": 6971.0935945977035,
         "avg_cost_from_ib": true,
-        "unrealized_pnl": 11146.02,
-        "unrealized_pnl_from_ib": false,
+        "unrealized_pnl": 5515.36999884971,
+        "unrealized_pnl_from_ib": true,
         "realized_pnl_gross_total": 34856.55,
-        "realized_pnl_net_total": 34185.85,
+        "realized_pnl_net_total": 34179.62,
         "realized_pnl_start_date": "2025-12-26",
         "kontraktname": "MES 20260320",
         "offene_orders_anzahl": 0
@@ -112,9 +112,42 @@
             "cumulative_gross": 34856.55,
             "cumulative_net": 34185.85,
             "trade_count": 1
+        },
+        {
+            "date": "2026-01-14",
+            "daily_gross": 0.0,
+            "daily_net": -6.23,
+            "cumulative_gross": 34856.55,
+            "cumulative_net": 34179.619999999995,
+            "trade_count": 1
         }
     ],
     "recent_transactions": [
+        {
+            "date_chi": "2026-01-14T00:10:23",
+            "aktion": "BUY",
+            "delta_zu_handeln": 5,
+            "ausgefuehrte_menge": 5,
+            "durchschnittspreis": 6985.5,
+            "kosten_transaktion": 3.1,
+            "slippage_kosten": 3.125,
+            "status": "Filled",
+            "order_typ": "MARKET",
+            "kontraktname": "MES 20260320",
+            "rollover_stattgefunden": 0,
+            "rollover_aktion": null,
+            "unrealized_pnl": 5700.37,
+            "realized_pnl_gross": null,
+            "realized_pnl_net": -6.23,
+            "avg_position_cost_before": 6970.04,
+            "avg_position_cost": 6971.09,
+            "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
+            "leverage_new": 1.8285,
+            "changed_columns": "pc_ratio_volume",
+            "is_rollover": 0,
+            "margin_auslastung": 12.0111,
+            "kosten_angepasst": 1.2449999999999999
+        },
         {
             "date_chi": "2026-01-13T00:10:24",
             "aktion": "BUY",
@@ -589,31 +622,6 @@
             "is_rollover": 0,
             "margin_auslastung": 16.82415,
             "kosten_angepasst": 0.0
-        },
-        {
-            "date_chi": "2025-12-31T05:10:10",
-            "aktion": "BUY",
-            "delta_zu_handeln": 56,
-            "ausgefuehrte_menge": 56,
-            "durchschnittspreis": 6928.97,
-            "kosten_transaktion": 34.72,
-            "slippage_kosten": 35.0,
-            "status": "Filled",
-            "order_typ": "MARKET",
-            "kontraktname": "MES 20260320",
-            "rollover_stattgefunden": 0,
-            "rollover_aktion": null,
-            "unrealized_pnl": -9018.77,
-            "realized_pnl_gross": null,
-            "realized_pnl_net": -69.72,
-            "avg_position_cost_before": 6953.41,
-            "avg_position_cost": 6942.16,
-            "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "leverage_new": 3.8287,
-            "changed_columns": "pc_ratio_volume",
-            "is_rollover": 0,
-            "margin_auslastung": 16.82415,
-            "kosten_angepasst": 1.2449999999999999
         }
     ]
 }
