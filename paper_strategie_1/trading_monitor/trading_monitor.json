@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 722,
+                "date_chi": "2026-01-15T00:10:24",
+                "date_ch": "2026-01-15T07:10:24",
+                "transaction_called": 1,
+                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
+                "reason_detail": "Hebel: 3.4579 -> 3.1102",
+                "leverage_old": 3.4579,
+                "leverage_new": 3.1102,
+                "leverage_change": 0.3477,
+                "changed_columns": "pc_ratio_volume",
+                "daily_trades_count": 1
+            },
+            {
                 "id": 721,
                 "date_chi": "2026-01-14T23:10:03",
                 "date_ch": "2026-01-15T06:10:03",
@@ -9376,5 +9389,5 @@
             }
         ]
     },
-    "timestamp": "2026-01-15T06:10:21.036564"
+    "timestamp": "2026-01-15T07:10:32.978457"
 }
