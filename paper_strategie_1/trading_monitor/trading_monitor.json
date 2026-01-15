@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 730,
+                "date_chi": "2026-01-15T08:10:03",
+                "date_ch": "2026-01-15T15:10:03",
+                "transaction_called": 0,
+                "reason_code": "KEINE_NEUEN_DATEN",
+                "reason_detail": "KEINE_NEUEN_DATEN",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 1
+            },
+            {
                 "id": 729,
                 "date_chi": "2026-01-15T07:10:03",
                 "date_ch": "2026-01-15T14:10:03",
@@ -9438,47 +9451,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 1
-            },
-            {
-                "id": 3,
-                "date_chi": "2025-12-16T15:10:03",
-                "date_ch": "2025-12-16T22:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 1
-            },
-            {
-                "id": 2,
-                "date_chi": "2025-12-16T14:51:42",
-                "date_ch": "2025-12-16T21:51:42",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 1
-            },
-            {
-                "id": 1,
-                "date_chi": "2025-12-16T14:50:19",
-                "date_ch": "2025-12-16T21:50:19",
-                "transaction_called": 1,
-                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-                "reason_detail": "Hebel: None -> 0.8829",
-                "leverage_old": null,
-                "leverage_new": 0.8829,
-                "leverage_change": 0.8829,
-                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-                "daily_trades_count": 1
             }
         ]
     },
-    "timestamp": "2026-01-15T14:10:11.767585"
+    "timestamp": "2026-01-15T15:10:12.308587"
 }
