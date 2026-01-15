@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 739,
+                "date_chi": "2026-01-15T17:10:14",
+                "date_ch": "2026-01-16T00:10:14",
+                "transaction_called": 1,
+                "reason_code": "ZEITFENSTER_17_18",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: 1.4808 -> 1.4808",
+                "leverage_old": 1.4808,
+                "leverage_new": 1.4808,
+                "leverage_change": 0.0,
+                "changed_columns": null,
+                "daily_trades_count": 3
+            },
+            {
                 "id": 738,
                 "date_chi": "2026-01-15T16:10:03",
                 "date_ch": "2026-01-15T23:10:03",
@@ -9425,34 +9438,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 0
-            },
-            {
-                "id": 13,
-                "date_chi": "2025-12-17T00:10:03",
-                "date_ch": "2025-12-17T07:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 0
-            },
-            {
-                "id": 12,
-                "date_chi": "2025-12-16T23:54:04",
-                "date_ch": "2025-12-17T06:54:04",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 0
             }
         ]
     },
-    "timestamp": "2026-01-15T23:10:11.854110"
+    "timestamp": "2026-01-16T00:10:22.931822"
 }

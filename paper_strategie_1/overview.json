@@ -1,14 +1,14 @@
 {
-    "timestamp": "2026-01-15T23:10:06.906873",
+    "timestamp": "2026-01-16T00:10:18.216572",
     "overview": {
-        "konto_wert_nlv": 1428901.27,
+        "konto_wert_nlv": 1429221.46,
         "konto_wert_from_ib": true,
-        "neuer_hebel": 1.4878,
-        "mes_preis": 6983.5,
+        "neuer_hebel": 1.4907,
+        "mes_preis": 6984.75,
         "mes_preis_from_ib": true,
         "avg_position_cost": 6956.428012349999,
         "avg_cost_from_ib": true,
-        "unrealized_pnl": 8256.956233250203,
+        "unrealized_pnl": 8638.206233250203,
         "unrealized_pnl_from_ib": true,
         "realized_pnl_gross_total": 52460.41,
         "realized_pnl_net_total": 51520.67,
@@ -153,7 +153,7 @@
             "leverage_new": 1.4808,
             "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
             "is_rollover": 0,
-            "margin_auslastung": 19.74905,
+            "margin_auslastung": 16.6856,
             "kosten_angepasst": 1.2449999999999999
         },
         {
@@ -178,7 +178,7 @@
             "leverage_new": 3.1102,
             "changed_columns": "pc_ratio_volume",
             "is_rollover": 0,
-            "margin_auslastung": 19.74905,
+            "margin_auslastung": 16.6856,
             "kosten_angepasst": 1.2449999999999999
         },
         {
