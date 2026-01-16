@@ -369,6 +369,44 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 30px;
+            transition: max-width 0.3s ease;
+        }
+
+        .container.fullwidth {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        /* Fullwidth Button */
+        .fullwidth-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .control-btn:hover {
+            background: #0052a3;
+            transform: translateY(-1px);
+        }
+
+        .control-btn.active {
+            background: #10b981;
         }
         
         .chart-section {
@@ -827,8 +865,16 @@
     </section>
     
     <section class="transactions-section">
-        <div class="container">
+        <div class="container" id="transactions-container">
             <h2 class="section-title">Letzte Transaktionen</h2>
+            <div class="fullwidth-controls">
+                <button class="control-btn" id="fullwidth-btn" onclick="toggleFullwidth()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                    Vollbild
+                </button>
+            </div>
             <div class="table-container">
                 <table id="transactions">
                     <thead>
@@ -867,7 +913,35 @@
         const SERVER_STATUS_URL = '../dashboard_analyse.json';
 
         let cachedOverviewData = null;
-        
+        let isFullwidth = false;
+
+        // Fullwidth Toggle
+        function toggleFullwidth() {
+            const container = document.getElementById('transactions-container');
+            const btn = document.getElementById('fullwidth-btn');
+            isFullwidth = !isFullwidth;
+
+            if (isFullwidth) {
+                container.classList.add('fullwidth');
+                btn.classList.add('active');
+                btn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 14h6m0 0v6m0-6L3 21M20 10h-6m0 0V4m0 6l7-7"/>
+                    </svg>
+                    Normal
+                `;
+            } else {
+                container.classList.remove('fullwidth');
+                btn.classList.remove('active');
+                btn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                    Vollbild
+                `;
+            }
+        }
+
         // Helper functions
         async function loadJSONData(url) {
             const response = await fetch(url);

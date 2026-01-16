@@ -174,11 +174,16 @@
         th.sum-header { background: #fef3c7; }
         td.sum-cell { background: rgba(254, 243, 199, 0.3); font-weight: 600; }
 
+        /* Differenz-Spalte */
+        th.diff-header { background: #fce7f3; }
+        td.diff-cell { background: rgba(252, 231, 243, 0.3); }
+
         /* Farbklassen */
         .positive { color: #10b981; font-weight: 600; }
         .negative { color: #ef4444; font-weight: 600; }
         .neutral { color: #6b7280; }
         .highlight { background: rgba(59, 130, 246, 0.1); }
+        .error { color: #7f1d1d; font-weight: 700; } /* tiefrot für große Differenzen */
 
         /* Aktion Badge */
         .aktion-badge {
@@ -189,10 +194,9 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-        .aktion-erhoeht { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-        .aktion-reduziert { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .aktion-unveraendert { background: rgba(107, 114, 128, 0.15); color: #6b7280; }
-        .aktion-initial { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .aktion-buy { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .aktion-sell { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .aktion-other { background: rgba(107, 114, 128, 0.15); color: #6b7280; }
 
         /* FOOTER */
         .footer { background: #333; color: #fff; padding: 25px 30px; text-align: center; }
@@ -248,6 +252,8 @@
                                 <th class="text-right">Delta</th>
                                 <th class="text-right">Hebel Alt</th>
                                 <th class="text-right">Hebel Neu</th>
+                                <th class="text-right sum-header">Hebel (berechnet)</th>
+                                <th class="text-right diff-header">Differenz</th>
                                 <th>Reason Code</th>
                                 <th>Changed Columns</th>
                                 <th class="text-right ind-header">DD Wert</th>
@@ -268,11 +274,10 @@
                                 <th class="text-right ind-header">MA10 Beitrag</th>
                                 <th class="text-right ind-header">MA50 Wert</th>
                                 <th class="text-right ind-header">MA50 Beitrag</th>
-                                <th class="text-right sum-header">Hebel (berechnet)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td colspan="26" style="text-align:center; padding: 30px;">Lade Daten...</td></tr>
+                            <tr><td colspan="27" style="text-align:center; padding: 30px;">Lade Daten...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -330,20 +335,18 @@
 
         function getAktionBadge(aktion) {
             if (!aktion) return '—';
-            const lower = aktion.toLowerCase();
-            let cls = 'aktion-unveraendert';
-            if (lower.includes('erhöht') || lower.includes('erhoht')) cls = 'aktion-erhoeht';
-            else if (lower.includes('reduziert')) cls = 'aktion-reduziert';
-            else if (lower.includes('initial')) cls = 'aktion-initial';
-            return `<span class="aktion-badge ${cls}">${aktion}</span>`;
+            const upper = aktion.toUpperCase();
+            let cls = 'aktion-other';
+            if (upper === 'BUY') cls = 'aktion-buy';
+            else if (upper === 'SELL') cls = 'aktion-sell';
+            return `<span class="aktion-badge ${cls}">${upper}</span>`;
         }
 
         function formatDelta(val) {
             if (val === null || val === undefined) return '—';
             const num = parseFloat(val);
             const cls = num > 0 ? 'positive' : (num < 0 ? 'negative' : 'neutral');
-            const prefix = num > 0 ? '+' : '';
-            return `<span class="${cls}">${prefix}${formatNumber(num, 4)}</span>`;
+            return `<span class="${cls}">${num}</span>`;
         }
 
         function formatBeitrag(val) {
@@ -374,6 +377,21 @@
             }
 
             return sum * skalierung;
+        }
+
+        function formatDifferenz(hebelNeu, hebelBerechnet) {
+            if (hebelNeu === null || hebelNeu === undefined) return '—';
+            const diff = parseFloat(hebelNeu) - hebelBerechnet;
+            const absDiff = Math.abs(diff);
+
+            // Nur anzeigen wenn Differenz > 0.001, sonst nur "-"
+            if (absDiff <= 0.001) {
+                return '—';
+            }
+
+            // Tiefrot wenn Differenz > 0.001
+            const prefix = diff > 0 ? '+' : '';
+            return `<span class="error">${prefix}${formatNumber(diff, 4)}</span>`;
         }
 
         // --- Fullwidth Toggle ---
@@ -419,7 +437,7 @@
                 const tbody = document.querySelector('#hebel-table tbody');
                 if (tbody) {
                     tbody.innerHTML =
-                        `<tr><td colspan="26" style="color:red; text-align:center; padding:20px;">
+                        `<tr><td colspan="27" style="color:red; text-align:center; padding:20px;">
                             Fehler beim Laden der Datei: ${DATA_URL}<br>
                             ${error.message}
                         </td></tr>`;
@@ -432,7 +450,7 @@
             const skalierung = parseFloat(document.getElementById('skalierung-input').value) || 0.30;
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="26" style="text-align:center; padding:20px;">Keine Daten verfügbar</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="27" style="text-align:center; padding:20px;">Keine Daten verfügbar</td></tr>';
                 return;
             }
 
@@ -444,9 +462,11 @@
                     <tr>
                         <td>${formatDateTime(row.timestamp_chi)}</td>
                         <td>${getAktionBadge(row.aktion)}</td>
-                        <td class="text-right">${formatDelta(row.hebel_aenderung)}</td>
+                        <td class="text-right">${formatDelta(row.delta)}</td>
                         <td class="text-right">${row.alter_hebel !== null ? formatNumber(row.alter_hebel, 4) + 'x' : '—'}</td>
                         <td class="text-right"><strong>${formatNumber(row.neuer_hebel, 4)}x</strong></td>
+                        <td class="text-right sum-cell"><span class="${hebelCls}">${formatNumber(hebelBerechnet, 4)}x</span></td>
+                        <td class="text-right diff-cell">${formatDifferenz(row.neuer_hebel, hebelBerechnet)}</td>
                         <td>${row.reason_code || '—'}</td>
                         <td>${row.changed_columns || '—'}</td>
                         <td class="text-right ind-cell">${formatNumber(row.dd_wert, 4)}</td>
@@ -467,7 +487,6 @@
                         <td class="text-right ind-cell">${formatBeitrag(row.ma10_beitrag)}</td>
                         <td class="text-right ind-cell">${row.ma50_wert !== null ? row.ma50_wert : '—'}</td>
                         <td class="text-right ind-cell">${formatBeitrag(row.ma50_beitrag)}</td>
-                        <td class="text-right sum-cell"><span class="${hebelCls}">${formatNumber(hebelBerechnet, 4)}x</span></td>
                     </tr>
                 `;
             }).join('');

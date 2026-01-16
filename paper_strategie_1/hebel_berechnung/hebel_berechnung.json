@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-16T17:49:38.601920",
+    "timestamp": "2026-01-16T18:19:56.510502",
     "hebel_history": [
         {
             "timestamp_chi": "2026-01-16T10:10:04",
@@ -26,9 +26,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "BUY",
+            "delta": 9
         },
         {
             "timestamp_chi": "2026-01-16T00:10:04",
@@ -55,9 +56,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 66
         },
         {
             "timestamp_chi": "2026-01-15T10:10:03",
@@ -84,9 +86,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "SELL",
+            "delta": -65
         },
         {
             "timestamp_chi": "2026-01-15T00:10:04",
@@ -113,9 +116,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "SELL",
+            "delta": -14
         },
         {
             "timestamp_chi": "2026-01-14T17:10:04",
@@ -142,9 +146,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -22
         },
         {
             "timestamp_chi": "2026-01-14T13:10:04",
@@ -171,9 +176,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "debit_balances_margin_accounts"
+            "changed_columns": "debit_balances_margin_accounts",
+            "aktion": "BUY",
+            "delta": 88
         },
         {
             "timestamp_chi": "2026-01-14T00:10:04",
@@ -200,9 +206,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 5
         },
         {
             "timestamp_chi": "2026-01-13T00:10:04",
@@ -229,9 +236,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 9
         },
         {
             "timestamp_chi": "2026-01-12T17:10:03",
@@ -258,9 +266,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -9
         },
         {
             "timestamp_chi": "2026-01-12T10:10:04",
@@ -287,9 +296,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "SELL",
+            "delta": -23
         },
         {
             "timestamp_chi": "2026-01-12T00:10:05",
@@ -316,9 +326,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 32
         },
         {
             "timestamp_chi": "2026-01-09T10:10:03",
@@ -345,9 +356,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "SELL",
+            "delta": -31
         },
         {
             "timestamp_chi": "2026-01-09T00:10:03",
@@ -374,9 +386,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 32
         },
         {
             "timestamp_chi": "2026-01-08T17:10:03",
@@ -403,9 +416,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -14
         },
         {
             "timestamp_chi": "2026-01-08T10:10:04",
@@ -432,9 +446,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "SELL",
+            "delta": -23
         },
         {
             "timestamp_chi": "2026-01-08T00:10:04",
@@ -461,9 +476,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 28
         },
         {
             "timestamp_chi": "2026-01-07T17:10:04",
@@ -490,9 +506,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 8
         },
         {
             "timestamp_chi": "2026-01-07T09:10:03",
@@ -519,9 +536,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "SELL",
+            "delta": -15
         },
         {
             "timestamp_chi": "2026-01-07T00:10:03",
@@ -548,9 +566,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 9
         },
         {
             "timestamp_chi": "2026-01-06T01:10:03",
@@ -577,9 +596,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "SELL",
+            "delta": -52
         },
         {
             "timestamp_chi": "2026-01-03T08:44:21",
@@ -606,9 +626,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2026-01-02T11:10:05",
@@ -635,9 +656,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "BUY",
+            "delta": 16
         },
         {
             "timestamp_chi": "2026-01-02T00:10:03",
@@ -664,9 +686,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "pc_ratio_volume"
+            "changed_columns": "pc_ratio_volume",
+            "aktion": "SELL",
+            "delta": -17
         },
         {
             "timestamp_chi": "2025-12-31T02:34:46",
@@ -693,9 +716,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-30T17:10:04",
@@ -722,9 +746,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 14
         },
         {
             "timestamp_chi": "2025-12-30T11:10:04",
@@ -751,9 +776,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": "SELL",
+            "delta": -14
         },
         {
             "timestamp_chi": "2025-12-30T10:10:03",
@@ -780,9 +806,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_KEINE_AENDERUNG",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-30T09:23:53",
@@ -809,9 +836,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-30T04:05:36",
@@ -838,9 +866,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
-            "reason_code": "HEBEL_KEINE_AENDERUNG",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume"
+            "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 3
         },
         {
             "timestamp_chi": "2025-12-29T17:10:04",
@@ -867,9 +896,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 3
         },
         {
             "timestamp_chi": "2025-12-29T11:10:04",
@@ -896,9 +926,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_KEINE_AENDERUNG",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T10:24:27",
@@ -925,9 +956,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T10:10:04",
@@ -954,9 +986,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_KEINE_AENDERUNG",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T10:01:51",
@@ -983,9 +1016,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:47:24",
@@ -1012,9 +1046,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:46:42",
@@ -1041,9 +1076,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:42:41",
@@ -1070,9 +1106,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:33:45",
@@ -1099,9 +1136,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:33:07",
@@ -1128,9 +1166,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:32:57",
@@ -1157,9 +1196,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:32:07",
@@ -1186,9 +1226,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:31:58",
@@ -1215,9 +1256,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:10:04",
@@ -1244,9 +1286,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": "HEBEL_KEINE_AENDERUNG",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T09:04:23",
@@ -1273,9 +1316,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:59:44",
@@ -1302,9 +1346,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:58:12",
@@ -1331,9 +1376,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:56:50",
@@ -1360,9 +1406,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:56:05",
@@ -1389,9 +1436,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:50:49",
@@ -1418,9 +1466,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:49:45",
@@ -1447,9 +1496,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:46:18",
@@ -1476,9 +1526,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:45:25",
@@ -1505,9 +1556,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T08:45:14",
@@ -1534,9 +1586,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-29T00:10:04",
@@ -1563,9 +1616,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 7
         },
         {
             "timestamp_chi": "2025-12-22T00:10:04",
@@ -1592,9 +1646,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume"
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "aktion": "BUY",
+            "delta": 24
         },
         {
             "timestamp_chi": "2025-12-18T17:10:03",
@@ -1621,9 +1676,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -18
         },
         {
             "timestamp_chi": "2025-12-17T17:10:03",
@@ -1650,9 +1706,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -107
         },
         {
             "timestamp_chi": "2025-12-16T17:10:04",
@@ -1679,9 +1736,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "ERH\u00d6HT",
             "reason_code": "ZEITFENSTER_17_18",
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 122
         },
         {
             "timestamp_chi": "2025-12-15T18:10:04",
@@ -1708,9 +1766,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-12-15T00:10:03",
@@ -1737,9 +1796,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 29
         },
         {
             "timestamp_chi": "2025-12-10T18:10:03",
@@ -1766,9 +1826,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -11
         },
         {
             "timestamp_chi": "2025-12-09T16:10:04",
@@ -1795,9 +1856,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "INITIAL",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 65
         },
         {
             "timestamp_chi": "2025-12-09T15:10:21",
@@ -1824,9 +1886,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -49
         },
         {
             "timestamp_chi": "2025-12-09T15:10:15",
@@ -1853,9 +1916,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -49
         },
         {
             "timestamp_chi": "2025-12-09T14:10:08",
@@ -1882,9 +1946,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -11
         },
         {
             "timestamp_chi": "2025-12-09T14:10:06",
@@ -1911,9 +1976,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -11
         },
         {
             "timestamp_chi": "2025-12-08T18:10:04",
@@ -1940,9 +2006,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 8
         },
         {
             "timestamp_chi": "2025-12-02T17:10:03",
@@ -1969,9 +2036,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "SELL",
+            "delta": -7
         },
         {
             "timestamp_chi": "2025-12-01T17:10:03",
@@ -1998,9 +2066,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "ERH\u00d6HT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": "BUY",
+            "delta": 7
         },
         {
             "timestamp_chi": "2025-11-28T16:10:05",
@@ -2027,9 +2096,10 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "REDUZIERT",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         },
         {
             "timestamp_chi": "2025-11-28T12:56:38",
@@ -2056,9 +2126,10 @@
             "ma10_beitrag": 0.0,
             "ma50_wert": 0,
             "ma50_beitrag": 0.0,
-            "aktion": "INITIAL",
             "reason_code": null,
-            "changed_columns": null
+            "changed_columns": null,
+            "aktion": null,
+            "delta": null
         }
     ]
 }
