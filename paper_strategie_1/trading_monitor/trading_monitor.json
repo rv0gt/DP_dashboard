@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 745,
+                "date_chi": "2026-01-15T23:10:03",
+                "date_ch": "2026-01-16T06:10:03",
+                "transaction_called": 0,
+                "reason_code": "KEINE_NEUEN_DATEN",
+                "reason_detail": "KEINE_NEUEN_DATEN",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 3
+            },
+            {
                 "id": 744,
                 "date_chi": "2026-01-15T22:10:03",
                 "date_ch": "2026-01-16T05:10:03",
@@ -9360,86 +9373,8 @@
                 "leverage_change": 0.0,
                 "changed_columns": "INITIAL",
                 "daily_trades_count": 1
-            },
-            {
-                "id": 24,
-                "date_chi": "2025-12-17T06:10:03",
-                "date_ch": "2025-12-17T13:10:03",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 4.6364 -> 4.6364",
-                "leverage_old": 4.6364,
-                "leverage_new": 4.6364,
-                "leverage_change": 0.0,
-                "changed_columns": "INITIAL",
-                "daily_trades_count": 1
-            },
-            {
-                "id": 23,
-                "date_chi": "2025-12-17T05:30:54",
-                "date_ch": "2025-12-17T12:30:54",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 4.6364 -> 4.6364",
-                "leverage_old": 4.6364,
-                "leverage_new": 4.6364,
-                "leverage_change": 0.0,
-                "changed_columns": "INITIAL",
-                "daily_trades_count": 1
-            },
-            {
-                "id": 22,
-                "date_chi": "2025-12-17T05:28:02",
-                "date_ch": "2025-12-17T12:28:02",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 4.6364 -> 4.6364",
-                "leverage_old": 4.6364,
-                "leverage_new": 4.6364,
-                "leverage_change": 0.0,
-                "changed_columns": "INITIAL",
-                "daily_trades_count": 1
-            },
-            {
-                "id": 21,
-                "date_chi": "2025-12-17T05:15:18",
-                "date_ch": "2025-12-17T12:15:18",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 4.6364 -> 4.6364",
-                "leverage_old": 4.6364,
-                "leverage_new": 4.6364,
-                "leverage_change": 0.0,
-                "changed_columns": "INITIAL",
-                "daily_trades_count": 1
-            },
-            {
-                "id": 20,
-                "date_chi": "2025-12-17T05:14:21",
-                "date_ch": "2025-12-17T12:14:21",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 4.6364 -> 4.6364",
-                "leverage_old": 4.6364,
-                "leverage_new": 4.6364,
-                "leverage_change": 0.0,
-                "changed_columns": "INITIAL",
-                "daily_trades_count": 1
-            },
-            {
-                "id": 19,
-                "date_chi": "2025-12-17T05:14:15",
-                "date_ch": "2025-12-17T12:14:15",
-                "transaction_called": 1,
-                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-                "reason_detail": "Hebel: None -> 4.6364",
-                "leverage_old": null,
-                "leverage_new": 4.6364,
-                "leverage_change": 4.6364,
-                "changed_columns": "INITIAL",
-                "daily_trades_count": 1
             }
         ]
     },
-    "timestamp": "2026-01-16T05:10:24.737923"
+    "timestamp": "2026-01-16T06:10:21.496097"
 }
