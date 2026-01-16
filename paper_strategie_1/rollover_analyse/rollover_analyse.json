@@ -1,12 +1,12 @@
 {
-    "timestamp": "2026-01-16T06:10:12.920028",
+    "timestamp": "2026-01-16T07:10:30.273638",
     "rollover_data": {
         "current": {
             "kontraktname": "MES 20260320",
             "kontrakt_verfall": "2026-03-20",
             "tage_bis_verfall": 63,
             "rollover_stattgefunden": 0,
-            "date_chi": "2026-01-15 17:10:14"
+            "date_chi": "2026-01-16 00:10:24"
         },
         "events": [
             {
@@ -21,6 +21,12 @@
             }
         ],
         "history": [
+            {
+                "datum": "2026-01-16 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 63
+            },
             {
                 "datum": "2026-01-15 17:10:14",
                 "kontraktname": "MES 20260320",
