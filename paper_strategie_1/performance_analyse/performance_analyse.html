@@ -128,6 +128,23 @@
     </section>
     <section class="chart-section">
         <div class="container">
+            <h2 class="section-title">Performance</h2>
+            <div class="chart-card">
+                <div class="chart-title">Unrealized P&L + Kumulativ Realized P&L + Kumulativ Transaktionskosten</div>
+                <div class="chart-controls"><button onclick="performanceChart?.resetZoom()">Reset Zoom</button></div>
+                <div class="chart-wrapper"><canvas id="performanceChart"></canvas></div>
+                <div class="chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #0066cc; border-radius: 4px;"></div><span>Performance (Summe)</span></div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #8b5cf6; border-radius: 4px;"></div><span>Unrealized P&L</span></div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div><span>Kumulativ Realized P&L Net</span></div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #f87171; border-radius: 4px;"></div><span>Kumulativ Transaktionskosten</span></div>
+            </div>
+        </div>
+    </section>
+    <section class="chart-section">
+        <div class="container">
             <h2 class="section-title">Realized P&L (Kumulativ)</h2>
             <div class="chart-card">
                 <div class="chart-title">Realized P&L Gross & Net (kumulativ)</div>
@@ -232,7 +249,8 @@
             },
             zoom: {
                 wheel: {
-                    enabled: false // Mausrad-Zoom deaktiviert - wird für horizontales Scrollen verwendet
+                    enabled: true, // Mausrad-Zoom aktiviert (vertikal)
+                    modifierKey: null
                 },
                 pinch: { enabled: true },
                 drag: {
@@ -257,7 +275,8 @@
             },
             zoom: {
                 wheel: {
-                    enabled: false
+                    enabled: true,
+                    modifierKey: null
                 },
                 pinch: { enabled: true },
                 drag: {
@@ -273,28 +292,34 @@
             }
         };
 
-        // Funktion um Mausrad-Scrollen (horizontales Panning) zu einem Chart hinzuzufügen
+        // Funktion um horizontales Mausrad-Scrollen (Seitenschieben) für Panning zu nutzen
+        // Vertikales Mausrad wird von Chart.js Zoom-Plugin für Zoom verwendet
         function setupWheelPan(chart, onPanCallback) {
             chart.canvas.addEventListener('wheel', (e) => {
-                e.preventDefault();
                 const xScale = chart.scales.x;
                 if (!xScale) return;
 
-                // deltaY für vertikales Mausrad (positiv = nach unten = nach rechts scrollen)
-                // Normalisiere delta auf -1 bis 1 Bereich für sanftes Scrollen
-                const rawDelta = e.deltaY;
-                const normalizedDelta = Math.sign(rawDelta) * Math.min(Math.abs(rawDelta) / 100, 1);
+                // Nur horizontales Mausrad (deltaX) für Panning verwenden
+                // deltaX kommt von Mäusen mit seitlichem Scrollrad oder Trackpads
+                if (e.deltaX !== 0) {
+                    e.preventDefault();
 
-                // Pan in Pixeln - ca. 20 Pixel pro Scroll-Schritt
-                const pixelAmount = normalizedDelta * 20;
+                    // Normalisiere delta für sanftes Scrollen
+                    const rawDelta = e.deltaX;
+                    const normalizedDelta = Math.sign(rawDelta) * Math.min(Math.abs(rawDelta) / 100, 1);
 
-                // Wende Pan an (negative Werte = nach links, positive = nach rechts)
-                chart.pan({ x: -pixelAmount }, undefined, 'default');
+                    // Pan in Pixeln - ca. 30 Pixel pro Scroll-Schritt
+                    const pixelAmount = normalizedDelta * 30;
 
-                // Callback nach dem Pan aufrufen (für dynamische Neuberechnung)
-                if (onPanCallback) {
-                    onPanCallback();
+                    // Wende Pan an (negative Werte = nach links, positive = nach rechts)
+                    chart.pan({ x: -pixelAmount }, undefined, 'default');
+
+                    // Callback nach dem Pan aufrufen (für dynamische Neuberechnung)
+                    if (onPanCallback) {
+                        onPanCallback();
+                    }
                 }
+                // Vertikales Mausrad (deltaY) wird vom Chart.js Zoom-Plugin für Zoom verwendet
             }, { passive: false });
         }
 
@@ -314,9 +339,112 @@
             if (!str) return null;
             return new Date(str.replace(' ', 'T'));
         }
-        let accountValueChart, accountPctChart, deltaCompareChart, costsChart, pnlChart;
-        let fullHistory = [], fullPerfData = null, fullPnlChartData = [];
+        let accountValueChart, accountPctChart, deltaCompareChart, costsChart, pnlChart, performanceChart;
+        let fullHistory = [], fullPerfData = null, fullPnlChartData = [], fullTransactions = [];
         let sortedChartData = []; // Sortierte Daten für dynamische Neuberechnung
+        let sortedPerformanceData = { pnl: [], transactions: [], history: [] }; // Für Performance-Chart dynamische Neuberechnung
+
+        // Funktion um Performance-Chart basierend auf sichtbarem Bereich neu zu berechnen
+        function recalculatePerformanceFromVisibleRange() {
+            if (!performanceChart || sortedPerformanceData.pnl.length === 0) return;
+
+            const xScale = performanceChart.scales.x;
+            if (!xScale) return;
+
+            const visibleMin = xScale.min;
+
+            // 1. Realized P&L: Finde ersten sichtbaren Datenpunkt und berechne kumulativ ab dort
+            let startPnlIdx = 0;
+            for (let i = 0; i < sortedPerformanceData.pnl.length; i++) {
+                const dataTime = parseDate(sortedPerformanceData.pnl[i].date).getTime();
+                if (dataTime >= visibleMin) {
+                    startPnlIdx = i;
+                    break;
+                }
+            }
+
+            // Kumuliere Realized P&L Net ab dem sichtbaren Startpunkt
+            let cumNet = 0;
+            const newRealizedData = sortedPerformanceData.pnl.map((d, idx) => {
+                if (idx >= startPnlIdx) {
+                    cumNet += d.daily_net || 0;
+                }
+                return {
+                    x: parseDate(d.date),
+                    y: idx >= startPnlIdx ? cumNet : 0
+                };
+            });
+
+            // 2. Transaktionskosten: Finde ersten sichtbaren Datenpunkt in History
+            let startCostIdx = 0;
+            for (let i = 0; i < sortedPerformanceData.history.length; i++) {
+                const dataTime = parseDate(sortedPerformanceData.history[i].datum).getTime();
+                if (dataTime >= visibleMin) {
+                    startCostIdx = i;
+                    break;
+                }
+            }
+
+            const startCosts = sortedPerformanceData.history.length > 0 && startCostIdx < sortedPerformanceData.history.length ?
+                ((sortedPerformanceData.history[startCostIdx].kosten_kumulativ || 0) +
+                 (sortedPerformanceData.history[startCostIdx].slippage_kumulativ || 0)) : 0;
+
+            const costsByDate = {};
+            sortedPerformanceData.history.forEach((h, idx) => {
+                const dateKey = h.datum.substring(0, 10);
+                if (idx >= startCostIdx) {
+                    const totalCost = (h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0) - startCosts;
+                    costsByDate[dateKey] = {
+                        x: parseDate(h.datum),
+                        y: -totalCost
+                    };
+                }
+            });
+            const newCostsData = Object.values(costsByDate).sort((a, b) => a.x - b.x);
+
+            // 3. Unrealized P&L bleibt unverändert (ist kein kumulativer Wert)
+            const unrealizedByDate = {};
+            sortedPerformanceData.transactions.forEach(t => {
+                if (t.unrealized_pnl !== null && t.unrealized_pnl !== undefined) {
+                    const dateKey = t.date_chi.substring(0, 10);
+                    unrealizedByDate[dateKey] = {
+                        x: parseDate(t.date_chi),
+                        y: t.unrealized_pnl
+                    };
+                }
+            });
+            const unrealizedData = Object.values(unrealizedByDate).sort((a, b) => a.x - b.x);
+
+            // 4. Performance (Summe) berechnen: Unrealized + Realized + Kosten (pro Datum)
+            const allDates = new Set();
+            unrealizedData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+            newRealizedData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+            newCostsData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+
+            const unrealizedMap = {};
+            unrealizedData.forEach(d => unrealizedMap[d.x.toISOString().substring(0, 10)] = d.y);
+            const realizedMap = {};
+            newRealizedData.forEach(d => realizedMap[d.x.toISOString().substring(0, 10)] = d.y);
+            const costsMap = {};
+            newCostsData.forEach(d => costsMap[d.x.toISOString().substring(0, 10)] = d.y);
+
+            const performanceData = [...allDates].sort().map(dateStr => {
+                const unrealized = unrealizedMap[dateStr] || 0;
+                const realized = realizedMap[dateStr] || 0;
+                const costs = costsMap[dateStr] || 0;
+                return {
+                    x: new Date(dateStr),
+                    y: unrealized + realized + costs
+                };
+            });
+
+            // Update Chart-Daten
+            performanceChart.data.datasets[0].data = performanceData;
+            performanceChart.data.datasets[1].data = unrealizedData;
+            performanceChart.data.datasets[2].data = newRealizedData;
+            performanceChart.data.datasets[3].data = newCostsData;
+            performanceChart.update('none');
+        }
 
         // Funktion um Performance-Daten basierend auf sichtbarem Bereich neu zu berechnen
         function recalculatePctFromVisibleRange() {
@@ -381,7 +509,12 @@
                         applyUnifiedFilter();
                     }
                     if (overviewData.recent_transactions && overviewData.recent_transactions.length > 0) {
+                        fullTransactions = overviewData.recent_transactions;
                         updateTransactionsTable(overviewData.recent_transactions);
+                        // Performance Chart initialisieren mit allen drei Datenquellen
+                        if (fullPnlChartData.length > 0 && fullHistory.length > 0) {
+                            initPerformanceChart(fullPnlChartData, fullTransactions, fullHistory);
+                        }
                     }
                 } catch (e) { console.warn('Konnte P&L Chart-Daten nicht laden:', e); }
             } catch (error) { console.error('Fehler:', error); }
@@ -450,6 +583,89 @@
                 pnlChart.data.datasets[0].data = recalcPnl.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross }));
                 pnlChart.data.datasets[1].data = recalcPnl.map(d => ({ x: parseDate(d.date), y: d.cumulative_net }));
                 pnlChart.update();
+
+                // Performance Chart aktualisieren
+                if (performanceChart && fullTransactions.length > 0) {
+                    // Gefilterte Transaktionen
+                    let filteredTransactions;
+                    if (!fromDate) {
+                        filteredTransactions = fullTransactions;
+                    } else {
+                        filteredTransactions = fullTransactions.filter(t => {
+                            const tDate = t.date_chi.substring(0, 10);
+                            if (tDate < fromDate) return false;
+                            if (toDate && tDate > toDate) return false;
+                            return true;
+                        });
+                    }
+
+                    // Sortierte Daten für dynamische Neuberechnung aktualisieren
+                    sortedPerformanceData.pnl = [...recalcPnl].sort((a, b) => parseDate(a.date) - parseDate(b.date));
+                    sortedPerformanceData.transactions = [...filteredTransactions].sort((a, b) => parseDate(a.date_chi) - parseDate(b.date_chi));
+                    sortedPerformanceData.history = [...filteredHistory].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+
+                    // Unrealized P&L
+                    const unrealizedByDate = {};
+                    filteredTransactions.forEach(t => {
+                        if (t.unrealized_pnl !== null && t.unrealized_pnl !== undefined) {
+                            const dateKey = t.date_chi.substring(0, 10);
+                            unrealizedByDate[dateKey] = {
+                                x: parseDate(t.date_chi),
+                                y: t.unrealized_pnl
+                            };
+                        }
+                    });
+                    const unrealizedData = Object.values(unrealizedByDate).sort((a, b) => a.x - b.x);
+
+                    // Kumulative Kosten aus gefilterten History-Daten
+                    const startCosts = filteredHistory.length > 0 ?
+                        ((filteredHistory[0].kosten_kumulativ || 0) + (filteredHistory[0].slippage_kumulativ || 0)) : 0;
+                    const costsByDate = {};
+                    filteredHistory.forEach(h => {
+                        const dateKey = h.datum.substring(0, 10);
+                        const totalCost = (h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0) - startCosts;
+                        costsByDate[dateKey] = {
+                            x: parseDate(h.datum),
+                            y: -totalCost
+                        };
+                    });
+                    const costsData = Object.values(costsByDate).sort((a, b) => a.x - b.x);
+
+                    // Realized P&L Net (bereits berechnet als recalcPnl)
+                    const realizedPnlData = recalcPnl.map(d => ({
+                        x: parseDate(d.date),
+                        y: d.cumulative_net
+                    }));
+
+                    // Performance (Summe) berechnen
+                    const allDates = new Set();
+                    unrealizedData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+                    realizedPnlData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+                    costsData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+
+                    const unrealizedMap = {};
+                    unrealizedData.forEach(d => unrealizedMap[d.x.toISOString().substring(0, 10)] = d.y);
+                    const realizedMap = {};
+                    realizedPnlData.forEach(d => realizedMap[d.x.toISOString().substring(0, 10)] = d.y);
+                    const costsMap = {};
+                    costsData.forEach(d => costsMap[d.x.toISOString().substring(0, 10)] = d.y);
+
+                    const performanceSumData = [...allDates].sort().map(dateStr => {
+                        const unrealized = unrealizedMap[dateStr] || 0;
+                        const realized = realizedMap[dateStr] || 0;
+                        const costs = costsMap[dateStr] || 0;
+                        return {
+                            x: new Date(dateStr),
+                            y: unrealized + realized + costs
+                        };
+                    });
+
+                    performanceChart.data.datasets[0].data = performanceSumData;
+                    performanceChart.data.datasets[1].data = unrealizedData;
+                    performanceChart.data.datasets[2].data = realizedPnlData;
+                    performanceChart.data.datasets[3].data = costsData;
+                    performanceChart.update();
+                }
             }
         }
         function resetUnifiedFilter() {
@@ -494,6 +710,181 @@
             // Doppelklick zum Reset
             ctx.ondblclick = () => pnlChart?.resetZoom();
             setupWheelPan(pnlChart);
+        }
+        function initPerformanceChart(pnlData, transactions, history) {
+            const ctx = document.getElementById('performanceChart');
+            if (!ctx) return;
+            if (performanceChart) performanceChart.destroy();
+
+            // Sortierte Daten für dynamische Neuberechnung speichern
+            sortedPerformanceData.pnl = [...pnlData].sort((a, b) => parseDate(a.date) - parseDate(b.date));
+            sortedPerformanceData.transactions = [...transactions].sort((a, b) => parseDate(a.date_chi) - parseDate(b.date_chi));
+            sortedPerformanceData.history = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+
+            // 1. Kumulative Realized P&L Net aus pnlData (bereits nach Datum sortiert)
+            const realizedPnlData = sortedPerformanceData.pnl.map(d => ({
+                x: parseDate(d.date),
+                y: d.cumulative_net
+            }));
+
+            // 2. Unrealized P&L aus Transaktionen (nach Datum sortiert, letzter Wert pro Tag)
+            const unrealizedByDate = {};
+            transactions.forEach(t => {
+                if (t.unrealized_pnl !== null && t.unrealized_pnl !== undefined) {
+                    const dateKey = t.date_chi.substring(0, 10);
+                    // Überschreibe mit dem neuesten Wert pro Tag
+                    unrealizedByDate[dateKey] = {
+                        x: parseDate(t.date_chi),
+                        y: t.unrealized_pnl
+                    };
+                }
+            });
+            const unrealizedData = Object.values(unrealizedByDate).sort((a, b) => a.x - b.x);
+
+            // 3. Kumulative Transaktionskosten aus history (kosten_kumulativ + slippage_kumulativ)
+            // Gruppiere nach Datum und nimm den letzten Wert pro Tag
+            const costsByDate = {};
+            history.forEach(h => {
+                const dateKey = h.datum.substring(0, 10);
+                const totalCost = (h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0);
+                costsByDate[dateKey] = {
+                    x: parseDate(h.datum),
+                    y: -totalCost // Negativ darstellen da es Kosten sind
+                };
+            });
+            const costsData = Object.values(costsByDate).sort((a, b) => a.x - b.x);
+
+            // 4. Performance (Summe) berechnen: Unrealized + Realized + Kosten (pro Datum)
+            const allDates = new Set();
+            unrealizedData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+            realizedPnlData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+            costsData.forEach(d => allDates.add(d.x.toISOString().substring(0, 10)));
+
+            const unrealizedMap = {};
+            unrealizedData.forEach(d => unrealizedMap[d.x.toISOString().substring(0, 10)] = d.y);
+            const realizedMap = {};
+            realizedPnlData.forEach(d => realizedMap[d.x.toISOString().substring(0, 10)] = d.y);
+            const costsMap = {};
+            costsData.forEach(d => costsMap[d.x.toISOString().substring(0, 10)] = d.y);
+
+            const performanceSumData = [...allDates].sort().map(dateStr => {
+                const unrealized = unrealizedMap[dateStr] || 0;
+                const realized = realizedMap[dateStr] || 0;
+                const costs = costsMap[dateStr] || 0;
+                return {
+                    x: new Date(dateStr),
+                    y: unrealized + realized + costs
+                };
+            });
+
+            // Zoom-Optionen mit onPan-Callback für dynamische Neuberechnung
+            const zoomOptionsPerformance = {
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                    threshold: 5,
+                    onPan: function() {
+                        recalculatePerformanceFromVisibleRange();
+                    }
+                },
+                zoom: {
+                    wheel: { enabled: true, modifierKey: null },
+                    pinch: { enabled: true },
+                    drag: { enabled: false },
+                    mode: 'x',
+                    onZoom: function() {
+                        recalculatePerformanceFromVisibleRange();
+                    }
+                },
+                limits: {
+                    x: { minRange: 86400000 }
+                }
+            };
+
+            performanceChart = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Performance (Summe)',
+                            data: performanceSumData,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Unrealized P&L',
+                            data: unrealizedData,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Kumulativ Realized P&L Net',
+                            data: realizedPnlData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Kumulativ Transaktionskosten',
+                            data: costsData,
+                            borderColor: '#f87171',
+                            backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: ctx => new Date(ctx[0].parsed.x).toLocaleDateString('de-DE'),
+                                label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y, 2)}`
+                            }
+                        },
+                        zoom: zoomOptionsPerformance
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: { callback: v => '$' + v.toLocaleString('de-DE') },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        }
+                    }
+                }
+            });
+
+            ctx.ondblclick = () => {
+                performanceChart?.resetZoom();
+                // Nach Reset: Neuberechnung mit Original-Startpunkt
+                setTimeout(recalculatePerformanceFromVisibleRange, 50);
+            };
+            setupWheelPan(performanceChart, recalculatePerformanceFromVisibleRange);
         }
         function updateMetrics(perfData) {
             if (!perfData) return;
