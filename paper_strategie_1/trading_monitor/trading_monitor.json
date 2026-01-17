@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 775,
+                "date_chi": "2026-01-17T09:10:02",
+                "date_ch": "2026-01-17T16:10:02",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 774,
                 "date_chi": "2026-01-17T08:10:31",
                 "date_ch": "2026-01-17T15:10:31",
@@ -9295,21 +9308,8 @@
                 "leverage_change": 0.5672,
                 "changed_columns": null,
                 "daily_trades_count": 1
-            },
-            {
-                "id": 59,
-                "date_chi": "2025-12-18T16:10:03",
-                "date_ch": "2025-12-18T23:10:03",
-                "transaction_called": 0,
-                "reason_code": "MARKT_GESCHLOSSEN_PAUSE",
-                "reason_detail": "Markt geschlossen",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 0
             }
         ]
     },
-    "timestamp": "2026-01-17T15:11:26.608634"
+    "timestamp": "2026-01-17T16:10:21.399750"
 }
