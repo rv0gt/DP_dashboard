@@ -703,7 +703,7 @@
             sortedPerformanceData.history = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
 
             // Alle Daten kommen jetzt aus derselben Quelle (history)
-            // Jeder Eintrag hat: unrealized_pnl, cumulative_realized_net, kosten_kumulativ, slippage_kumulativ
+            // Jeder Eintrag hat: unrealized_pnl, cumulative_realized_gross, kosten_kumulativ, slippage_kumulativ
             // WICHTIG: Alle Datasets müssen dieselben X-Werte haben für korrektes Hover-Verhalten
 
             // Unrealized: null-Werte beibehalten (nicht filtern!), damit Index synchron bleibt
@@ -714,7 +714,7 @@
 
             const realizedPnlData = sortedPerformanceData.history.map(h => ({
                 x: parseDate(h.datum),
-                y: h.cumulative_realized_net || 0
+                y: h.cumulative_realized_gross || 0
             }));
 
             const costsData = sortedPerformanceData.history.map(h => ({
@@ -725,7 +725,7 @@
             // Performance (Summe) berechnen: Unrealized + Realized + Kosten (pro Eintrag)
             const performanceSumData = sortedPerformanceData.history.map(h => {
                 const unrealized = h.unrealized_pnl || 0;
-                const realized = h.cumulative_realized_net || 0;
+                const realized = h.cumulative_realized_gross || 0;
                 const costs = -((h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0));
                 return {
                     x: parseDate(h.datum),
