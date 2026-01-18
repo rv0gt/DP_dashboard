@@ -381,9 +381,31 @@
             font-size: 13px;
             color: #999;
         }
+
+        /* TOP NAVIGATION */
+        .top-nav { background: #0a2540; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .nav-brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #0066cc, #00a3ff); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .nav-brand-icon svg { width: 18px; height: 18px; color: #fff; }
+        .nav-brand-text { font-size: 16px; font-weight: 600; color: #fff; }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .nav-link.active { color: #fff; background: rgba(255,255,255,0.15); }
+        .nav-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.15); margin: 0 8px; }
+        @media (max-width: 768px) { .top-nav { padding: 0 15px; } .nav-brand-text { display: none; } .nav-link { padding: 10px; font-size: 12px; } }
     </style>
 </head>
 <body>
+    <nav class="top-nav">
+        <a href="./dashboard_analyse.html" class="nav-brand">
+            <div class="nav-brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <span class="nav-brand-text">PortfolioHub</span>
+        </a>
+        <div class="nav-links">
+            <a href="./dashboard_analyse.html" class="nav-link active">Dashboard</a>
+        </div>
+    </nav>
     <section class="hero">
         <div class="hero-content">
             <div class="hero-container">
