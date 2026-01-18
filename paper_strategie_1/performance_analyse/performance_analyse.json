@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-18T10:10:10.989970",
+    "timestamp": "2026-01-18T10:28:08.936867",
     "performance_data": {
         "start_value": 1122022.32,
         "current_value": 1418281.3,
@@ -22,7 +22,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-11-29 06:34:19",
@@ -37,7 +42,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-11-29 06:49:13",
@@ -52,7 +62,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-11-29 07:03:25",
@@ -67,7 +82,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-11-29 07:10:41",
@@ -82,7 +102,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-11-30 17:10:08",
@@ -97,7 +122,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 5.7596,
                 "total_kosten_pro_kontrakt": 5.8836,
-                "zeitslippage": -5.76
+                "zeitslippage": -5.76,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-01 01:13:53",
@@ -112,7 +142,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-01 01:14:15",
@@ -127,7 +162,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-01 17:10:06",
@@ -142,7 +182,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": -5.5,
                 "total_kosten_pro_kontrakt": -5.376,
-                "zeitslippage": 5.5
+                "zeitslippage": 5.5,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-02 17:10:07",
@@ -157,7 +202,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 1.5,
                 "total_kosten_pro_kontrakt": 1.624,
-                "zeitslippage": -1.5
+                "zeitslippage": -1.5,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-08 18:10:07",
@@ -172,7 +222,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 4.1875,
                 "total_kosten_pro_kontrakt": 4.3115,
-                "zeitslippage": -4.18
+                "zeitslippage": -4.18,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-09 14:10:10",
@@ -187,7 +242,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": -0.875,
                 "total_kosten_pro_kontrakt": -0.751,
-                "zeitslippage": 0.87
+                "zeitslippage": 0.87,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-09 15:10:24",
@@ -202,7 +262,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 1.375,
                 "total_kosten_pro_kontrakt": 1.499,
-                "zeitslippage": -1.38
+                "zeitslippage": -1.38,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-09 16:10:37",
@@ -217,7 +282,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-10 18:10:07",
@@ -232,7 +302,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 4.375,
                 "total_kosten_pro_kontrakt": 4.499,
-                "zeitslippage": -4.38
+                "zeitslippage": -4.38,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-15 00:10:10",
@@ -247,7 +322,12 @@
                 "kosten_pro_kontrakt": 0.3549,
                 "slippage_pro_kontrakt": -0.8319,
                 "total_kosten_pro_kontrakt": -0.477,
-                "zeitslippage": 0.84
+                "zeitslippage": 0.84,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-15 18:10:06",
@@ -262,7 +342,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-16 14:35:33",
@@ -277,7 +362,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-16 14:50:17",
@@ -292,7 +382,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-16 17:10:08",
@@ -307,7 +402,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.2541,
                 "total_kosten_pro_kontrakt": 0.3781,
-                "zeitslippage": -0.25
+                "zeitslippage": -0.25,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-16 18:10:07",
@@ -322,7 +422,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 3.125,
                 "total_kosten_pro_kontrakt": 3.249,
-                "zeitslippage": -3.13
+                "zeitslippage": -3.13,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-17 05:10:07",
@@ -337,7 +442,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 1.875,
                 "total_kosten_pro_kontrakt": 1.999,
-                "zeitslippage": -1.87
+                "zeitslippage": -1.87,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-17 05:14:12",
@@ -352,7 +462,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-17 17:10:09",
@@ -367,7 +482,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 11.9883,
                 "total_kosten_pro_kontrakt": 12.1123,
-                "zeitslippage": -11.99
+                "zeitslippage": -11.99,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-18 17:10:07",
@@ -382,7 +502,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 7.25,
                 "total_kosten_pro_kontrakt": 7.374,
-                "zeitslippage": -7.25
+                "zeitslippage": -7.25,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-19 15:22:42",
@@ -397,7 +522,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-22 00:10:13",
@@ -412,7 +542,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -6.43
+                "zeitslippage": -6.43,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-22 17:10:06",
@@ -427,7 +562,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-23 08:03:17",
@@ -442,7 +582,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-23 08:04:15",
@@ -457,7 +602,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": null,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-23 08:19:39",
@@ -472,7 +622,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 8780.88,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-23 17:10:08",
@@ -487,7 +642,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 19363.38,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-24 17:10:38",
@@ -502,7 +662,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 25355.88,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-26 03:14:42",
@@ -517,7 +682,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 24886.51,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-26 03:18:37",
@@ -532,7 +702,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 25146.51,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 0.0,
+                "cumulative_realized_net": 0.0
             },
             {
                 "datum": "2025-12-26 03:42:54",
@@ -547,7 +722,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -0.38
+                "zeitslippage": -0.38,
+                "unrealized_pnl": 24407.92,
+                "realized_pnl_gross": 477.34,
+                "realized_pnl_net": 476.09,
+                "cumulative_realized_gross": 477.34,
+                "cumulative_realized_net": 476.09
             },
             {
                 "datum": "2025-12-26 03:44:34",
@@ -562,7 +742,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 0.38
+                "zeitslippage": 0.38,
+                "unrealized_pnl": 24473.55,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -1.25,
+                "cumulative_realized_gross": 477.34,
+                "cumulative_realized_net": 474.84
             },
             {
                 "datum": "2025-12-26 04:36:39",
@@ -577,7 +762,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 25058.55,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 477.34,
+                "cumulative_realized_net": 474.84
             },
             {
                 "datum": "2025-12-26 04:53:41",
@@ -592,7 +782,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -1.38
+                "zeitslippage": -1.38,
+                "unrealized_pnl": 15580.65,
+                "realized_pnl_gross": 9587.91,
+                "realized_pnl_net": 9563.01,
+                "cumulative_realized_gross": 10065.25,
+                "cumulative_realized_net": 10037.85
             },
             {
                 "datum": "2025-12-26 04:54:01",
@@ -607,7 +802,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 0.38
+                "zeitslippage": 0.38,
+                "unrealized_pnl": 15538.25,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -24.9,
+                "cumulative_realized_gross": 10065.25,
+                "cumulative_realized_net": 10012.95
             },
             {
                 "datum": "2025-12-29 00:10:09",
@@ -622,7 +822,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -1.12
+                "zeitslippage": -1.12,
+                "unrealized_pnl": 9848.42,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -8.72,
+                "cumulative_realized_gross": 10065.25,
+                "cumulative_realized_net": 10004.23
             },
             {
                 "datum": "2025-12-29 17:10:09",
@@ -637,7 +842,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.375,
                 "total_kosten_pro_kontrakt": 0.499,
-                "zeitslippage": 1.63
+                "zeitslippage": 1.63,
+                "unrealized_pnl": 5149.06,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -7.49,
+                "cumulative_realized_gross": 10065.25,
+                "cumulative_realized_net": 9996.74
             },
             {
                 "datum": "2025-12-30 04:10:10",
@@ -652,7 +862,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 0.38
+                "zeitslippage": 0.38,
+                "unrealized_pnl": 4922.2,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -3.74,
+                "cumulative_realized_gross": 10065.25,
+                "cumulative_realized_net": 9993.0
             },
             {
                 "datum": "2025-12-30 11:10:09",
@@ -667,7 +882,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 0.37
+                "zeitslippage": 0.37,
+                "unrealized_pnl": 1822.03,
+                "realized_pnl_gross": 535.17,
+                "realized_pnl_net": 517.74,
+                "cumulative_realized_gross": 10600.42,
+                "cumulative_realized_net": 10510.74
             },
             {
                 "datum": "2025-12-30 17:10:09",
@@ -682,7 +902,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": -1.25
+                "zeitslippage": -1.25,
+                "unrealized_pnl": 1552.1,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -26.18,
+                "cumulative_realized_gross": 10600.42,
+                "cumulative_realized_net": 10484.56
             },
             {
                 "datum": "2025-12-31 05:10:10",
@@ -697,7 +922,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -1.84
+                "zeitslippage": -1.84,
+                "unrealized_pnl": -9018.77,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -69.72,
+                "cumulative_realized_gross": 10600.42,
+                "cumulative_realized_net": 10414.84
             },
             {
                 "datum": "2025-12-31 17:10:38",
@@ -712,7 +942,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": 35.22
+                "zeitslippage": 35.22,
+                "unrealized_pnl": -29286.27,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 10600.42,
+                "cumulative_realized_net": 10414.84
             },
             {
                 "datum": "2026-01-02 00:10:09",
@@ -727,7 +962,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 0.87
+                "zeitslippage": 0.87,
+                "unrealized_pnl": -9350.88,
+                "realized_pnl_gross": -1458.35,
+                "realized_pnl_net": -1479.51,
+                "cumulative_realized_gross": 9142.07,
+                "cumulative_realized_net": 8935.33
             },
             {
                 "datum": "2026-01-02 11:10:10",
@@ -742,7 +982,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -0.12
+                "zeitslippage": -0.12,
+                "unrealized_pnl": -31505.8,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -19.92,
+                "cumulative_realized_gross": 9142.07,
+                "cumulative_realized_net": 8915.41
             },
             {
                 "datum": "2026-01-05 00:10:24",
@@ -757,7 +1002,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -0.13
+                "zeitslippage": -0.13,
+                "unrealized_pnl": -12958.33,
+                "realized_pnl_gross": -2012.95,
+                "realized_pnl_net": -2032.87,
+                "cumulative_realized_gross": 7129.12,
+                "cumulative_realized_net": 6882.54
             },
             {
                 "datum": "2026-01-05 17:10:22",
@@ -772,7 +1022,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": -0.75
+                "zeitslippage": -0.75,
+                "unrealized_pnl": 4548.55,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -1.87,
+                "cumulative_realized_gross": 7129.12,
+                "cumulative_realized_net": 6880.67
             },
             {
                 "datum": "2026-01-06 01:10:22",
@@ -787,7 +1042,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -1.91
+                "zeitslippage": -1.91,
+                "unrealized_pnl": 6807.76,
+                "realized_pnl_gross": 6280.26,
+                "realized_pnl_net": 6215.52,
+                "cumulative_realized_gross": 13409.38,
+                "cumulative_realized_net": 13096.19
             },
             {
                 "datum": "2026-01-06 17:10:23",
@@ -802,7 +1062,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": -1.0
+                "zeitslippage": -1.0,
+                "unrealized_pnl": 15049.08,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -26.18,
+                "cumulative_realized_gross": 13409.38,
+                "cumulative_realized_net": 13070.01
             },
             {
                 "datum": "2026-01-07 00:10:23",
@@ -817,7 +1082,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -1.87
+                "zeitslippage": -1.87,
+                "unrealized_pnl": 17599.75,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -11.21,
+                "cumulative_realized_gross": 13409.38,
+                "cumulative_realized_net": 13058.8
             },
             {
                 "datum": "2026-01-07 09:10:22",
@@ -832,7 +1102,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": -6.25
+                "zeitslippage": -6.25,
+                "unrealized_pnl": 16554.8,
+                "realized_pnl_gross": 3688.7,
+                "realized_pnl_net": 3660.65,
+                "cumulative_realized_gross": 17098.08,
+                "cumulative_realized_net": 16719.45
             },
             {
                 "datum": "2026-01-07 17:10:23",
@@ -847,7 +1122,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -0.84
+                "zeitslippage": -0.84,
+                "unrealized_pnl": 9353.59,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -9.96,
+                "cumulative_realized_gross": 17098.08,
+                "cumulative_realized_net": 16709.49
             },
             {
                 "datum": "2026-01-08 00:10:24",
@@ -862,7 +1142,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": 6.5
+                "zeitslippage": 6.5,
+                "unrealized_pnl": 1829.23,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -52.36,
+                "cumulative_realized_gross": 17098.08,
+                "cumulative_realized_net": 16657.13
             },
             {
                 "datum": "2026-01-08 10:10:23",
@@ -877,7 +1162,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -5.88
+                "zeitslippage": -5.88,
+                "unrealized_pnl": 7322.23,
+                "realized_pnl_gross": 1645.75,
+                "realized_pnl_net": 1617.12,
+                "cumulative_realized_gross": 18743.83,
+                "cumulative_realized_net": 18274.25
             },
             {
                 "datum": "2026-01-08 17:10:23",
@@ -892,7 +1182,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": -3.64
+                "zeitslippage": -3.64,
+                "unrealized_pnl": 8867.96,
+                "realized_pnl_gross": 1831.76,
+                "realized_pnl_net": 1805.58,
+                "cumulative_realized_gross": 20575.59,
+                "cumulative_realized_net": 20079.83
             },
             {
                 "datum": "2026-01-09 00:10:23",
@@ -907,7 +1202,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 1.38
+                "zeitslippage": 1.38,
+                "unrealized_pnl": 4716.68,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -39.84,
+                "cumulative_realized_gross": 20575.59,
+                "cumulative_realized_net": 20039.99
             },
             {
                 "datum": "2026-01-09 10:10:23",
@@ -922,7 +1222,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 8.53
+                "zeitslippage": 8.53,
+                "unrealized_pnl": 9859.9,
+                "realized_pnl_gross": 6398.03,
+                "realized_pnl_net": 6359.44,
+                "cumulative_realized_gross": 26973.62,
+                "cumulative_realized_net": 26399.43
             },
             {
                 "datum": "2026-01-12 00:10:24",
@@ -937,7 +1242,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -2.87
+                "zeitslippage": -2.87,
+                "unrealized_pnl": 2692.96,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -39.84,
+                "cumulative_realized_gross": 26973.62,
+                "cumulative_realized_net": 26359.59
             },
             {
                 "datum": "2026-01-12 10:10:23",
@@ -952,7 +1262,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 3.87
+                "zeitslippage": 3.87,
+                "unrealized_pnl": 15302.22,
+                "realized_pnl_gross": 5560.74,
+                "realized_pnl_net": 5532.11,
+                "cumulative_realized_gross": 32534.36,
+                "cumulative_realized_net": 31891.7
             },
             {
                 "datum": "2026-01-12 17:10:23",
@@ -967,7 +1282,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.25,
                 "total_kosten_pro_kontrakt": 0.374,
-                "zeitslippage": -4.25
+                "zeitslippage": -4.25,
+                "unrealized_pnl": 16681.28,
+                "realized_pnl_gross": 2322.19,
+                "realized_pnl_net": 2305.36,
+                "cumulative_realized_gross": 34856.55,
+                "cumulative_realized_net": 34197.06
             },
             {
                 "datum": "2026-01-13 00:10:24",
@@ -982,7 +1302,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -0.62
+                "zeitslippage": -0.62,
+                "unrealized_pnl": 14251.02,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -11.21,
+                "cumulative_realized_gross": 34856.55,
+                "cumulative_realized_net": 34185.85
             },
             {
                 "datum": "2026-01-13 17:10:14",
@@ -997,7 +1322,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 11146.02,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 34856.55,
+                "cumulative_realized_net": 34185.85
             },
             {
                 "datum": "2026-01-14 00:10:23",
@@ -1012,7 +1342,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 1.13
+                "zeitslippage": 1.13,
+                "unrealized_pnl": 5700.37,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -6.23,
+                "cumulative_realized_gross": 34856.55,
+                "cumulative_realized_net": 34179.62
             },
             {
                 "datum": "2026-01-14 13:10:24",
@@ -1027,7 +1362,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -1.84
+                "zeitslippage": -1.84,
+                "unrealized_pnl": -11484.19,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -109.56,
+                "cumulative_realized_gross": 34856.55,
+                "cumulative_realized_net": 34070.06
             },
             {
                 "datum": "2026-01-14 17:10:23",
@@ -1042,7 +1382,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.375,
                 "total_kosten_pro_kontrakt": 0.499,
-                "zeitslippage": 0.95
+                "zeitslippage": 0.95,
+                "unrealized_pnl": -649.61,
+                "realized_pnl_gross": -38.33,
+                "realized_pnl_net": -93.22,
+                "cumulative_realized_gross": 34818.22,
+                "cumulative_realized_net": 33976.84
             },
             {
                 "datum": "2026-01-15 00:10:24",
@@ -1057,7 +1402,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 2.66
+                "zeitslippage": 2.66,
+                "unrealized_pnl": 3982.85,
+                "realized_pnl_gross": 637.54,
+                "realized_pnl_net": 620.11,
+                "cumulative_realized_gross": 35455.76,
+                "cumulative_realized_net": 34596.95
             },
             {
                 "datum": "2026-01-15 10:10:23",
@@ -1072,7 +1422,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": 1.87
+                "zeitslippage": 1.87,
+                "unrealized_pnl": 15424.46,
+                "realized_pnl_gross": 17004.65,
+                "realized_pnl_net": 16923.72,
+                "cumulative_realized_gross": 52460.41,
+                "cumulative_realized_net": 51520.67
             },
             {
                 "datum": "2026-01-15 17:10:14",
@@ -1087,7 +1442,12 @@
                 "kosten_pro_kontrakt": 0.0,
                 "slippage_pro_kontrakt": 0.0,
                 "total_kosten_pro_kontrakt": 0.0,
-                "zeitslippage": null
+                "zeitslippage": null,
+                "unrealized_pnl": 8866.96,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": 0.0,
+                "cumulative_realized_gross": 52460.41,
+                "cumulative_realized_net": 51520.67
             },
             {
                 "datum": "2026-01-16 00:10:24",
@@ -1102,7 +1462,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -3.48
+                "zeitslippage": -3.48,
+                "unrealized_pnl": 15763.76,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -82.17,
+                "cumulative_realized_gross": 52460.41,
+                "cumulative_realized_net": 51438.5
             },
             {
                 "datum": "2026-01-16 10:10:23",
@@ -1117,21 +1482,12 @@
                 "kosten_pro_kontrakt": 0.124,
                 "slippage_pro_kontrakt": 0.125,
                 "total_kosten_pro_kontrakt": 0.249,
-                "zeitslippage": -6.12
-            },
-            {
-                "datum": "2026-01-18",
-                "konto_wert": 1418281.3,
-                "konto_wert_pct": 26.4,
-                "buy_hold_pct": 1.76,
-                "mes_preis": 6978.0,
-                "aktueller_hebel": null,
-                "kosten_kumulativ": 755.78,
-                "slippage_kumulativ": 8635.62,
-                "total_kosten_kumulativ": 9391.4,
-                "kosten_pro_kontrakt": 0.0,
-                "slippage_pro_kontrakt": 0.0,
-                "total_kosten_pro_kontrakt": 0.0
+                "zeitslippage": -6.12,
+                "unrealized_pnl": 871.93,
+                "realized_pnl_gross": 0.0,
+                "realized_pnl_net": -11.21,
+                "cumulative_realized_gross": 52460.41,
+                "cumulative_realized_net": 51427.29
             }
         ]
     }
