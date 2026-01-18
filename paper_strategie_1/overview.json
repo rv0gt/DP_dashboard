@@ -1,9 +1,9 @@
 {
-    "timestamp": "2026-01-18T08:16:00.049973",
+    "timestamp": "2026-01-18T09:10:06.275813",
     "overview": {
         "konto_wert_nlv": 1418281.3,
         "konto_wert_from_ib": true,
-        "neuer_hebel": 3.3395,
+        "neuer_hebel": 3.3296,
         "mes_preis": 6978.0,
         "mes_preis_from_ib": true,
         "avg_position_cost": 6976.967750000001,
@@ -139,6 +139,31 @@
         }
     ],
     "recent_transactions": [
+        {
+            "date_chi": "2026-01-18T01:56:51",
+            "aktion": "SELL",
+            "delta_zu_handeln": -944598,
+            "ausgefuehrte_menge": null,
+            "durchschnittspreis": null,
+            "kosten_transaktion": 0.0,
+            "slippage_kosten": 0.0,
+            "status": "Inactive",
+            "order_typ": "MARKET",
+            "kontraktname": "MES 20260320",
+            "rollover_stattgefunden": 0,
+            "rollover_aktion": null,
+            "unrealized_pnl": -4745018.07,
+            "realized_pnl_gross": null,
+            "realized_pnl_net": null,
+            "avg_position_cost_before": 6976.97,
+            "avg_position_cost": 6976.97,
+            "reason_code": null,
+            "leverage_new": null,
+            "changed_columns": null,
+            "is_rollover": 0,
+            "margin_auslastung": 23.6403,
+            "kosten_angepasst": 0.0
+        },
         {
             "date_chi": "2026-01-16T10:10:23",
             "aktion": "BUY",
@@ -613,31 +638,6 @@
             "is_rollover": 0,
             "margin_auslastung": 10.44473333,
             "kosten_angepasst": 1.245
-        },
-        {
-            "date_chi": "2026-01-06T17:10:23",
-            "aktion": "BUY",
-            "delta_zu_handeln": 14,
-            "ausgefuehrte_menge": 14,
-            "durchschnittspreis": 6990.0,
-            "kosten_transaktion": 8.68,
-            "slippage_kosten": 17.5,
-            "status": "Filled",
-            "order_typ": "MARKET",
-            "kontraktname": "MES 20260320",
-            "rollover_stattgefunden": 0,
-            "rollover_aktion": null,
-            "unrealized_pnl": 15049.08,
-            "realized_pnl_gross": null,
-            "realized_pnl_net": -26.18,
-            "avg_position_cost_before": 6930.82,
-            "avg_position_cost": 6943.4,
-            "reason_code": "ZEITFENSTER_17_18",
-            "leverage_new": 1.6322,
-            "changed_columns": null,
-            "is_rollover": 0,
-            "margin_auslastung": 13.71245,
-            "kosten_angepasst": 1.8699999999999999
         }
     ]
 }
