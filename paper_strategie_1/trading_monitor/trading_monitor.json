@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 807,
+                "date_chi": "2026-01-18T17:10:02",
+                "date_ch": "2026-01-19T00:10:02",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 806,
                 "date_chi": "2026-01-18T16:10:03",
                 "date_ch": "2026-01-18T23:10:03",
@@ -9295,34 +9308,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 0
-            },
-            {
-                "id": 91,
-                "date_chi": "2025-12-20T00:10:03",
-                "date_ch": "2025-12-20T07:10:03",
-                "transaction_called": 0,
-                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
-                "reason_detail": "Markt geschlossen",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 0
-            },
-            {
-                "id": 90,
-                "date_chi": "2025-12-19T23:19:01",
-                "date_ch": "2025-12-20T06:19:01",
-                "transaction_called": 0,
-                "reason_code": "MARKT_GESCHLOSSEN_FREITAG",
-                "reason_detail": "Markt geschlossen",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 0
             }
         ]
     },
-    "timestamp": "2026-01-18T23:10:11.491808"
+    "timestamp": "2026-01-19T00:10:11.452590"
 }
