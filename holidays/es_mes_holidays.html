@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES & MES Trading Holidays</title>
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="../_shared/css/common.css">
+    <style>
+        /* Page-specific styles for Holidays */
+
+        /* Tab Navigation */
+        .tab-section {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #fff;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .tab-btn:hover {
+            border-color: #0066cc;
+            color: #0066cc;
+        }
+
+        .tab-btn.active {
+            background: #0066cc;
+            border-color: #0066cc;
+            color: #fff;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 40px 30px;
+            background: #f8f9fa;
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Holidays Grid */
+        .holidays-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .holiday-column {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .holiday-column-header {
+            background: #0a2540;
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .holiday-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .holiday-table th {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .holiday-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .holiday-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .holiday-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .holiday-date {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .holiday-name {
+            color: #333;
+        }
+
+        .holiday-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .status-closed {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .status-early {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        /* Upcoming Holidays Card */
+        .upcoming-holidays {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .upcoming-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upcoming-list {
+            padding: 15px;
+        }
+
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+        }
+
+        .upcoming-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .upcoming-item.imminent {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .upcoming-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .upcoming-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .upcoming-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .upcoming-countdown {
+            text-align: right;
+        }
+
+        .upcoming-days {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0066cc;
+        }
+
+        .upcoming-days.soon {
+            color: #ef4444;
+        }
+
+        .upcoming-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .upcoming-closure {
+            display: block;
+            font-size: 11px;
+            color: #0066cc;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .closure-time {
+            font-size: 11px;
+            color: #666;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Market Status Card */
+        .stat-sublabel {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .stat-card.market-open {
+            border-left: 4px solid #22c55e;
+        }
+
+        .stat-card.market-open .stat-number {
+            color: #22c55e;
+        }
+
+        .stat-card.market-closed {
+            border-left: 4px solid #ef4444;
+        }
+
+        .stat-card.market-closed .stat-number {
+            color: #ef4444;
+        }
+
+        .countdown-timer {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .holidays-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .tab-container {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation wird via includes.js eingefügt -->
+    <div id="nav-placeholder"></div>
+
+    <section class="hero hero-small">
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="../dashboard_analyse.html">Home</a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current">Trading Holidays</span>
+            </div>
+            <h1>ES & MES Trading Holidays</h1>
+            <p class="hero-subtitle">CME/GLOBEX Trading-Kalender für ES/MES Futures</p>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-grid" id="stats" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="stat-card" id="market-status-card">
+                <div class="stat-number" id="stat-market-status">-</div>
+                <div class="stat-label" id="stat-market-label">Marktstatus</div>
+                <div class="stat-sublabel" id="stat-market-time"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-next-name">-</div>
+                <div class="stat-label">Nächster Holiday</div>
+                <div class="stat-sublabel" id="stat-next-date"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Holidays Content -->
+    <section class="content-section active" id="holidays-section">
+        <div class="content-container">
+            <!-- Upcoming Holidays -->
+            <div class="upcoming-holidays" id="upcoming-holidays">
+                <div class="upcoming-header">
+                    ⚠️ Kommende Trading Holidays (nächste 90 Tage)
+                </div>
+                <div class="upcoming-list" id="upcoming-list">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <span>Lade Holidays...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Holiday Tables -->
+            <div class="holidays-grid">
+                <div class="holiday-column">
+                    <div class="holiday-column-header" id="holidays-year1-header">📅 CME/GLOBEX Holidays</div>
+                    <table class="holiday-table" id="holidays-year1">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Holiday</th>
+                                <th>Status</th>
+                                <th>Schließung (CT)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="holiday-column">
+                    <div class="holiday-column-header" id="holidays-year2-header">📅 CME/GLOBEX Holidays</div>
+                    <table class="holiday-table" id="holidays-year2">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Holiday</th>
+                                <th>Status</th>
+                                <th>Schließung (CT)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="last-update" id="last-update"></div>
+
+    <footer class="footer">
+        <p>ES & MES Trading Holidays - Daten via exchange_calendars (CMES)</p>
+    </footer>
+
+    <!-- Shared JavaScript -->
+    <script src="../_shared/js/includes.js"></script>
+    <script src="../_shared/js/common.js"></script>
+    <script>
+        // Initialize navigation
+        initIncludes({
+            activeNav: 'nav-holidays',
+            loadCSS: false,
+            loadJS: false
+        });
+
+        const DATA_URL = './es_mes_holidays.json';
+        let holidaysData = null;
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('de-DE', {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Chicago Time Helper
+        function getChicagoTime() {
+            return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+        }
+
+        function formatChicagoTime(date) {
+            return date.toLocaleTimeString('de-DE', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'America/Chicago'
+            }) + ' CT';
+        }
+
+        // ES/MES Handelszeiten: Sonntag 17:00 CT - Freitag 16:00 CT (Pause täglich 16:00-17:00 CT)
+        function getMarketStatus(holidays) {
+            const now = getChicagoTime();
+            const dayOfWeek = now.getDay(); // 0=Sonntag, 6=Samstag
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const currentTime = hour * 60 + minute; // Minuten seit Mitternacht
+
+            const todayStr = now.toISOString().split('T')[0];
+
+            // Prüfe ob heute ein Holiday ist
+            const todayHoliday = holidays?.find(h => h.date === todayStr);
+
+            // Samstag: Komplett geschlossen
+            if (dayOfWeek === 6) {
+                const sundayOpen = new Date(now);
+                sundayOpen.setDate(sundayOpen.getDate() + 1);
+                sundayOpen.setHours(17, 0, 0, 0);
+                return {
+                    isOpen: false,
+                    reason: 'Wochenende',
+                    nextEvent: 'Öffnet',
+                    nextTime: sundayOpen,
+                    nextTimeStr: 'So 17:00 CT'
+                };
+            }
+
+            // Sonntag
+            if (dayOfWeek === 0) {
+                if (currentTime < 17 * 60) {
+                    // Vor 17:00 CT - noch geschlossen
+                    const openTime = new Date(now);
+                    openTime.setHours(17, 0, 0, 0);
+                    return {
+                        isOpen: false,
+                        reason: 'Wochenende',
+                        nextEvent: 'Öffnet',
+                        nextTime: openTime,
+                        nextTimeStr: 'So 17:00 CT'
+                    };
+                } else {
+                    // Nach 17:00 CT - offen
+                    const closeTime = new Date(now);
+                    closeTime.setDate(closeTime.getDate() + 1);
+                    closeTime.setHours(16, 0, 0, 0);
+                    return {
+                        isOpen: true,
+                        nextEvent: 'Schließt',
+                        nextTime: closeTime,
+                        nextTimeStr: 'Mo 16:00 CT'
+                    };
+                }
+            }
+
+            // Freitag
+            if (dayOfWeek === 5) {
+                if (currentTime >= 16 * 60) {
+                    // Nach 16:00 CT - Wochenende
+                    const sundayOpen = new Date(now);
+                    sundayOpen.setDate(sundayOpen.getDate() + 2);
+                    sundayOpen.setHours(17, 0, 0, 0);
+                    return {
+                        isOpen: false,
+                        reason: 'Wochenende',
+                        nextEvent: 'Öffnet',
+                        nextTime: sundayOpen,
+                        nextTimeStr: 'So 17:00 CT'
+                    };
+                }
+            }
+
+            // Holiday Check
+            if (todayHoliday) {
+                if (todayHoliday.status === 'Closed') {
+                    // Komplett geschlossen
+                    return {
+                        isOpen: false,
+                        reason: todayHoliday.name,
+                        nextEvent: 'Öffnet',
+                        nextTime: null,
+                        nextTimeStr: todayHoliday.closure_end + ' CT'
+                    };
+                } else if (todayHoliday.close_time) {
+                    // Early Close
+                    const closeHour = parseInt(todayHoliday.close_time.split(':')[0]);
+                    const closeMinute = parseInt(todayHoliday.close_time.split(':')[1]) || 0;
+                    const earlyCloseTime = closeHour * 60 + closeMinute;
+
+                    if (currentTime >= earlyCloseTime && currentTime < 17 * 60) {
+                        // Zwischen Early Close und 17:00 - geschlossen
+                        const openTime = new Date(now);
+                        openTime.setHours(17, 0, 0, 0);
+                        return {
+                            isOpen: false,
+                            reason: todayHoliday.name + ' (Early Close)',
+                            nextEvent: 'Öffnet',
+                            nextTime: openTime,
+                            nextTimeStr: 'Heute 17:00 CT'
+                        };
+                    } else if (currentTime < earlyCloseTime) {
+                        // Vor Early Close - offen, aber früher Schluss
+                        const closeTime = new Date(now);
+                        closeTime.setHours(closeHour, closeMinute, 0, 0);
+                        return {
+                            isOpen: true,
+                            nextEvent: 'Early Close',
+                            nextTime: closeTime,
+                            nextTimeStr: todayHoliday.close_time
+                        };
+                    }
+                }
+            }
+
+            // Normale Handelszeiten Mo-Fr
+            // Tägliche Pause: 16:00-17:00 CT
+            if (currentTime >= 16 * 60 && currentTime < 17 * 60) {
+                // In der Pause
+                const openTime = new Date(now);
+                openTime.setHours(17, 0, 0, 0);
+                return {
+                    isOpen: false,
+                    reason: 'Tägliche Pause',
+                    nextEvent: 'Öffnet',
+                    nextTime: openTime,
+                    nextTimeStr: 'Heute 17:00 CT'
+                };
+            }
+
+            // Offen - berechne nächsten Close
+            let closeTime = new Date(now);
+            let closeTimeStr;
+
+            if (dayOfWeek === 5) {
+                // Freitag - schließt um 16:00 CT für Wochenende
+                closeTime.setHours(16, 0, 0, 0);
+                closeTimeStr = 'Fr 16:00 CT';
+            } else {
+                // Mo-Do - schließt um 16:00 CT (Pause)
+                closeTime.setHours(16, 0, 0, 0);
+                const dayNames = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+                closeTimeStr = dayNames[dayOfWeek] + ' 16:00 CT';
+            }
+
+            return {
+                isOpen: true,
+                nextEvent: 'Schließt',
+                nextTime: closeTime,
+                nextTimeStr: closeTimeStr
+            };
+        }
+
+        function formatCountdown(targetTime) {
+            if (!targetTime) return '-';
+
+            const now = getChicagoTime();
+            const diff = targetTime - now;
+
+            if (diff <= 0) return '0d 0h 0m';
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            if (days > 0) {
+                return `${days}d ${hours}h ${minutes}m`;
+            } else if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            } else {
+                return `${minutes}m`;
+            }
+        }
+
+        function updateMarketStatusDisplay() {
+            const holidays = holidaysData?.trading_holidays?.upcoming || [];
+            const status = getMarketStatus(holidays);
+
+            const card = document.getElementById('market-status-card');
+            const statusEl = document.getElementById('stat-market-status');
+            const labelEl = document.getElementById('stat-market-label');
+            const timeEl = document.getElementById('stat-market-time');
+
+            card.classList.remove('market-open', 'market-closed');
+
+            if (status.isOpen) {
+                card.classList.add('market-open');
+                statusEl.innerHTML = `<span class="countdown-timer">${formatCountdown(status.nextTime)}</span>`;
+                labelEl.textContent = `${status.nextEvent} um ${status.nextTimeStr}`;
+                timeEl.textContent = `OPEN - ${formatChicagoTime(getChicagoTime())}`;
+            } else {
+                card.classList.add('market-closed');
+                statusEl.innerHTML = 'CLOSED';
+                labelEl.textContent = status.reason;
+                timeEl.textContent = `${status.nextEvent} ${status.nextTimeStr}`;
+            }
+        }
+
+        function renderUpcomingHolidays(holidays) {
+            const container = document.getElementById('upcoming-list');
+
+            if (!holidays || holidays.length === 0) {
+                container.innerHTML = '<p style="padding: 20px; text-align: center; color: #666;">Keine Holidays in den nächsten 90 Tagen</p>';
+                return;
+            }
+
+            container.innerHTML = holidays.map(h => {
+                const isImminent = h.days_until <= 7;
+                const closureInfo = h.closure_description ? `<span class="upcoming-closure">${h.closure_description}</span>` : '';
+                return `
+                    <div class="upcoming-item ${isImminent ? 'imminent' : ''}">
+                        <div class="upcoming-info">
+                            <span class="upcoming-name">${h.name}</span>
+                            <span class="upcoming-date">${formatDate(h.date)} (${h.weekday})</span>
+                            <span class="holiday-status ${h.status === 'Closed' ? 'status-closed' : 'status-early'}">${h.status}</span>
+                            ${closureInfo}
+                        </div>
+                        <div class="upcoming-countdown">
+                            <div class="upcoming-days ${isImminent ? 'soon' : ''}">${h.days_until}</div>
+                            <div class="upcoming-label">Tage</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderHolidayTable(tableId, holidays) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+
+            if (!holidays || holidays.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Keine Daten</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = holidays.map(h => {
+                const closureText = h.closure_start && h.closure_end
+                    ? `${h.closure_start} - ${h.closure_end}`
+                    : '-';
+                return `
+                <tr>
+                    <td class="holiday-date">${formatDate(h.date)}</td>
+                    <td class="holiday-name">${h.name}</td>
+                    <td>
+                        <span class="holiday-status ${h.status === 'Closed' ? 'status-closed' : 'status-early'}">
+                            ${h.status}
+                        </span>
+                    </td>
+                    <td class="closure-time">${closureText}</td>
+                </tr>
+            `}).join('');
+        }
+
+        function updateStats(data) {
+            const holidays = data.trading_holidays || {};
+            const upcoming = holidays.upcoming || [];
+
+            // Next holiday
+            if (upcoming.length > 0) {
+                document.getElementById('stat-next-name').textContent = upcoming[0].name;
+                document.getElementById('stat-next-date').textContent = `${formatDate(upcoming[0].date)} (in ${upcoming[0].days_until} Tagen)`;
+            } else {
+                document.getElementById('stat-next-name').textContent = 'Keine';
+                document.getElementById('stat-next-date').textContent = '';
+            }
+
+            // Update market status
+            updateMarketStatusDisplay();
+        }
+
+        async function loadDashboard() {
+            try {
+                const data = await loadJSONData(DATA_URL);
+                holidaysData = data;
+
+                updateStats(data);
+
+                // Holidays
+                const holidays = data.trading_holidays || {};
+                renderUpcomingHolidays(holidays.upcoming || []);
+
+                // Dynamic years from data
+                const currentYear = new Date().getFullYear();
+                const nextYear = currentYear + 1;
+
+                // Update headers
+                document.getElementById('holidays-year1-header').textContent = `📅 ${currentYear} CME/GLOBEX Holidays`;
+                document.getElementById('holidays-year2-header').textContent = `📅 ${nextYear} CME/GLOBEX Holidays`;
+
+                // Fill tables
+                renderHolidayTable('holidays-year1', holidays[`all_${currentYear}`] || []);
+                renderHolidayTable('holidays-year2', holidays[`all_${nextYear}`] || []);
+
+                // Timestamp
+                if (data.timestamp) {
+                    updateLastUpdate(data.timestamp);
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden:', error);
+                document.getElementById('upcoming-list').innerHTML = `
+                    <p style="padding: 20px; text-align: center; color: #ef4444;">
+                        Fehler beim Laden der Daten
+                    </p>
+                `;
+            }
+        }
+
+        // Initialize
+        loadDashboard();
+        setInterval(loadDashboard, 300000); // Refresh data every 5 minutes
+        setInterval(updateMarketStatusDisplay, 1000); // Update countdown every second
+    </script>
+</body>
+</html>
