@@ -4,410 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading Dashboard - Home</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #fff;
-        }
-        
-        .hero {
-            background: #0a2540;
-            background: linear-gradient(135deg, #0a2540 0%, #0d3a5c 50%, #134e7a 100%);
-            padding: 0;
-            text-align: center;
-            min-height: 45vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 102, 204, 0.3), transparent),
-                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0, 163, 255, 0.15), transparent),
-                url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E');
-            background-size: auto, auto, 40px 40px;
-            animation: subtleFloat 20s ease-in-out infinite;
-        }
-
-        @keyframes subtleFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 150px;
-            background: linear-gradient(to top, rgba(10, 37, 64, 0.8), transparent);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 30px 60px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 56px;
-            font-weight: 300;
-            color: #fff;
-            margin-bottom: 24px;
-            line-height: 1.1;
-            letter-spacing: -0.5px;
-        }
-
-        .hero p {
-            font-size: 22px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 300;
-            line-height: 1.5;
-        }
-
-        /* Server Status Section - direkt unter Hero */
-        .server-status-section {
-            background: linear-gradient(135deg, #0d3a5c 0%, #134e7a 100%);
-            padding: 40px 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .server-status-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .server-status-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .server-status-header h3 {
-            color: #fff;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .pulse-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #4ade80;
-            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
-            animation: pulse 2s infinite;
-        }
-
-        .pulse-indicator.offline {
-            background: #f87171;
-            box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
-
-        .server-status {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .status-tile {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 14px 10px;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .status-tile:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .status-tile .label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .status-tile .value {
-            font-size: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .status-tile .value.online {
-            color: #4ade80;
-        }
-
-        .status-tile .value.offline {
-            color: #f87171;
-        }
-
-        .status-tile .value.warning {
-            color: #fbbf24;
-        }
-
-        .status-icon {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-        
-        .strategies-section {
-            padding: 80px 30px;
-            background: #f8f9fa;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            font-size: 32px;
-            font-weight: 300;
-            color: #333;
-            margin-bottom: 50px;
-            text-align: center;
-        }
-        
-        .strategies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            perspective: 1200px;
-        }
-        
-        .strategy-card {
-            background:
-                linear-gradient(165deg,
-                    rgba(255, 255, 255, 1) 0%,
-                    rgba(250, 252, 255, 1) 40%,
-                    rgba(245, 249, 255, 1) 100%
-                );
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            border-radius: 28px;
-            padding: 40px 30px;
-            text-align: center;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            position: relative;
-            overflow: hidden;
-            box-shadow:
-                0 0 0 1px rgba(0, 102, 204, 0.03),
-                0 1px 1px rgba(0, 0, 0, 0.01),
-                0 2px 4px rgba(0, 0, 0, 0.02),
-                0 8px 16px rgba(0, 0, 0, 0.03),
-                0 24px 48px rgba(0, 102, 204, 0.04),
-                0 48px 96px rgba(0, 102, 204, 0.02);
-            transition:
-                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.5s ease;
-        }
-
-        /* Animierter Top-Akzent */
-        .strategy-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                #0066cc 15%,
-                #00a8ff 35%,
-                #00d4ff 50%,
-                #00a8ff 65%,
-                #0066cc 85%,
-                transparent 100%
-            );
-            background-size: 300% 100%;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
-        }
-
-        /* Glasmorphismus-Overlay */
-        .strategy-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(
-                    125deg,
-                    rgba(255, 255, 255, 0.6) 0%,
-                    rgba(255, 255, 255, 0.2) 25%,
-                    rgba(255, 255, 255, 0) 50%,
-                    rgba(0, 102, 204, 0.02) 75%,
-                    rgba(0, 168, 255, 0.04) 100%
-                );
-            pointer-events: none;
-            border-radius: 28px;
-            opacity: 0;
-            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .strategy-card:hover {
-            transform: translateY(-20px) rotateX(3deg) scale(1.01);
-            box-shadow:
-                0 0 0 1px rgba(0, 102, 204, 0.08),
-                0 2px 4px rgba(0, 102, 204, 0.04),
-                0 8px 16px rgba(0, 102, 204, 0.06),
-                0 16px 32px rgba(0, 102, 204, 0.08),
-                0 32px 64px rgba(0, 102, 204, 0.1),
-                0 64px 128px rgba(0, 102, 204, 0.06);
-            border-color: rgba(0, 168, 255, 0.2);
-        }
-
-        .strategy-card:hover::before {
-            opacity: 1;
-        }
-
-        .strategy-card:hover::after {
-            opacity: 1;
-        }
-        
-        .strategy-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #0a2540, #0f3554);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            font-size: 36px;
-        }
-        
-        .strategy-card h3 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-        }
-        
-        .strategy-card p {
-            font-size: 15px;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        
-        .strategy-status {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .status-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .section-divider {
-            height: 1px;
-            background-color: #e9ecef;
-            margin: 60px 0;
-            width: 100%;
-        }
-        
-        .footer {
-            background: #333;
-            color: #fff;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .footer p {
-            font-size: 13px;
-            color: #999;
-        }
-
-        /* TOP NAVIGATION */
-        .top-nav { background: #0a2540; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .nav-brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #0066cc, #00a3ff); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .nav-brand-icon svg { width: 18px; height: 18px; color: #fff; }
-        .nav-brand-text { font-size: 16px; font-weight: 600; color: #fff; }
-        .nav-links { display: flex; align-items: center; gap: 8px; }
-        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
-        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
-        .nav-link.active { color: #fff; background: rgba(255,255,255,0.15); }
-        .nav-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.15); margin: 0 8px; }
-        @media (max-width: 768px) { .top-nav { padding: 0 15px; } .nav-brand-text { display: none; } .nav-link { padding: 10px; font-size: 12px; } }
-    </style>
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="./_shared/css/common.css">
 </head>
 <body>
-    <nav class="top-nav">
-        <a href="./dashboard_analyse.html" class="nav-brand">
-            <div class="nav-brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <span class="nav-brand-text">PortfolioHub</span>
-        </a>
-        <div class="nav-links">
-            <a href="./dashboard_analyse.html" class="nav-link active">Dashboard</a>
-            <a href="./holidays/es_mes_holidays.html" class="nav-link">Holidays</a>
-        </div>
-    </nav>
-    <section class="hero">
+    <!-- Navigation wird via includes.js eingefügt -->
+    <div id="nav-placeholder"></div>
+
+    <section class="hero hero-large">
         <div class="hero-content">
             <div class="hero-container">
                 <h1>Trading Dashboard</h1>
@@ -434,7 +38,7 @@
     <section class="strategies-section">
         <div class="container">
             <h2 class="section-title">Strategien</h2>
-            
+
             <div class="strategies-grid">
                 <a href="paper_strategie_1/overview.html" class="strategy-card">
                     <div class="strategy-icon">📊</div>
@@ -442,14 +46,14 @@
                     <p>MES Futures Trading mit automatischer Hebelsteuerung und Rollover-Management</p>
                     <span class="strategy-status status-active" id="strategy1-status">Aktiv</span>
                 </a>
-                
+
                 <div class="strategy-card" style="opacity: 0.5; cursor: not-allowed;">
                     <div class="strategy-icon">🔒</div>
                     <h3>Strategie 2</h3>
                     <p>Weitere Strategie in Planung</p>
                     <span class="strategy-status status-inactive">Inaktiv</span>
                 </div>
-                
+
                 <div class="strategy-card" style="opacity: 0.5; cursor: not-allowed;">
                     <div class="strategy-icon">🔒</div>
                     <h3>Strategie 3</h3>
@@ -457,11 +61,11 @@
                     <span class="strategy-status status-inactive">Inaktiv</span>
                 </div>
             </div>
-            
+
             <div class="section-divider"></div>
 
             <h2 class="section-title">Daten & Analyse</h2>
-            
+
             <div class="strategies-grid">
                 <a href="ib_analysis/download_analyse/download_analyse.html" class="strategy-card">
                     <div class="strategy-icon">📉</div>
@@ -469,14 +73,14 @@
                     <p>Fehleranalyse der historischen Minutendaten und Download-Überwachung</p>
                     <span class="strategy-status status-active" id="ib-status">Aktiv</span>
                 </a>
-                
+
                 <div class="strategy-card" style="opacity: 0.5; cursor: not-allowed;">
                     <div class="strategy-icon">🔒</div>
                     <h3>Analyse 2</h3>
                     <p>Weitere Auswertung in Planung</p>
                     <span class="strategy-status status-inactive">Inaktiv</span>
                 </div>
-                
+
                 <div class="strategy-card" style="opacity: 0.5; cursor: not-allowed;">
                     <div class="strategy-icon">🔒</div>
                     <h3>Analyse 3</h3>
@@ -486,131 +90,34 @@
             </div>
         </div>
     </section>
-    
+
     <footer class="footer">
         <p>Trading Dashboard · Automatisierte Strategieüberwachung</p>
     </footer>
-    
+
+    <!-- Shared JavaScript -->
+    <script src="./_shared/js/includes.js"></script>
+    <script src="./_shared/js/common.js"></script>
     <script>
-        async function loadJSONData(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP Fehler ${response.status}: ${response.statusText}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error(`Fehler beim Laden der Daten von ${url}:`, error);
-                throw error;
-            }
-        }
-        
-        function createStatusTile(label, value, statusClass) {
-            return `
-                <div class="status-tile">
-                    <div class="label">${label}</div>
-                    <div class="value ${statusClass}"><span class="status-icon"></span> ${value}</div>
-                </div>
-            `;
-        }
-        
-        function updateServerStatus(status, system, timestamp) {
-            if (!status) return;
-            
-            const container = document.getElementById('server-status');
-            const pulseIndicator = document.getElementById('pulse-indicator');
-            if (!container) return;
-            
-            let html = '';
-            
-            // Gateway Status
-            const gatewayOnline = status.gateway_running;
-            html += createStatusTile(
-                'Gateway',
-                gatewayOnline ? 'Online' : 'Offline',
-                gatewayOnline ? 'online' : 'offline'
-            );
-            
-            // Port Status
-            const portActive = status.port_4002_listening;
-            html += createStatusTile(
-                'Port 4002',
-                portActive ? 'Aktiv' : 'Inaktiv',
-                portActive ? 'online' : 'offline'
-            );
-            
-            if (system) {
-                // RAM
-                const ramVal = system.ram_usage_percent;
-                const ramClass = ramVal > 85 ? 'offline' : 'online';
-                html += createStatusTile('RAM', `${ramVal}%`, ramClass);
-                
-                // Disk
-                const diskVal = system.disk_usage_percent;
-                const diskClass = diskVal > 85 ? 'offline' : 'online';
-                html += createStatusTile('Disk', `${diskVal}%`, diskClass);
-                
-                // Uptime - grün wenn >= 5 Tage
-                const uptimeDays = system.uptime_days;
-                if (uptimeDays !== null && uptimeDays !== undefined) {
-                    const uptimeClass = uptimeDays >= 5 ? 'online' : 'warning';
-                    const uptimeText = uptimeDays >= 1 
-                        ? `${uptimeDays.toFixed(1)}d` 
-                        : `${(uptimeDays * 24).toFixed(1)}h`;
-                    html += createStatusTile('Uptime', uptimeText, uptimeClass);
-                }
-            }
-            
-            // Letzte Aktualisierung - grün wenn < 65 Minuten
-            if (timestamp) {
-                const lastUpdate = new Date(timestamp);
-                const now = new Date();
-                const diffMinutes = (now - lastUpdate) / (1000 * 60);
-                const updateClass = diffMinutes < 65 ? 'online' : 'offline';
-                
-                const timeStr = lastUpdate.toLocaleTimeString('de-DE', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                html += createStatusTile('Aktualisiert', timeStr, updateClass);
-            }
-            
-            container.innerHTML = html;
-            
-            // Pulse Indicator
-            const allOnline = gatewayOnline && portActive;
-            if (pulseIndicator) {
-                pulseIndicator.classList.toggle('offline', !allOnline);
-            }
-        }
-        
-        function updateIBStatus(ibData, elementId = 'ib-status') {
-            const el = document.getElementById(elementId);
-            if (!el) return;
-            if (ibData.error_count && ibData.error_count > 0) {
-                el.className = 'strategy-status status-warning';
-                el.textContent = `${ibData.error_count} Fehler`;
-            } else if (ibData.active) {
-                el.className = 'strategy-status status-active';
-                el.textContent = 'Aktiv';
-            } else {
-                el.className = 'strategy-status status-inactive';
-                el.textContent = 'Inaktiv';
-            }
-        }
-        
+        // Initialize navigation
+        initIncludes({
+            activeNav: 'nav-dashboard',
+            loadCSS: false,  // Already loaded via link tag
+            loadJS: false    // Already loaded via script tag
+        });
+
         const DATA_URL = './dashboard_analyse.json';
-        
+
         async function loadStatus() {
             try {
                 const data = await loadJSONData(DATA_URL);
-                
-                updateServerStatus(data.server_status, data.system_status, data.timestamp);
-                
+
+                updateServerStatusTiles(data.server_status, data.system_status, data.timestamp);
+
                 if (data.ib_status) {
                     updateIBStatus(data.ib_status);
                 }
-                
+
             } catch (error) {
                 console.error('Fehler beim Laden des Status:', error);
                 const statusContainer = document.getElementById('server-status');
@@ -619,7 +126,7 @@
                 }
             }
         }
-        
+
         loadStatus();
         setInterval(loadStatus, 60000);
     </script>

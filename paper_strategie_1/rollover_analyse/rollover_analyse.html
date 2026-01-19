@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Rollover Analyse</title>
+    <!-- Shared CSS and JS -->
+    <link rel="stylesheet" href="../../_shared/css/common.css">
+    <script src="../../_shared/js/includes.js"></script>
+    <!-- Chart.js Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
@@ -57,38 +61,11 @@
         @media (max-width: 800px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .hero h1 { font-size: 28px; } }
         @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
 
-        /* TOP NAVIGATION */
-        .top-nav { background: #0a2540; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .nav-brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #0066cc, #00a3ff); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .nav-brand-icon svg { width: 18px; height: 18px; color: #fff; }
-        .nav-brand-text { font-size: 16px; font-weight: 600; color: #fff; }
-        .nav-links { display: flex; align-items: center; gap: 8px; }
-        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
-        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
-        .nav-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.15); margin: 0 8px; }
-        @media (max-width: 768px) { .top-nav { padding: 0 15px; } .nav-brand-text { display: none; } .nav-link { padding: 10px; font-size: 12px; } }
-
-        /* BREADCRUMB IMPROVED */
-        .breadcrumb { margin-bottom: 20px; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); padding: 10px 20px; border-radius: 30px; backdrop-filter: blur(10px); }
-        .breadcrumb a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 15px; transition: all 0.2s ease; }
-        .breadcrumb a:hover { color: #fff; background: rgba(255,255,255,0.15); }
-        .breadcrumb-separator { color: rgba(255,255,255,0.4); font-size: 12px; }
-        .breadcrumb-current { color: #fff; font-size: 13px; font-weight: 600; padding: 4px 12px; background: rgba(0, 102, 204, 0.4); border-radius: 15px; }
+        /* Navigation and breadcrumb styles from common.css */
     </style>
 </head>
 <body>
-    <nav class="top-nav">
-        <a href="../../dashboard_analyse.html" class="nav-brand">
-            <div class="nav-brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <span class="nav-brand-text">PortfolioHub</span>
-        </a>
-        <div class="nav-links">
-            <a href="../../dashboard_analyse.html" class="nav-link">Dashboard</a>
-            <div class="nav-divider"></div>
-            <a href="../overview.html" class="nav-link">Paper Strategie 1</a>
-        </div>
-    </nav>
+    <div id="nav-placeholder"></div>
     <section class="hero">
         <div class="hero-content">
             <div class="breadcrumb">
@@ -276,6 +253,9 @@
         }
         loadData();
         setInterval(loadData, 60000);
+
+        // Initialize shared includes
+        initIncludes({ activeNav: 'nav-dashboard', loadCSS: false });
     </script>
 </body>
 </html>

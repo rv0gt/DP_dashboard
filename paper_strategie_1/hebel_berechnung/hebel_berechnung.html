@@ -4,82 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paper Strategie 1 - Hebel-Berechnung</title>
+    <!-- Shared CSS and JS -->
+    <link rel="stylesheet" href="../../_shared/css/common.css">
+    <script src="../../_shared/js/includes.js"></script>
     <style>
         /* --- BASIS STYLES (Identisch zum Dashboard) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #fff; }
 
-        /* TOP NAVIGATION */
-        .top-nav {
-            background: #0a2540;
-            padding: 0 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 56px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-        .nav-brand-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #0066cc, #00a3ff);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .nav-brand-icon svg {
-            width: 18px;
-            height: 18px;
-            color: #fff;
-        }
-        .nav-brand-text {
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
-            letter-spacing: -0.3px;
-        }
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .nav-link:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-        }
-        .nav-link svg {
-            width: 16px;
-            height: 16px;
-            opacity: 0.8;
-        }
-        .nav-divider {
-            width: 1px;
-            height: 24px;
-            background: rgba(255,255,255,0.15);
-            margin: 0 8px;
-        }
+        /* Navigation styles from common.css */
 
         /* HERO SECTION */
         .hero {
@@ -316,54 +249,14 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .top-nav { padding: 0 15px; }
-            .nav-brand-text { display: none; }
-            .nav-link { padding: 10px; font-size: 12px; }
             .hero h1 { font-size: 28px; }
             .table-scroll-wrapper { max-height: 60vh; }
             .breadcrumb { flex-wrap: wrap; justify-content: center; padding: 8px 15px; }
         }
-        @media (max-width: 480px) {
-            .nav-links { gap: 4px; }
-            .nav-link svg { width: 18px; height: 18px; }
-        }
     </style>
 </head>
 <body>
-
-    <!-- TOP NAVIGATION -->
-    <nav class="top-nav">
-        <a href="../../dashboard_analyse.html" class="nav-brand">
-            <div class="nav-brand-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-            </div>
-            <span class="nav-brand-text">PortfolioHub</span>
-        </a>
-        <div class="nav-links">
-            <a href="../../dashboard_analyse.html" class="nav-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/>
-                </svg>
-                Dashboard
-            </a>
-            <div class="nav-divider"></div>
-            <a href="../overview.html" class="nav-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-                Paper Strategie 1
-            </a>
-        </div>
-    </nav>
+    <div id="nav-placeholder"></div>
 
     <section class="hero">
         <div class="hero-content">
@@ -668,6 +561,9 @@
         // --- Initialize ---
         loadTableData();
         setInterval(loadTableData, 60000);
+
+        // Initialize shared includes
+        initIncludes({ activeNav: 'nav-dashboard', loadCSS: false });
     </script>
 </body>
 </html>
