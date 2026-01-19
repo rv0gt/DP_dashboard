@@ -41,7 +41,7 @@ function loadSharedCSS() {
     const basePath = getBasePath();
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = basePath + '_shared/css/common.css';
+    link.href = basePath + 'shared/css/common.css';
     document.head.appendChild(link);
 }
 
@@ -52,7 +52,7 @@ function loadSharedJS() {
     return new Promise((resolve, reject) => {
         const basePath = getBasePath();
         const script = document.createElement('script');
-        script.src = basePath + '_shared/js/common.js';
+        script.src = basePath + 'shared/js/common.js';
         script.onload = resolve;
         script.onerror = reject;
         document.head.appendChild(script);
