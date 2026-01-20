@@ -39,12 +39,15 @@ function getBasePath() {
     // Get path after the root marker
     const relativePath = path.substring(rootIndex + markerLength);
 
-    // Count subdirectories (number of / in the remaining path, minus the filename)
-    const parts = relativePath.split('/').filter(p => p.length > 0);
-    const subDirs = parts.length > 0 ? parts.length - 1 : 0; // -1 because last part is the file
+    // Count slashes to determine depth
+    // Example: "dashboard_analyse.html" -> 0 slashes -> depth 0 -> "./"
+    // Example: "holidays/es_mes_holidays.html" -> 1 slash -> depth 1 -> "../"
+    // Example: "paper_strategie_1/overview.html" -> 1 slash -> depth 1 -> "../"
+    // Example: "paper_strategie_1/performance_analyse/performance_analyse.html" -> 2 slashes -> depth 2 -> "../../"
+    const slashCount = (relativePath.match(/\//g) || []).length;
 
-    if (subDirs === 0) return './';
-    return '../'.repeat(subDirs);
+    if (slashCount === 0) return './';
+    return '../'.repeat(slashCount);
 }
 
 /**
