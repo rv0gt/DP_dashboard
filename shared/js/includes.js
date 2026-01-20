@@ -15,20 +15,33 @@ const CONFIG = {
 
 /**
  * Calculate relative path to root based on current location
+ * Works for both local development and GitHub Pages
  */
 function getBasePath() {
     const path = window.location.pathname;
-    const depth = (path.match(/\//g) || []).length -
-                  (path.indexOf('/01_Webseite/') > -1
-                      ? path.substring(0, path.indexOf('/01_Webseite/')).split('/').length
-                      : 0);
 
-    // Count subdirectories from 01_Webseite
-    const webseiteIndex = path.indexOf('/01_Webseite/');
-    if (webseiteIndex === -1) return './';
+    // Find the root marker - either /01_Webseite/ (local) or /DP_dashboard/ (GitHub Pages)
+    const markers = ['/01_Webseite/', '/DP_dashboard/'];
+    let rootIndex = -1;
+    let markerLength = 0;
 
-    const relativePath = path.substring(webseiteIndex + '/01_Webseite/'.length);
-    const subDirs = (relativePath.match(/\//g) || []).length;
+    for (const marker of markers) {
+        const idx = path.indexOf(marker);
+        if (idx !== -1) {
+            rootIndex = idx;
+            markerLength = marker.length;
+            break;
+        }
+    }
+
+    if (rootIndex === -1) return './';
+
+    // Get path after the root marker
+    const relativePath = path.substring(rootIndex + markerLength);
+
+    // Count subdirectories (number of / in the remaining path, minus the filename)
+    const parts = relativePath.split('/').filter(p => p.length > 0);
+    const subDirs = parts.length > 0 ? parts.length - 1 : 0; // -1 because last part is the file
 
     if (subDirs === 0) return './';
     return '../'.repeat(subDirs);
