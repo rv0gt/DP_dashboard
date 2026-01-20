@@ -605,6 +605,36 @@
             }
         }
 
+        function getNextHolidayCountdown() {
+            const upcoming = holidaysData?.trading_holidays?.upcoming || [];
+            if (upcoming.length === 0) return null;
+
+            const nextHoliday = upcoming[0];
+            const holidayDate = new Date(nextHoliday.date + 'T00:00:00');
+            const now = new Date();
+
+            // Set holiday date to start of day in local timezone
+            holidayDate.setHours(0, 0, 0, 0);
+            const todayStart = new Date(now);
+            todayStart.setHours(0, 0, 0, 0);
+
+            const diff = holidayDate - now;
+
+            if (diff <= 0) return null;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            return {
+                name: nextHoliday.name,
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                formatted: `${days}d ${hours}h ${minutes}m`
+            };
+        }
+
         function updateMarketStatusDisplay() {
             const holidays = holidaysData?.trading_holidays?.upcoming || [];
             const status = getMarketStatus(holidays);
@@ -618,9 +648,17 @@
 
             if (status.isOpen) {
                 card.classList.add('market-open');
-                statusEl.innerHTML = `<span class="countdown-timer">${formatCountdown(status.nextTime)}</span>`;
-                labelEl.textContent = `${status.nextEvent} um ${status.nextTimeStr}`;
-                timeEl.textContent = `OPEN - ${formatChicagoTime(getChicagoTime())}`;
+                statusEl.innerHTML = 'OPEN';
+
+                // Show countdown to next holiday
+                const holidayCountdown = getNextHolidayCountdown();
+                if (holidayCountdown) {
+                    labelEl.innerHTML = `<span class="countdown-timer">${holidayCountdown.formatted}</span>`;
+                    timeEl.textContent = `bis ${holidayCountdown.name}`;
+                } else {
+                    labelEl.textContent = 'Markt geöffnet';
+                    timeEl.textContent = formatChicagoTime(getChicagoTime());
+                }
             } else {
                 card.classList.add('market-closed');
                 statusEl.innerHTML = 'CLOSED';
