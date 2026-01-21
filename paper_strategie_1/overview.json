@@ -1,17 +1,17 @@
 {
-    "timestamp": "2026-01-21T20:10:06.390134",
+    "timestamp": "2026-01-21T21:10:27.208952",
     "overview": {
-        "konto_wert_nlv": 1315561.15,
+        "konto_wert_nlv": 1324133.93,
         "konto_wert_from_ib": true,
-        "neuer_hebel": 0.8537,
-        "mes_preis": 6867.0,
+        "neuer_hebel": 4.4976,
+        "mes_preis": 6942.5,
         "mes_preis_from_ib": true,
-        "avg_position_cost": 6959.44047399,
+        "avg_position_cost": 6940.487044428315,
         "avg_cost_from_ib": true,
-        "unrealized_pnl": -15252.678208350017,
+        "unrealized_pnl": 1731.1417916489881,
         "unrealized_pnl_from_ib": true,
         "realized_pnl_gross_total": -37231.67,
-        "realized_pnl_net_total": -38374.53,
+        "realized_pnl_net_total": -38460.71,
         "realized_pnl_start_date": "2025-12-26",
         "kontraktname": "MES 20260320",
         "offene_orders_anzahl": 0
@@ -156,13 +156,38 @@
         {
             "date": "2026-01-21",
             "daily_gross": -89692.08,
-            "daily_net": -89778.88,
+            "daily_net": -89865.06,
             "cumulative_gross": -37231.67,
-            "cumulative_net": -38374.530000000006,
-            "trade_count": 2
+            "cumulative_net": -38460.71,
+            "trade_count": 3
         }
     ],
     "recent_transactions": [
+        {
+            "date_chi": "2026-01-21T14:10:23",
+            "aktion": "BUY",
+            "delta_zu_handeln": 139,
+            "ausgefuehrte_menge": 139,
+            "durchschnittspreis": 6935.86,
+            "kosten_transaktion": 86.18,
+            "slippage_kosten": 86.875,
+            "status": "Filled",
+            "order_typ": "MARKET",
+            "kontraktname": "MES 20260320",
+            "rollover_stattgefunden": 0,
+            "rollover_aktion": null,
+            "unrealized_pnl": 3236.14,
+            "realized_pnl_gross": null,
+            "realized_pnl_net": -86.18,
+            "avg_position_cost_before": 6959.44,
+            "avg_position_cost": 6940.49,
+            "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
+            "leverage_new": 4.485,
+            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
+            "is_rollover": 0,
+            "margin_auslastung": 22.43543333,
+            "kosten_angepasst": 1.245
+        },
         {
             "date_chi": "2026-01-21T08:10:24",
             "aktion": "SELL",
@@ -185,7 +210,7 @@
             "leverage_new": 0.8563,
             "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
             "is_rollover": 0,
-            "margin_auslastung": 31.3549,
+            "margin_auslastung": 22.43543333,
             "kosten_angepasst": 1.2449999999999999
         },
         {
@@ -210,7 +235,7 @@
             "leverage_new": 4.0103,
             "changed_columns": "pc_ratio_volume",
             "is_rollover": 0,
-            "margin_auslastung": 31.3549,
+            "margin_auslastung": 22.43543333,
             "kosten_angepasst": 1.2449999999999999
         },
         {
@@ -637,31 +662,6 @@
             "is_rollover": 0,
             "margin_auslastung": 12.28033333,
             "kosten_angepasst": 1.2449999999999999
-        },
-        {
-            "date_chi": "2026-01-08T00:10:24",
-            "aktion": "BUY",
-            "delta_zu_handeln": 28,
-            "ausgefuehrte_menge": 28,
-            "durchschnittspreis": 6940.0,
-            "kosten_transaktion": 17.36,
-            "slippage_kosten": 35.0,
-            "status": "Filled",
-            "order_typ": "MARKET",
-            "kontraktname": "MES 20260320",
-            "rollover_stattgefunden": 0,
-            "rollover_aktion": null,
-            "unrealized_pnl": 1829.23,
-            "realized_pnl_gross": null,
-            "realized_pnl_net": -52.36,
-            "avg_position_cost_before": 6943.39,
-            "avg_position_cost": 6942.44,
-            "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "leverage_new": 2.4075,
-            "changed_columns": "pc_ratio_volume",
-            "is_rollover": 0,
-            "margin_auslastung": 12.28033333,
-            "kosten_angepasst": 1.8699999999999999
         }
     ]
 }
