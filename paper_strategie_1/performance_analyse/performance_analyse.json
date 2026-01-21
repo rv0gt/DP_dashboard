@@ -1,10 +1,10 @@
 {
-    "timestamp": "2026-01-21T10:10:14.032630",
+    "timestamp": "2026-01-21T11:10:10.763263",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1329317.44,
+        "current_value": 1319779.16,
         "current_value_from_ib": true,
-        "total_return_pct": 18.48,
+        "total_return_pct": 17.63,
         "total_costs": 789.26,
         "total_slippage": 8669.37,
         "total_all_costs": 9458.63,
