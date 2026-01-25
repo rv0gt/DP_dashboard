@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-01-25T03:10:08.130820",
+    "timestamp": "2026-01-25T04:10:10.235195",
     "margin_data": {
         "current": {
             "margin_benoetigt": 53754.53,
@@ -490,46 +490,6 @@
                 "excess_liquidity": 1009208.97,
                 "margin_auslastung": 9.1618,
                 "konto_wert": 1103540.88,
-                "aktueller_hebel": 1.6447
-            },
-            {
-                "datum": "2025-12-26 03:44:34",
-                "margin_benoetigt": 99152.83,
-                "maintenance_margin": 90138.94,
-                "margin_verfuegbar": 1000857.15,
-                "excess_liquidity": 1009871.05,
-                "margin_auslastung": 8.994,
-                "konto_wert": 1102427.75,
-                "aktueller_hebel": 1.6142
-            },
-            {
-                "datum": "2025-12-26 03:42:54",
-                "margin_benoetigt": 101110.23,
-                "maintenance_margin": 91918.39,
-                "margin_verfuegbar": 998968.18,
-                "excess_liquidity": 1008160.02,
-                "margin_auslastung": 9.171,
-                "konto_wert": 1102496.37,
-                "aktueller_hebel": 1.6457
-            },
-            {
-                "datum": "2025-12-26 03:18:37",
-                "margin_benoetigt": 101094.83,
-                "maintenance_margin": 91902.35,
-                "margin_verfuegbar": 999580.58,
-                "excess_liquidity": 1008773.05,
-                "margin_auslastung": 9.1647,
-                "konto_wert": 1103093.89,
-                "aktueller_hebel": 1.645
-            },
-            {
-                "datum": "2025-12-26 03:14:42",
-                "margin_benoetigt": 101082.72,
-                "maintenance_margin": 91893.38,
-                "margin_verfuegbar": 999671.79,
-                "excess_liquidity": 1008861.13,
-                "margin_auslastung": 9.1629,
-                "konto_wert": 1103173.1,
                 "aktueller_hebel": 1.6447
             }
         ]
