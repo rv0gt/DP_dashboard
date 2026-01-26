@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-01-26T05:10:06.573237",
+  "timestamp": "2026-01-26T06:10:07.223290",
   "server_status": {
     "gateway_running": true,
     "port_4002_listening": true,
-    "last_check": "2026-01-26T05:10:06.589702",
+    "last_check": "2026-01-26T06:10:07.262700",
     "overall": true
   },
   "system_status": {
-    "ram_usage_percent": 11.7,
-    "disk_usage_percent": 60,
+    "ram_usage_percent": 22.8,
+    "disk_usage_percent": 59,
     "uptime_days": 8.6
   }
 }
