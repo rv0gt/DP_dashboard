@@ -2,6 +2,30 @@
     "paper_strategie_1": {
         "data_overview": [
             {
+                "sync_chi": "2026-01-29T15:59:59",
+                "sync_ch": "2026-01-29T22:59:59",
+                "mes": null,
+                "mes_sync_chi": null,
+                "es": null,
+                "es_sync_chi": null,
+                "spx": null,
+                "spx_sync_chi": null,
+                "vix": null,
+                "vix_sync_chi": null,
+                "BAMLHE00EHYIEY": null,
+                "BAMLHE00EHYIEY_sync_chi": null,
+                "BAMLH0A0HYM2SYTW": null,
+                "BAMLH0A0HYM2SYTW_sync_chi": null,
+                "BAMLH0A0HYM2": null,
+                "BAMLH0A0HYM2_sync_chi": null,
+                "BAMLC0A3CAEY": null,
+                "BAMLC0A3CAEY_sync_chi": null,
+                "pc_ratio_volume": 0.809527,
+                "pc_ratio_volume_sync_chi": "2026-01-29T00:01:00",
+                "debit_balances_margin_accounts": null,
+                "debit_balances_margin_accounts_sync_chi": null
+            },
+            {
                 "sync_chi": "2026-01-28T15:59:59",
                 "sync_ch": "2026-01-28T22:59:59",
                 "mes": 7016.75,
@@ -1176,32 +1200,8 @@
                 "pc_ratio_volume_sync_chi": "2025-11-19T00:01:00",
                 "debit_balances_margin_accounts": null,
                 "debit_balances_margin_accounts_sync_chi": null
-            },
-            {
-                "sync_chi": "2025-11-18T15:59:59",
-                "sync_ch": "2025-11-18T22:59:59",
-                "mes": 6627.75,
-                "mes_sync_chi": "2025-11-18T15:59:00",
-                "es": 6627.75,
-                "es_sync_chi": "2025-11-18T15:59:00",
-                "spx": 6616.94,
-                "spx_sync_chi": "2025-11-18T14:59:00",
-                "vix": 24.69,
-                "vix_sync_chi": "2025-11-18T15:59:00",
-                "BAMLHE00EHYIEY": 5.15,
-                "BAMLHE00EHYIEY_sync_chi": "2025-11-18T10:00:00",
-                "BAMLH0A0HYM2SYTW": 7.02,
-                "BAMLH0A0HYM2SYTW_sync_chi": "2025-11-18T10:00:00",
-                "BAMLH0A0HYM2": 3.13,
-                "BAMLH0A0HYM2_sync_chi": "2025-11-18T10:00:00",
-                "BAMLC0A3CAEY": 4.73,
-                "BAMLC0A3CAEY_sync_chi": "2025-11-18T10:00:00",
-                "pc_ratio_volume": 0.96797,
-                "pc_ratio_volume_sync_chi": "2025-11-18T00:01:00",
-                "debit_balances_margin_accounts": null,
-                "debit_balances_margin_accounts_sync_chi": null
             }
         ]
     },
-    "timestamp": "2026-01-29T06:10:19.802745"
+    "timestamp": "2026-01-29T07:10:12.600067"
 }
