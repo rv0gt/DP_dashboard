@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1143,
+                "date_chi": "2026-02-01T17:10:03",
+                "date_ch": "2026-02-02T00:10:03",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1142,
                 "date_chi": "2026-02-01T16:10:04",
                 "date_ch": "2026-02-01T23:10:04",
@@ -9204,34 +9217,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 0
-            },
-            {
-                "id": 434,
-                "date_chi": "2026-01-03T00:10:03",
-                "date_ch": "2026-01-03T07:10:03",
-                "transaction_called": 0,
-                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
-                "reason_detail": "Markt geschlossen",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 0
-            },
-            {
-                "id": 433,
-                "date_chi": "2026-01-02T23:19:01",
-                "date_ch": "2026-01-03T06:19:01",
-                "transaction_called": 0,
-                "reason_code": "MARKT_GESCHLOSSEN_FREITAG",
-                "reason_detail": "Markt geschlossen",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 2
             }
         ]
     },
-    "timestamp": "2026-02-01T23:10:13.334336"
+    "timestamp": "2026-02-02T00:10:12.370125"
 }
