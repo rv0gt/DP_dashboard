@@ -1,14 +1,14 @@
 {
-    "timestamp": "2026-02-02T22:10:07.657384",
+    "timestamp": "2026-02-02T23:10:06.095503",
     "overview": {
-        "konto_wert_nlv": 1311663.75,
+        "konto_wert_nlv": 1312074.23,
         "konto_wert_from_ib": true,
         "neuer_hebel": -0.7497,
-        "mes_preis": 7003.25,
+        "mes_preis": 7003.0,
         "mes_preis_from_ib": true,
         "avg_position_cost": 6898.70327273,
         "avg_cost_from_ib": true,
-        "unrealized_pnl": -15159.27545414997,
+        "unrealized_pnl": -15123.02545414997,
         "unrealized_pnl_from_ib": true,
         "realized_pnl_gross_total": -85603.15,
         "realized_pnl_net_total": -87161.41,
