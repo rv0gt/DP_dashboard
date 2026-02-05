@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1233,
+                "date_chi": "2026-02-05T11:10:04",
+                "date_ch": "2026-02-05T18:10:04",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 0.4554 -> 0.4554",
+                "leverage_old": 0.4554,
+                "leverage_new": 0.4554,
+                "leverage_change": 0.0,
+                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, pc_ratio_volume",
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1232,
                 "date_chi": "2026-02-05T10:10:03",
                 "date_ch": "2026-02-05T17:10:03",
@@ -9204,34 +9217,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 2
-            },
-            {
-                "id": 524,
-                "date_chi": "2026-01-06T18:10:03",
-                "date_ch": "2026-01-07T01:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 2
-            },
-            {
-                "id": 523,
-                "date_chi": "2026-01-06T17:10:24",
-                "date_ch": "2026-01-07T00:10:24",
-                "transaction_called": 1,
-                "reason_code": "ZEITFENSTER_17_18",
-                "reason_detail": "17:00-18:00 Fenster. Hebel: 1.6322 -> 1.6322",
-                "leverage_old": 1.6322,
-                "leverage_new": 1.6322,
-                "leverage_change": 0.0,
-                "changed_columns": null,
-                "daily_trades_count": 2
             }
         ]
     },
-    "timestamp": "2026-02-05T17:10:12.999240"
+    "timestamp": "2026-02-05T18:10:12.793601"
 }
