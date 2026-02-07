@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1281,
+                "date_chi": "2026-02-07T11:10:03",
+                "date_ch": "2026-02-07T18:10:03",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1280,
                 "date_chi": "2026-02-07T10:10:02",
                 "date_ch": "2026-02-07T17:10:02",
@@ -9204,34 +9217,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 3
-            },
-            {
-                "id": 572,
-                "date_chi": "2026-01-08T18:10:03",
-                "date_ch": "2026-01-09T01:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 3
-            },
-            {
-                "id": 571,
-                "date_chi": "2026-01-08T17:10:23",
-                "date_ch": "2026-01-09T00:10:23",
-                "transaction_called": 1,
-                "reason_code": "ZEITFENSTER_17_18",
-                "reason_detail": "17:00-18:00 Fenster. Hebel: 1.8285 -> 1.4808",
-                "leverage_old": 1.8285,
-                "leverage_new": 1.4808,
-                "leverage_change": 0.3477,
-                "changed_columns": null,
-                "daily_trades_count": 3
             }
         ]
     },
-    "timestamp": "2026-02-07T17:10:23.806335"
+    "timestamp": "2026-02-07T18:10:24.064349"
 }
