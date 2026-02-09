@@ -5893,6 +5893,34 @@
             "weekday": 4,
             "year": 2026,
             "symbol": "SOX"
+        },
+        {
+            "date": "2026-02-09",
+            "time": "17:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "YM"
+        },
+        {
+            "date": "2026-02-09",
+            "time": "17:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2026-02-09",
+            "time": "17:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "ES"
+        },
+        {
+            "date": "2026-02-09",
+            "time": "17:00",
+            "weekday": 0,
+            "year": 2026,
+            "symbol": "MES"
         }
     ],
     "config": {
@@ -5967,10 +5995,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2026-02-06"
+        "max_date": "2026-02-09"
     },
     "meta": {
-        "generated_at": "2026-02-09 23:10",
+        "generated_at": "2026-02-10 00:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
