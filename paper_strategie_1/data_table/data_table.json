@@ -4,14 +4,14 @@
             {
                 "sync_chi": "2026-02-09T15:59:59",
                 "sync_ch": "2026-02-09T22:59:59",
-                "mes": null,
-                "mes_sync_chi": null,
-                "es": null,
-                "es_sync_chi": null,
-                "spx": null,
-                "spx_sync_chi": null,
-                "vix": null,
-                "vix_sync_chi": null,
+                "mes": 6985.25,
+                "mes_sync_chi": "2026-02-09T15:50:00",
+                "es": 6985.25,
+                "es_sync_chi": "2026-02-09T15:50:00",
+                "spx": 6963.17,
+                "spx_sync_chi": "2026-02-09T14:59:00",
+                "vix": 17.36,
+                "vix_sync_chi": "2026-02-09T15:44:00",
                 "BAMLHE00EHYIEY": 4.96,
                 "BAMLHE00EHYIEY_sync_chi": "2026-02-09T09:01:58",
                 "BAMLH0A0HYM2SYTW": 6.7,
@@ -1203,5 +1203,5 @@
             }
         ]
     },
-    "timestamp": "2026-02-09T22:10:11.186975"
+    "timestamp": "2026-02-09T23:10:11.556197"
 }
