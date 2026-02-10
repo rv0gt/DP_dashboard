@@ -1,13 +1,13 @@
 {
-    "timestamp": "2026-02-10T23:10:10.547089",
+    "timestamp": "2026-02-11T00:10:32.869047",
     "performance_data": {
         "start_value": 1122022.32,
-        "current_value": 1359313.66,
+        "current_value": 1357344.74,
         "current_value_from_ib": true,
-        "total_return_pct": 21.15,
-        "total_costs": 1405.54,
-        "total_slippage": 9500.0,
-        "total_all_costs": 10905.54,
+        "total_return_pct": 20.97,
+        "total_costs": 1425.38,
+        "total_slippage": 9540.0,
+        "total_all_costs": 10965.38,
         "history": [
             {
                 "datum": "2025-11-28 13:34:27",
@@ -1968,6 +1968,26 @@
                 "realized_pnl_net": 0.0,
                 "cumulative_realized_gross": -36944.07,
                 "cumulative_realized_net": -38626.95
+            },
+            {
+                "datum": "2026-02-10 17:10:25",
+                "konto_wert": 1358423.12,
+                "konto_wert_pct": 21.07,
+                "buy_hold_pct": 1.65,
+                "mes_preis": 6970.5,
+                "neuer_hebel": -0.8723,
+                "kosten_kumulativ": 1425.38,
+                "slippage_kumulativ": 9540.0,
+                "total_kosten_kumulativ": 10965.38,
+                "kosten_pro_kontrakt": 0.124,
+                "slippage_pro_kontrakt": 0.25,
+                "total_kosten_pro_kontrakt": 0.374,
+                "zeitslippage": -3.16,
+                "unrealized_pnl": -656.08,
+                "realized_pnl_gross": 2274.84,
+                "realized_pnl_net": 2255.0,
+                "cumulative_realized_gross": -34669.23,
+                "cumulative_realized_net": -36371.95
             }
         ]
     }
