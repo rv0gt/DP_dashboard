@@ -5921,6 +5921,41 @@
             "weekday": 0,
             "year": 2026,
             "symbol": "MES"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "07:00",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "YM"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "07:00",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "07:00",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "ES"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "07:00",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "MES"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "07:00",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "EURUSD"
         }
     ],
     "config": {
@@ -5995,10 +6030,10 @@
             "SPY"
         ],
         "min_date": "2025-11-17",
-        "max_date": "2026-02-09"
+        "max_date": "2026-02-10"
     },
     "meta": {
-        "generated_at": "2026-02-10 13:10",
+        "generated_at": "2026-02-10 14:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
