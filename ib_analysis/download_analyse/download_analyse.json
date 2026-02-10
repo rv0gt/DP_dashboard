@@ -5956,6 +5956,69 @@
             "weekday": 1,
             "year": 2026,
             "symbol": "EURUSD"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "SPX"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "NDX"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "OEX"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "RUI"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "RUA"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "RUT"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "VXN"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "HGX"
+        },
+        {
+            "date": "2026-02-10",
+            "time": "08:30",
+            "weekday": 1,
+            "year": 2026,
+            "symbol": "SOX"
         }
     ],
     "config": {
@@ -6033,7 +6096,7 @@
         "max_date": "2026-02-10"
     },
     "meta": {
-        "generated_at": "2026-02-10 15:10",
+        "generated_at": "2026-02-10 16:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
