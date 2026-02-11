@@ -6117,6 +6117,34 @@
             "weekday": 2,
             "year": 2026,
             "symbol": "CG"
+        },
+        {
+            "date": "2026-02-11",
+            "time": "17:00",
+            "weekday": 2,
+            "year": 2026,
+            "symbol": "YM"
+        },
+        {
+            "date": "2026-02-11",
+            "time": "17:00",
+            "weekday": 2,
+            "year": 2026,
+            "symbol": "EMD"
+        },
+        {
+            "date": "2026-02-11",
+            "time": "17:00",
+            "weekday": 2,
+            "year": 2026,
+            "symbol": "ES"
+        },
+        {
+            "date": "2026-02-11",
+            "time": "17:00",
+            "weekday": 2,
+            "year": 2026,
+            "symbol": "MES"
         }
     ],
     "config": {
@@ -6194,7 +6222,7 @@
         "max_date": "2026-02-11"
     },
     "meta": {
-        "generated_at": "2026-02-11 23:10",
+        "generated_at": "2026-02-12 00:10",
         "source_file": "download_data_ib_min.py.log"
     }
 }
