@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-12T12:19:53.662319",
+  "timestamp": "2026-02-12T12:21:02.534210",
   "server_status": {
     "gateway_running": false,
     "port_4002_listening": false,
-    "last_check": "2026-02-12T12:19:53.678065",
+    "last_check": "2026-02-12T12:21:02.550298",
     "overall": false
   },
   "system_status": {
