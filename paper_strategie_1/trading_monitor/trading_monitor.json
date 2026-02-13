@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1423,
+                "date_chi": "2026-02-13T01:10:23",
+                "date_ch": "2026-02-13T08:10:23",
+                "transaction_called": 1,
+                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
+                "reason_detail": "Hebel: -0.7465 -> -0.2983",
+                "leverage_old": -0.7465,
+                "leverage_new": -0.2983,
+                "leverage_change": 0.4482,
+                "changed_columns": "pc_ratio_volume",
+                "daily_trades_count": 1
+            },
+            {
                 "id": 1422,
                 "date_chi": "2026-02-12T23:18:40",
                 "date_ch": "2026-02-13T06:18:40",
@@ -9308,34 +9321,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 1
-            },
-            {
-                "id": 706,
-                "date_chi": "2026-01-14T08:10:03",
-                "date_ch": "2026-01-14T15:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 1
-            },
-            {
-                "id": 705,
-                "date_chi": "2026-01-14T07:10:03",
-                "date_ch": "2026-01-14T14:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 1
             }
         ]
     },
-    "timestamp": "2026-02-13T06:23:28.768423"
+    "timestamp": "2026-02-13T08:10:31.256952"
 }
