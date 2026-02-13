@@ -2,6 +2,149 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1417,
+                "date_chi": "2026-02-12T18:18:27",
+                "date_ch": "2026-02-13T01:18:27",
+                "transaction_called": 0,
+                "reason_code": "KEINE_NEUEN_DATEN",
+                "reason_detail": "KEINE_NEUEN_DATEN",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1416,
+                "date_chi": "2026-02-12T17:23:56",
+                "date_ch": "2026-02-13T00:23:56",
+                "transaction_called": 0,
+                "reason_code": "KRITISCHER_FEHLER",
+                "reason_detail": "[Errno -3] Temporary failure in name resolution",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1415,
+                "date_chi": "2026-02-12T17:23:45",
+                "date_ch": "2026-02-13T00:23:45",
+                "transaction_called": 0,
+                "reason_code": "TRANSACTION_SCRIPT_FEHLER",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: -0.7465 -> -0.7465",
+                "leverage_old": -0.7465,
+                "leverage_new": -0.7465,
+                "leverage_change": 0.0,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1414,
+                "date_chi": "2026-02-12T17:22:49",
+                "date_ch": "2026-02-13T00:22:49",
+                "transaction_called": 0,
+                "reason_code": "KRITISCHER_FEHLER",
+                "reason_detail": "[Errno -3] Temporary failure in name resolution",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1413,
+                "date_chi": "2026-02-12T17:22:31",
+                "date_ch": "2026-02-13T00:22:31",
+                "transaction_called": 0,
+                "reason_code": "TRANSACTION_SCRIPT_FEHLER",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: -0.7465 -> -0.7465",
+                "leverage_old": -0.7465,
+                "leverage_new": -0.7465,
+                "leverage_change": 0.0,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1412,
+                "date_chi": "2026-02-12T17:21:35",
+                "date_ch": "2026-02-13T00:21:35",
+                "transaction_called": 0,
+                "reason_code": "KRITISCHER_FEHLER",
+                "reason_detail": "[Errno -3] Temporary failure in name resolution",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1411,
+                "date_chi": "2026-02-12T17:21:18",
+                "date_ch": "2026-02-13T00:21:18",
+                "transaction_called": 0,
+                "reason_code": "TRANSACTION_SCRIPT_FEHLER",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: -0.7465 -> -0.7465",
+                "leverage_old": -0.7465,
+                "leverage_new": -0.7465,
+                "leverage_change": 0.0,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1410,
+                "date_chi": "2026-02-12T17:20:21",
+                "date_ch": "2026-02-13T00:20:21",
+                "transaction_called": 0,
+                "reason_code": "KRITISCHER_FEHLER",
+                "reason_detail": "[Errno -3] Temporary failure in name resolution",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1409,
+                "date_chi": "2026-02-12T17:20:09",
+                "date_ch": "2026-02-13T00:20:09",
+                "transaction_called": 0,
+                "reason_code": "TRANSACTION_SCRIPT_FEHLER",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: -0.7465 -> -0.7465",
+                "leverage_old": -0.7465,
+                "leverage_new": -0.7465,
+                "leverage_change": 0.0,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1408,
+                "date_chi": "2026-02-12T17:19:25",
+                "date_ch": "2026-02-13T00:19:25",
+                "transaction_called": 0,
+                "reason_code": "KRITISCHER_FEHLER",
+                "reason_detail": "[Errno -3] Temporary failure in name resolution",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
+                "id": 1407,
+                "date_chi": "2026-02-12T17:19:13",
+                "date_ch": "2026-02-13T00:19:13",
+                "transaction_called": 0,
+                "reason_code": "TRANSACTION_SCRIPT_FEHLER",
+                "reason_detail": "17:00-18:00 Fenster. Hebel: -0.7465 -> -0.7465",
+                "leverage_old": -0.7465,
+                "leverage_new": -0.7465,
+                "leverage_change": 0.0,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1406,
                 "date_chi": "2026-02-12T16:18:27",
                 "date_ch": "2026-02-12T23:18:27",
@@ -9191,34 +9334,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 1
-            },
-            {
-                "id": 699,
-                "date_chi": "2026-01-14T01:10:02",
-                "date_ch": "2026-01-14T08:10:02",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 1
-            },
-            {
-                "id": 698,
-                "date_chi": "2026-01-14T00:10:24",
-                "date_ch": "2026-01-14T07:10:24",
-                "transaction_called": 1,
-                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-                "reason_detail": "Hebel: 1.7002 -> 1.8285",
-                "leverage_old": 1.7002,
-                "leverage_new": 1.8285,
-                "leverage_change": 0.1283,
-                "changed_columns": "pc_ratio_volume",
-                "daily_trades_count": 1
             }
         ]
     },
-    "timestamp": "2026-02-12T23:23:05.137903"
+    "timestamp": "2026-02-13T01:18:32.335600"
 }
