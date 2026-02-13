@@ -32,10 +32,10 @@
                 "mes_sync_chi": "2026-02-12T15:59:00",
                 "es": 6861.75,
                 "es_sync_chi": "2026-02-12T15:59:00",
-                "spx": null,
-                "spx_sync_chi": null,
-                "vix": null,
-                "vix_sync_chi": null,
+                "spx": 6833.54,
+                "spx_sync_chi": "2026-02-12T14:59:00",
+                "vix": 20.82,
+                "vix_sync_chi": "2026-02-12T15:59:00",
                 "BAMLHE00EHYIEY": 4.93,
                 "BAMLHE00EHYIEY_sync_chi": "2026-02-12T10:00:00",
                 "BAMLH0A0HYM2SYTW": 6.68,
@@ -1203,5 +1203,5 @@
             }
         ]
     },
-    "timestamp": "2026-02-13T15:10:11.174376"
+    "timestamp": "2026-02-13T16:10:12.056909"
 }
