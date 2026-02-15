@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1474,
+                "date_chi": "2026-02-15T04:10:02",
+                "date_ch": "2026-02-15T11:10:02",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1473,
                 "date_chi": "2026-02-15T03:10:02",
                 "date_ch": "2026-02-15T10:10:02",
@@ -9308,34 +9321,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 2
-            },
-            {
-                "id": 757,
-                "date_chi": "2026-01-16T11:10:03",
-                "date_ch": "2026-01-16T18:10:03",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 2
-            },
-            {
-                "id": 756,
-                "date_chi": "2026-01-16T10:10:24",
-                "date_ch": "2026-01-16T17:10:24",
-                "transaction_called": 1,
-                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-                "reason_detail": "Hebel: 3.1102 -> 3.3296",
-                "leverage_old": 3.1102,
-                "leverage_new": 3.3296,
-                "leverage_change": 0.2194,
-                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY",
-                "daily_trades_count": 2
             }
         ]
     },
-    "timestamp": "2026-02-15T10:10:11.673465"
+    "timestamp": "2026-02-15T11:10:11.020502"
 }
