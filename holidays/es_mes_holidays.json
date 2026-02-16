@@ -1,26 +1,15 @@
 {
-    "timestamp": "2026-02-16T23:10:12.003023",
+    "timestamp": "2026-02-17T00:10:31.343730",
     "calendar": "CMES (CME Equity Index Futures)",
     "timezone": "CT (America/Chicago)",
     "trading_holidays": {
         "upcoming": [
             {
-                "date": "2026-02-16",
-                "name": "Presidents Day",
-                "status": "Early Close 12:00 CT",
-                "close_time": "12:00 CT",
-                "days_until": 0,
-                "weekday": "Monday",
-                "closure_start": "Mon 16.02. 12:00",
-                "closure_end": "Mon 16.02. 17:00",
-                "closure_description": "Schließt 12:00 CT, öffnet wieder 17:00 CT"
-            },
-            {
                 "date": "2026-04-03",
                 "name": "Good Friday",
                 "status": "Closed",
                 "close_time": null,
-                "days_until": 46,
+                "days_until": 45,
                 "weekday": "Friday",
                 "closure_start": "Thu 02.04. 16:00",
                 "closure_end": "Sun 05.04. 17:00",
