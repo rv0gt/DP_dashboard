@@ -20,8 +20,8 @@
                 "BAMLH0A0HYM2_sync_chi": null,
                 "BAMLC0A3CAEY": 4.58,
                 "BAMLC0A3CAEY_sync_chi": "2026-02-17T16:01:24",
-                "pc_ratio_volume": null,
-                "pc_ratio_volume_sync_chi": null,
+                "pc_ratio_volume": 0.982767,
+                "pc_ratio_volume_sync_chi": "2026-02-18T00:01:00",
                 "debit_balances_margin_accounts": null,
                 "debit_balances_margin_accounts_sync_chi": null
             },
@@ -1203,5 +1203,5 @@
             }
         ]
     },
-    "timestamp": "2026-02-18T06:10:21.735450"
+    "timestamp": "2026-02-18T07:10:12.635715"
 }
