@@ -22,8 +22,8 @@
                 "BAMLC0A3CAEY_sync_chi": "2026-02-19T09:31:26",
                 "pc_ratio_volume": 1.006654,
                 "pc_ratio_volume_sync_chi": "2026-02-19T00:01:00",
-                "debit_balances_margin_accounts": null,
-                "debit_balances_margin_accounts_sync_chi": null
+                "debit_balances_margin_accounts": 1279042.0,
+                "debit_balances_margin_accounts_sync_chi": "2026-02-19T14:31:43"
             },
             {
                 "sync_chi": "2026-02-18T15:59:59",
@@ -1203,5 +1203,5 @@
             }
         ]
     },
-    "timestamp": "2026-02-19T21:10:12.035506"
+    "timestamp": "2026-02-19T22:10:12.085356"
 }
