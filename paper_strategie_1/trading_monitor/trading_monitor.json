@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1611,
+                "date_chi": "2026-02-20T21:10:02",
+                "date_ch": "2026-02-21T04:10:02",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FREITAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1610,
                 "date_chi": "2026-02-20T20:10:02",
                 "date_ch": "2026-02-21T03:10:02",
@@ -9360,21 +9373,8 @@
                 "leverage_change": 0.0,
                 "changed_columns": "pc_ratio_volume",
                 "daily_trades_count": 0
-            },
-            {
-                "id": 890,
-                "date_chi": "2026-01-22T04:10:04",
-                "date_ch": "2026-01-22T11:10:04",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 0.5351 -> 0.5351",
-                "leverage_old": 0.5351,
-                "leverage_new": 0.5351,
-                "leverage_change": 0.0,
-                "changed_columns": "pc_ratio_volume",
-                "daily_trades_count": 0
             }
         ]
     },
-    "timestamp": "2026-02-21T03:10:11.225100"
+    "timestamp": "2026-02-21T04:10:11.951354"
 }
