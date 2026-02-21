@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1618,
+                "date_chi": "2026-02-21T05:10:04",
+                "date_ch": "2026-02-21T12:10:04",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1617,
                 "date_chi": "2026-02-21T03:10:03",
                 "date_ch": "2026-02-21T10:10:03",
@@ -9347,34 +9360,8 @@
                 "leverage_change": 0.0,
                 "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
                 "daily_trades_count": 0
-            },
-            {
-                "id": 898,
-                "date_chi": "2026-01-22T12:10:04",
-                "date_ch": "2026-01-22T19:10:04",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 0.5351 -> 0.5351",
-                "leverage_old": 0.5351,
-                "leverage_new": 0.5351,
-                "leverage_change": 0.0,
-                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-                "daily_trades_count": 0
-            },
-            {
-                "id": 897,
-                "date_chi": "2026-01-22T11:10:04",
-                "date_ch": "2026-01-22T18:10:04",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: 0.5351 -> 0.5351",
-                "leverage_old": 0.5351,
-                "leverage_new": 0.5351,
-                "leverage_change": 0.0,
-                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-                "daily_trades_count": 0
             }
         ]
     },
-    "timestamp": "2026-02-21T10:10:24.290716"
+    "timestamp": "2026-02-21T12:10:27.576732"
 }
