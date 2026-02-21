@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-21T23:10:24.806900",
+    "timestamp": "2026-02-22T00:10:24.810318",
     "calendar": "CMES (CME Equity Index Futures)",
     "timezone": "CT (America/Chicago)",
     "trading_holidays": {
@@ -9,7 +9,7 @@
                 "name": "Good Friday",
                 "status": "Closed",
                 "close_time": null,
-                "days_until": 41,
+                "days_until": 40,
                 "weekday": "Friday",
                 "closure_start": "Thu 02.04. 16:00",
                 "closure_end": "Sun 05.04. 17:00",
