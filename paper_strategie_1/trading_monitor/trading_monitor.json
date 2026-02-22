@@ -2,6 +2,19 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 1631,
+                "date_chi": "2026-02-21T18:10:03",
+                "date_ch": "2026-02-22T01:10:03",
+                "transaction_called": 0,
+                "reason_code": "MARKT_GESCHLOSSEN_FEIERTAG",
+                "reason_detail": "Markt geschlossen",
+                "leverage_old": null,
+                "leverage_new": null,
+                "leverage_change": null,
+                "changed_columns": null,
+                "daily_trades_count": 0
+            },
+            {
                 "id": 1630,
                 "date_chi": "2026-02-21T17:10:02",
                 "date_ch": "2026-02-22T00:10:02",
@@ -9347,34 +9360,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 1
-            },
-            {
-                "id": 911,
-                "date_chi": "2026-01-23T01:10:02",
-                "date_ch": "2026-01-23T08:10:02",
-                "transaction_called": 0,
-                "reason_code": "KEINE_NEUEN_DATEN",
-                "reason_detail": "KEINE_NEUEN_DATEN",
-                "leverage_old": null,
-                "leverage_new": null,
-                "leverage_change": null,
-                "changed_columns": null,
-                "daily_trades_count": 1
-            },
-            {
-                "id": 910,
-                "date_chi": "2026-01-23T00:10:24",
-                "date_ch": "2026-01-23T07:10:24",
-                "transaction_called": 1,
-                "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-                "reason_detail": "Hebel: 0.5351 -> 0.7545",
-                "leverage_old": 0.5351,
-                "leverage_new": 0.7545,
-                "leverage_change": 0.2194,
-                "changed_columns": "pc_ratio_volume",
-                "daily_trades_count": 1
             }
         ]
     },
-    "timestamp": "2026-02-22T00:10:23.937954"
+    "timestamp": "2026-02-22T01:10:12.218446"
 }
