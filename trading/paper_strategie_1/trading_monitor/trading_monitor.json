@@ -2,6 +2,32 @@
     "paper_strategie_1": {
         "trading_monitor": [
             {
+                "id": 2099,
+                "date_chi": "2026-03-13T09:10:04",
+                "date_ch": "2026-03-13T15:10:04",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 0.847 -> 0.847",
+                "leverage_old": 0.847,
+                "leverage_new": 0.847,
+                "leverage_change": 0.0,
+                "changed_columns": "pc_ratio_volume",
+                "daily_trades_count": 0
+            },
+            {
+                "id": 2098,
+                "date_chi": "2026-03-13T08:10:04",
+                "date_ch": "2026-03-13T14:10:04",
+                "transaction_called": 0,
+                "reason_code": "HEBEL_KEINE_AENDERUNG",
+                "reason_detail": "Hebel: 0.847 -> 0.847",
+                "leverage_old": 0.847,
+                "leverage_new": 0.847,
+                "leverage_change": 0.0,
+                "changed_columns": "pc_ratio_volume",
+                "daily_trades_count": 0
+            },
+            {
                 "id": 2097,
                 "date_chi": "2026-03-13T07:10:04",
                 "date_ch": "2026-03-13T13:10:04",
@@ -9308,34 +9334,8 @@
                 "leverage_change": null,
                 "changed_columns": null,
                 "daily_trades_count": 0
-            },
-            {
-                "id": 1381,
-                "date_chi": "2026-02-11T15:10:03",
-                "date_ch": "2026-02-11T22:10:03",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: -0.8749 -> -0.8749",
-                "leverage_old": -0.8749,
-                "leverage_new": -0.8749,
-                "leverage_change": 0.0,
-                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-                "daily_trades_count": 0
-            },
-            {
-                "id": 1380,
-                "date_chi": "2026-02-11T14:10:03",
-                "date_ch": "2026-02-11T21:10:03",
-                "transaction_called": 0,
-                "reason_code": "HEBEL_KEINE_AENDERUNG",
-                "reason_detail": "Hebel: -0.8749 -> -0.8749",
-                "leverage_old": -0.8749,
-                "leverage_new": -0.8749,
-                "leverage_change": 0.0,
-                "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
-                "daily_trades_count": 0
             }
         ]
     },
-    "timestamp": "2026-03-13T13:10:12.712347"
+    "timestamp": "2026-03-13T15:10:13.182520"
 }
