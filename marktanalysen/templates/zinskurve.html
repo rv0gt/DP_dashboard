@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zinskurvenanalyse: Yield Curve Regimes, S&amp;P 500 Overlay, Regime-Statistiken">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M5 22 C8 12 14 18 18 8 C22 16 27 14 27 14' stroke='%23F79645' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M5 16h22' stroke='%232598C3' stroke-width='1.5' stroke-dasharray='3 2' opacity='.6'/%3E%3C/svg%3E">
+    <title>Zinskurvenanalyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Variante</label>
+                <select id="variantSelect" onchange="switchVariant(this.value)" style="min-width:160px;">
+                    <option value="3M_10Y" selected>3M / 10Y</option>
+                    <option value="2Y_10Y">2Y / 10Y</option>
+                    <option value="2Y_5Y">2Y / 5Y</option>
+                    <option value="5Y_10Y">5Y / 10Y</option>
+                    <option value="3M_2Y">3M / 2Y</option>
+                </select>
+                <select id="realVariantSelect" onchange="switchRealVariant(this.value)" style="min-width:160px;display:none;">
+                    <option value="r5_r7">5Y / 7Y</option>
+                    <option value="r5_r10" selected>5Y / 10Y</option>
+                    <option value="r5_r20">5Y / 20Y</option>
+                    <option value="r5_r30">5Y / 30Y</option>
+                    <option value="r7_r10">7Y / 10Y</option>
+                    <option value="r7_r20">7Y / 20Y</option>
+                    <option value="r7_r30">7Y / 30Y</option>
+                    <option value="r10_r20">10Y / 20Y</option>
+                    <option value="r10_r30">10Y / 30Y</option>
+                    <option value="r20_r30">20Y / 30Y</option>
+                </select>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Rolling-Fenster</label>
+                <select id="rollingWeeksSelect" onchange="switchRollingWeeks(parseInt(this.value))" style="min-width:140px;">
+                    <option value="4">4 Wochen</option>
+                    <option value="8">8 Wochen</option>
+                    <option value="13" selected>13 Wochen</option>
+                    <option value="18">18 Wochen</option>
+                    <option value="26">26 Wochen</option>
+                    <option value="52">52 Wochen</option>
+                </select>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Schwelle</label>
+                <select id="thresholdSelect" onchange="switchThreshold(parseFloat(this.value))" style="min-width:120px;">
+                    <option value="0.00">&plusmn;0 Pp</option>
+                    <option value="0.10">&plusmn;0.10 Pp</option>
+                    <option value="0.15">&plusmn;0.15 Pp</option>
+                    <option value="0.20" selected>&plusmn;0.20 Pp</option>
+                    <option value="0.25">&plusmn;0.25 Pp</option>
+                    <option value="0.30">&plusmn;0.30 Pp</option>
+                    <option value="0.40">&plusmn;0.40 Pp</option>
+                    <option value="0.50">&plusmn;0.50 Pp</option>
+                </select>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Yields</label>
+                <div class="toggle-group" id="yieldModeToggle">
+                    <button class="toggle-btn active" onclick="switchYieldMode('nominal', this)">Nominal</button>
+                    <button class="toggle-btn" onclick="switchYieldMode('real', this)">Real</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentRegimeInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- S&P 500 + Yield-Niveaus + Yield Spread (direkt untereinander) -->
+            <div class="chart-container">
+                <h3 class="section-title" id="spxTitle">S&amp;P 500 mit Yield Curve Regime Overlay (3M/10Y)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;" id="spxSubtitle">
+                    Hintergrundfarben zeigen das aktuelle Zinskurven-Regime (<span id="rollingWeeksLabel">13</span>-Wochen Rolling Change, Schwelle: &plusmn;<span id="thresholdLabel">0.20</span> Pp)
+                </p>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                    <div id="regimeLegend" style="display:flex;flex-wrap:wrap;gap:6px;flex:1;"></div>
+                    <div style="display:flex;gap:4px;flex-shrink:0;">
+                        <button onclick="showAllRegimes()" style="font-size:11px;padding:3px 8px;border:1px solid var(--color-border);border-radius:4px;background:var(--color-surface-alt);cursor:pointer;color:var(--color-text-secondary);">Alle</button>
+                        <button onclick="hideAllRegimes()" style="font-size:11px;padding:3px 8px;border:1px solid var(--color-border);border-radius:4px;background:var(--color-surface-alt);cursor:pointer;color:var(--color-text-secondary);">Keine</button>
+                    </div>
+                </div>
+                <div id="spxChart"></div>
+                <div id="yieldChart"></div>
+                <div id="spreadChart"></div>
+            </div>
+
+            <!-- Statistik-Tabelle -->
+            <div class="chart-container">
+                <h3 class="section-title" id="statsTitle">Regime-Statistiken: S&amp;P 500 Renditen nach Regime (3M/10Y)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;">
+                    Annualisierte Renditen und Varianz des S&amp;P 500 w&auml;hrend jedes Zinskurven-Regimes. * = signifikant (p &lt; 0.05)
+                </p>
+                <table class="data-table" id="regimeStatsTable">
+                    <thead>
+                        <tr>
+                            <th>Regime</th>
+                            <th class="text-right">Wochen</th>
+                            <th class="text-right">Anteil</th>
+                            <th class="text-right">Rendite p.a.</th>
+                            <th class="text-right">Varianz p.a.</th>
+                            <th class="text-right">Ret/Var</th>
+                            <th class="text-right">p-Wert</th>
+                        </tr>
+                    </thead>
+                    <tbody id="regimeStatsBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Chart 4: ACM Term Premium -->
+            <div class="chart-container">
+                <h3 class="section-title">ACM Term Premium (Adrian, Crump, Moench)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Gesch&auml;tzte Laufzeitpr&auml;mie f&uuml;r 2Y, 5Y und 10Y Treasury Bonds &ndash; negativ = invertierte Laufzeitstruktur
+                </p>
+                <div id="termPremiumChart"></div>
+            </div>
+
+            <!-- Info-Box -->
+            <div class="info-box">
+                <h3>Yield Curve Regime-Analyse</h3>
+                <p>Diese Analyse klassifiziert die Zinskurven-Dynamik in 9 Regimes basierend auf der Rolling-Ver&auml;nderung
+                   der kurz- und langfristigen US Treasury Yields. F&uuml;r jeden Yield wird bestimmt, ob er steigt (&uarr; &gt; +0.20 Pp),
+                   f&auml;llt (&darr; &lt; -0.20 Pp) oder stabil bleibt (&mdash;).</p>
+                <p><strong>Term Premium:</strong> Die ACM-Laufzeitpr&auml;mie misst die zus&auml;tzliche Kompensation, die Anleger f&uuml;r
+                   das Halten l&auml;ngerfristiger Anleihen verlangen. Negative Werte deuten auf starke Nachfrage nach Duration hin.</p>
+                <p style="font-size:0.9em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> Yields &amp; Term Premium: Federal Reserve Economic Data (FRED) &middot; S&amp;P 500: Yahoo Finance
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Finanzanalyse &middot; Daten: FRED, Yahoo Finance</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    const zkData = __ZINSKURVE_DATA__;
+
+    if (!zkData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_zinskurve.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    const plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    const layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 40, t: 30, b: 50 } };
+
+    let currentVariant = '3M_10Y';
+    let currentRealVariant = 'r5_r10';
+    let currentRollingWeeks = 13;
+    let currentThreshold = 0.20;
+    let currentYieldMode = 'nominal';
+
+    var realVariantDefs = {
+        'r5_r7':   { shortKey: 'r5',  longKey: 'r7',  shortLabel: '5Y',  longLabel: '7Y' },
+        'r5_r10':  { shortKey: 'r5',  longKey: 'r10', shortLabel: '5Y',  longLabel: '10Y' },
+        'r5_r20':  { shortKey: 'r5',  longKey: 'r20', shortLabel: '5Y',  longLabel: '20Y' },
+        'r5_r30':  { shortKey: 'r5',  longKey: 'r30', shortLabel: '5Y',  longLabel: '30Y' },
+        'r7_r10':  { shortKey: 'r7',  longKey: 'r10', shortLabel: '7Y',  longLabel: '10Y' },
+        'r7_r20':  { shortKey: 'r7',  longKey: 'r20', shortLabel: '7Y',  longLabel: '20Y' },
+        'r7_r30':  { shortKey: 'r7',  longKey: 'r30', shortLabel: '7Y',  longLabel: '30Y' },
+        'r10_r20': { shortKey: 'r10', longKey: 'r20', shortLabel: '10Y', longLabel: '20Y' },
+        'r10_r30': { shortKey: 'r10', longKey: 'r30', shortLabel: '10Y', longLabel: '30Y' },
+        'r20_r30': { shortKey: 'r20', longKey: 'r30', shortLabel: '20Y', longLabel: '30Y' },
+    };
+
+    // Raw data: vollstaendige Zeitreihen ab ~1984 (vor Varianten-Verarbeitung)
+    // Fallback auf erste Variante falls raw_data noch nicht vorhanden (alte Daten)
+    var rawData = null;
+    if (zkData && zkData.raw_data) {
+        rawData = zkData.raw_data;
+    } else if (zkData && zkData.variants) {
+        var firstKey = Object.keys(zkData.variants)[0];
+        var fv = zkData.variants[firstKey];
+        rawData = {
+            dates: fv.dates, y3m: fv.y3m, y2: fv.y2, y5: fv.y5 || [], y10: fv.y10,
+            r5: fv.r5 || [], r7: fv.r7 || [], r10: fv.r10 || [],
+            r20: fv.r20 || [], r30: fv.r30 || [], spx: fv.spx
+        };
+    }
+
+    var regimeConfig = zkData ? zkData.regime_config : null;
+    var visibleRegimes = regimeConfig ? new Set(regimeConfig.order) : new Set();
+    var lastVariantData = null;
+
+    // ============================================================
+    //  DYNAMIC REGIME COMPUTATION
+    // ============================================================
+    function classifyRegime(dShort, dLong) {
+        var s = dShort > currentThreshold ? '\u2191' : (dShort < -currentThreshold ? '\u2193' : '\u2014');
+        var l = dLong > currentThreshold ? '\u2191' : (dLong < -currentThreshold ? '\u2193' : '\u2014');
+        return 'Kurz ' + s + ' Lang ' + l;
+    }
+
+    function smoothRegimes(regimes, window) {
+        var smoothed = regimes.slice();
+        for (var i = window; i < regimes.length; i++) {
+            var chunk = regimes.slice(i - window, i + 1);
+            var counts = {};
+            chunk.forEach(function(r) { counts[r] = (counts[r] || 0) + 1; });
+            var maxCount = 0, mode = regimes[i];
+            for (var r in counts) {
+                if (counts[r] > maxCount) { maxCount = counts[r]; mode = r; }
+            }
+            smoothed[i] = mode;
+        }
+        return smoothed;
+    }
+
+    function computeSpans(dates, regimes) {
+        var spans = [];
+        if (dates.length === 0) return spans;
+        var prevRegime = regimes[0];
+        var start = dates[0];
+        for (var i = 1; i < dates.length; i++) {
+            if (regimes[i] !== prevRegime) {
+                spans.push({ start: start, end: dates[i], regime: prevRegime });
+                start = dates[i];
+                prevRegime = regimes[i];
+            }
+        }
+        spans.push({ start: start, end: dates[dates.length - 1], regime: prevRegime });
+        return spans;
+    }
+
+    function normalCDF(x) {
+        var t = 1 / (1 + 0.2316419 * Math.abs(x));
+        var d = 0.3989422804014327;
+        var p = d * Math.exp(-x * x / 2) * (0.3193815 * t - 0.3565638 * t * t + 1.781478 * t * t * t - 1.8212560 * t * t * t * t + 1.3302744 * t * t * t * t * t);
+        return x > 0 ? 1 - p : p;
+    }
+
+    function computeVariantData(variant, rollingWeeks) {
+        if (!rawData) return null;
+
+        var shortKey, longKey, shortLabel, longLabel;
+        var isReal = (currentYieldMode === 'real');
+
+        if (isReal) {
+            var def = realVariantDefs[variant];
+            if (!def) def = realVariantDefs['r5_r10'];
+            shortKey = def.shortKey; longKey = def.longKey;
+            shortLabel = def.shortLabel; longLabel = def.longLabel;
+        } else {
+            if (variant === '3M_10Y') {
+                shortKey = 'y3m'; longKey = 'y10'; shortLabel = '3M'; longLabel = '10Y';
+            } else if (variant === '2Y_10Y') {
+                shortKey = 'y2'; longKey = 'y10'; shortLabel = '2Y'; longLabel = '10Y';
+            } else if (variant === '2Y_5Y') {
+                shortKey = 'y2'; longKey = 'y5'; shortLabel = '2Y'; longLabel = '5Y';
+            } else if (variant === '5Y_10Y') {
+                shortKey = 'y5'; longKey = 'y10'; shortLabel = '5Y'; longLabel = '10Y';
+            } else {
+                shortKey = 'y3m'; longKey = 'y2'; shortLabel = '3M'; longLabel = '2Y';
+            }
+        }
+
+        var shortArr = rawData[shortKey];
+        var longArr = rawData[longKey];
+        var w = rollingWeeks;
+
+        var dates = [], y3m = [], y2 = [], y5 = [], y10 = [];
+        var r5 = [], r7 = [], r10 = [], r20 = [], r30 = [];
+        var spx = [], spread = [], regimes = [];
+
+        for (var i = w; i < rawData.dates.length; i++) {
+            var sVal = shortArr[i], sValW = shortArr[i - w];
+            var lVal = longArr[i], lValW = longArr[i - w];
+
+            // Skip if required values are null (real yields before ~2003)
+            if (sVal == null || sValW == null || lVal == null || lValW == null) continue;
+
+            var dShort = sVal - sValW;
+            var dLong = lVal - lValW;
+
+            dates.push(rawData.dates[i]);
+            y3m.push(rawData.y3m[i]);
+            y2.push(rawData.y2[i]);
+            y5.push(rawData.y5[i]);
+            y10.push(rawData.y10[i]);
+            r5.push(rawData.r5[i] != null ? rawData.r5[i] : null);
+            r7.push(rawData.r7[i] != null ? rawData.r7[i] : null);
+            r10.push(rawData.r10[i] != null ? rawData.r10[i] : null);
+            r20.push(rawData.r20[i] != null ? rawData.r20[i] : null);
+            r30.push(rawData.r30[i] != null ? rawData.r30[i] : null);
+            spx.push(rawData.spx[i]);
+            spread.push(lVal - sVal);
+            regimes.push(classifyRegime(dShort, dLong));
+        }
+
+        var smoothed = smoothRegimes(regimes, 4);
+        var spans = computeSpans(dates, smoothed);
+
+        // Compute SPX weekly returns
+        var spxRets = [];
+        for (var i = 1; i < spx.length; i++) {
+            spxRets.push(spx[i] / spx[i - 1] - 1);
+        }
+        var overallSum = 0;
+        for (var i = 0; i < spxRets.length; i++) overallSum += spxRets[i];
+        var overallMean = spxRets.length > 0 ? overallSum / spxRets.length : 0;
+
+        // Regime stats
+        var stats = {};
+        var totalWeeks = dates.length;
+        regimeConfig.order.forEach(function(regime) {
+            var regimeRets = [];
+            for (var i = 1; i < smoothed.length; i++) {
+                if (smoothed[i] === regime) {
+                    regimeRets.push(spxRets[i - 1]);
+                }
+            }
+            if (regimeRets.length < 2) return;
+            var count = regimeRets.length;
+            var pct = Math.round(count / totalWeeks * 1000) / 10;
+            var sum = 0, sum2 = 0;
+            regimeRets.forEach(function(r) { sum += r; sum2 += r * r; });
+            var mean = sum / count;
+            var variance = (sum2 - sum * sum / count) / (count - 1);
+            var annRet = Math.round(mean * 52 * 100 * 10) / 10;
+            var annVar = Math.round(variance * 52 * 100 * 100) / 100;
+            var retVar = annVar > 0 ? Math.round(annRet / annVar * 100) / 100 : 0;
+
+            // T-test p-value (normal approximation)
+            var se = Math.sqrt(variance / count);
+            var tStat = se > 0 ? (mean - overallMean) / se : 0;
+            var pValue = Math.round(2 * (1 - normalCDF(Math.abs(tStat))) * 10000) / 10000;
+
+            stats[regime] = {
+                weeks: count,
+                pct: pct,
+                ret_pa: annRet,
+                var_pa: annVar,
+                ret_var: retVar,
+                p_value: pValue,
+                significant: pValue < 0.05
+            };
+        });
+
+        var lastIdx = dates.length - 1;
+        return {
+            dates: dates,
+            y3m: y3m,
+            y2: y2,
+            y5: y5,
+            y10: y10,
+            r5: r5,
+            r7: r7,
+            r10: r10,
+            r20: r20,
+            r30: r30,
+            spx: spx,
+            spread: spread,
+            regime: smoothed,
+            spans: spans,
+            stats: stats,
+            current: {
+                regime: smoothed[lastIdx],
+                short_val: shortArr[rawData.dates.length - 1] != null ? shortArr[rawData.dates.length - 1] : shortArr[dates.length - 1],
+                long_val: longArr[rawData.dates.length - 1] != null ? longArr[rawData.dates.length - 1] : longArr[dates.length - 1],
+                spread_val: spread[lastIdx]
+            },
+            short_label: shortLabel,
+            long_label: longLabel
+        };
+    }
+
+    // ============================================================
+    //  VARIANT & ROLLING WEEKS SWITCHING
+    // ============================================================
+    function switchVariant(variant) {
+        currentVariant = variant;
+        updateAll();
+    }
+
+    function switchRollingWeeks(weeks) {
+        currentRollingWeeks = weeks;
+        updateAll();
+    }
+
+    function switchThreshold(threshold) {
+        currentThreshold = threshold;
+        updateAll();
+    }
+
+    function switchYieldMode(mode, btn) {
+        currentYieldMode = mode;
+        document.getElementById('yieldModeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        if (mode === 'real') {
+            document.getElementById('variantSelect').style.display = 'none';
+            document.getElementById('realVariantSelect').style.display = '';
+        } else {
+            document.getElementById('variantSelect').style.display = '';
+            document.getElementById('realVariantSelect').style.display = 'none';
+        }
+        updateAll();
+    }
+
+    function switchRealVariant(variant) {
+        currentRealVariant = variant;
+        updateAll();
+    }
+
+    function toggleRegime(regime) {
+        if (visibleRegimes.has(regime)) visibleRegimes.delete(regime);
+        else visibleRegimes.add(regime);
+        refreshVisuals();
+    }
+
+    function showAllRegimes() {
+        regimeConfig.order.forEach(function(r) { visibleRegimes.add(r); });
+        refreshVisuals();
+    }
+
+    function hideAllRegimes() {
+        visibleRegimes.clear();
+        refreshVisuals();
+    }
+
+    function refreshVisuals() {
+        if (!lastVariantData || !regimeConfig) return;
+        updateRegimeLegend(regimeConfig);
+        updateSPXChart(lastVariantData, regimeConfig);
+        updateStatsTable(lastVariantData, regimeConfig);
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!zkData || !rawData) return;
+        var activeVariant = (currentYieldMode === 'real') ? currentRealVariant : currentVariant;
+        var v = computeVariantData(activeVariant, currentRollingWeeks);
+        if (!v) return;
+        lastVariantData = v;
+        var cfg = regimeConfig;
+
+        // Rolling weeks & threshold labels
+        document.getElementById('rollingWeeksLabel').textContent = currentRollingWeeks;
+        document.getElementById('thresholdLabel').textContent = currentThreshold.toFixed(2);
+
+        // Current regime info
+        var sp = v.current.spread_val;
+        document.getElementById('currentRegimeInfo').innerHTML =
+            'Regime: <strong>' + v.current.regime + '</strong> &middot; ' +
+            v.short_label + ': ' + v.current.short_val.toFixed(2) + '% &middot; ' +
+            v.long_label + ': ' + v.current.long_val.toFixed(2) + '% &middot; ' +
+            'Spread: ' + (sp >= 0 ? '+' : '') + sp.toFixed(2) + ' Pp';
+
+        // Titles
+        document.getElementById('spxTitle').textContent = 'S&P 500 mit Yield Curve Regime Overlay (' + v.short_label + '/' + v.long_label + ')';
+        document.getElementById('statsTitle').textContent = 'Regime-Statistiken: S&P 500 Renditen nach Regime (' + v.short_label + '/' + v.long_label + ')';
+
+        updateRegimeLegend(cfg);
+        updateSPXChart(v, cfg);
+        updateYieldChart(v);
+        updateSpreadChart(v);
+        updateStatsTable(v, cfg);
+        updateTermPremiumChart();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  SPX CHART with Regime Backgrounds
+    // ============================================================
+    function updateSPXChart(v, cfg) {
+        var shapes = v.spans.map(function(s) {
+            var isVisible = visibleRegimes.has(s.regime);
+            return {
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: s.start, x1: s.end, y0: 0, y1: 1,
+                fillcolor: isVisible ? (cfg.colors[s.regime] || '#555') : 'rgba(0,0,0,0)',
+                opacity: isVisible ? 0.4 : 0, line: { width: 0 }
+            };
+        });
+
+        var traces = [{
+            x: v.dates, y: v.spx,
+            type: 'scatter', mode: 'lines',
+            line: { color: '#1A2E4A', width: 1.8 },
+            name: 'S&P 500',
+            hovertemplate: '%{x|%d.%m.%Y}<br>S&P 500: %{y:,.0f}<extra></extra>'
+        }];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: {
+                showgrid: true, gridcolor: '#E8E8E8',
+                tickformat: '%Y',
+                dtick: 'M24',
+                showticklabels: false
+            },
+            yaxis: {
+                title: 'S&P 500 (log)',
+                type: 'log',
+                showgrid: true, gridcolor: '#E8E8E8',
+                tickformat: ',.0f'
+            },
+            shapes: shapes,
+            height: 500,
+            showlegend: false,
+            margin: { l: 80, r: 40, t: 20, b: 5 }
+        });
+
+        Plotly.newPlot('spxChart', traces, layout, plotlyConfig);
+        baseShapeCount.spxChart = shapes.length;
+    }
+
+    // ============================================================
+    //  YIELD CHART
+    // ============================================================
+    function updateYieldChart(v) {
+        var traces;
+        var yTitle;
+
+        if (currentYieldMode === 'real') {
+            traces = [
+                {
+                    x: v.dates, y: v.r5,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#16a34a', width: 1.1 },
+                    name: '5Y TIPS',
+                    connectgaps: false,
+                    hovertemplate: '5Y Real: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.r7,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#8b5cf6', width: 1.1 },
+                    name: '7Y TIPS',
+                    connectgaps: false,
+                    hovertemplate: '7Y Real: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.r10,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#2598C3', width: 1.2 },
+                    name: '10Y TIPS',
+                    connectgaps: false,
+                    hovertemplate: '10Y Real: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.r20,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#F79645', width: 1.1 },
+                    name: '20Y TIPS',
+                    connectgaps: false,
+                    hovertemplate: '20Y Real: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.r30,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#dc2626', width: 1.1 },
+                    name: '30Y TIPS',
+                    connectgaps: false,
+                    hovertemplate: '30Y Real: %{y:.2f}%<extra></extra>'
+                }
+            ];
+            yTitle = 'Real Yield / TIPS (%)';
+        } else {
+            traces = [
+                {
+                    x: v.dates, y: v.y3m,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#16a34a', width: 1 },
+                    name: '3M Yield',
+                    hovertemplate: '3M: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.y2,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#F79645', width: 1.2 },
+                    name: '2Y Yield',
+                    hovertemplate: '2Y: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.y5,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#8b5cf6', width: 1.1 },
+                    name: '5Y Yield',
+                    hovertemplate: '5Y: %{y:.2f}%<extra></extra>'
+                },
+                {
+                    x: v.dates, y: v.y10,
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#2598C3', width: 1.2 },
+                    name: '10Y Yield',
+                    hovertemplate: '10Y: %{y:.2f}%<extra></extra>'
+                }
+            ];
+            yTitle = 'Yield (%)';
+        }
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: {
+                showgrid: true, gridcolor: '#E8E8E8',
+                tickformat: '%Y', dtick: 'M24',
+                showticklabels: false
+            },
+            yaxis: {
+                title: yTitle,
+                showgrid: true, gridcolor: '#E8E8E8'
+            },
+            height: 250,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 40, t: 30, b: 5 }
+        });
+
+        Plotly.newPlot('yieldChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  SPREAD CHART
+    // ============================================================
+    function updateSpreadChart(v) {
+        var posY = v.spread.map(function(s) { return s >= 0 ? s : 0; });
+        var negY = v.spread.map(function(s) { return s < 0 ? s : 0; });
+
+        var traces = [
+            {
+                x: v.dates, y: posY,
+                type: 'scatter', fill: 'tozeroy',
+                fillcolor: 'rgba(37,152,195,0.25)',
+                line: { width: 0 },
+                showlegend: false,
+                hoverinfo: 'skip'
+            },
+            {
+                x: v.dates, y: negY,
+                type: 'scatter', fill: 'tozeroy',
+                fillcolor: 'rgba(220,38,38,0.25)',
+                line: { width: 0 },
+                showlegend: false,
+                hoverinfo: 'skip'
+            },
+            {
+                x: v.dates, y: v.spread,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 1.1 },
+                name: 'Spread',
+                hovertemplate: '%{x|%d.%m.%Y}<br>Spread: %{y:.2f} Pp<extra></extra>'
+            }
+        ];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: {
+                showgrid: true, gridcolor: '#E8E8E8',
+                tickformat: '%Y', dtick: 'M24'
+            },
+            yaxis: {
+                title: v.long_label + '\u2212' + v.short_label + ' Spread (Pp)',
+                showgrid: true, gridcolor: '#E8E8E8',
+                zeroline: true, zerolinecolor: '#666', zerolinewidth: 1.5
+            },
+            height: 200,
+            showlegend: false,
+            margin: { l: 70, r: 40, t: 10, b: 50 }
+        });
+
+        Plotly.newPlot('spreadChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  REGIME LEGEND
+    // ============================================================
+    function updateRegimeLegend(cfg) {
+        var el = document.getElementById('regimeLegend');
+        var html = '';
+        cfg.order.forEach(function(regime) {
+            var color = cfg.colors[regime];
+            var label = cfg.labels[regime];
+            var active = visibleRegimes.has(regime);
+            var style = 'display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;user-select:none;transition:opacity 0.15s,background 0.15s;';
+            style += active
+                ? 'background:var(--color-surface-alt);border:1px solid var(--color-border-light);opacity:1;'
+                : 'background:var(--color-surface-alt);border:1px dashed var(--color-border);opacity:0.35;';
+            var colorStyle = 'display:inline-block;width:14px;height:14px;border-radius:3px;flex-shrink:0;';
+            colorStyle += active
+                ? 'background:' + color + ';opacity:0.85;'
+                : 'background:#aaa;opacity:0.4;';
+            html += '<div style="' + style + '" onclick="toggleRegime(\'' + regime.replace(/'/g, "\\'") + '\')" title="Klicken zum Ein-/Ausblenden">' +
+                '<span style="' + colorStyle + '"></span>' +
+                '<span><strong>' + regime + '</strong> <span style="color:var(--color-text-muted);">(' + label + ')</span></span></div>';
+        });
+        el.innerHTML = html;
+    }
+
+    // ============================================================
+    //  STATS TABLE
+    // ============================================================
+    function updateStatsTable(v, cfg) {
+        var tbody = document.getElementById('regimeStatsBody');
+        tbody.innerHTML = '';
+        cfg.order.forEach(function(regime) {
+            var s = v.stats[regime];
+            if (!s) return;
+            var tr = document.createElement('tr');
+            var isVisible = visibleRegimes.has(regime);
+            var isCurrent = (regime === v.current.regime);
+            if (!isVisible) tr.style.opacity = '0.3';
+            else if (isCurrent) tr.style.background = 'rgba(247,150,69,0.1)';
+            var retClass = s.ret_pa >= 0 ? 'val-positive' : 'val-negative';
+            var rvClass = s.ret_var >= 0 ? 'val-positive' : 'val-negative';
+            tr.innerHTML =
+                '<td>' +
+                    '<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:' + cfg.colors[regime] + ';vertical-align:middle;margin-right:8px;"></span>' +
+                    regime +
+                    (isCurrent ? ' <span class="badge badge-orange">Aktuell</span>' : '') +
+                '</td>' +
+                '<td class="text-right">' + s.weeks + '</td>' +
+                '<td class="text-right">' + s.pct + '%</td>' +
+                '<td class="text-right ' + retClass + '">' + (s.ret_pa >= 0 ? '+' : '') + s.ret_pa.toFixed(1) + '%</td>' +
+                '<td class="text-right">' + s.var_pa.toFixed(2) + '%</td>' +
+                '<td class="text-right ' + rvClass + '">' + (s.ret_var >= 0 ? '+' : '') + s.ret_var.toFixed(2) + '</td>' +
+                '<td class="text-right">' + s.p_value.toFixed(4) + (s.significant ? ' *' : '') + '</td>';
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ============================================================
+    //  TERM PREMIUM CHART
+    // ============================================================
+    function updateTermPremiumChart() {
+        if (!rawData || !rawData.tp10) return;
+        var dates = rawData.dates;
+        var traces = [];
+        if (rawData.tp2) traces.push({ x: dates, y: rawData.tp2, type:'scatter', mode:'lines', name:'2Y Term Premium', line:{color:'#16a34a',width:1.5} });
+        if (rawData.tp5) traces.push({ x: dates, y: rawData.tp5, type:'scatter', mode:'lines', name:'5Y Term Premium', line:{color:'#2598C3',width:1.5} });
+        traces.push({ x: dates, y: rawData.tp10, type:'scatter', mode:'lines', name:'10Y Term Premium', line:{color:'#1A2E4A',width:2} });
+        var shapes = [{ type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:0,y1:0,line:{color:'#dc2626',width:1,dash:'dash'} }];
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { gridcolor: '#f0f0f0' },
+            yaxis: { title: 'Term Premium (%)', gridcolor: '#f0f0f0' },
+            shapes: shapes
+        });
+        Plotly.newPlot('termPremiumChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR ACROSS CHARTS
+    // ============================================================
+    var chartIds = ['spxChart', 'yieldChart', 'spreadChart', 'termPremiumChart'];
+    var baseShapeCount = { spxChart: 0, yieldChart: 0, spreadChart: 0, termPremiumChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var crosshairShape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(crosshairShape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Übersicht</title>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        .pnl-date-card {
+            background: rgba(37, 152, 195, 0.08);
+            border-color: rgba(37, 152, 195, 0.25);
+        }
+        .sp-table { min-width: 1800px; }
+        .pnl-positive { color: var(--color-positive); font-weight: 600; }
+        .pnl-negative { color: var(--color-negative); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <!-- Tab Navigation -->
+            <div class="spa-tabs">
+                <a href="overview.html" class="spa-tab active">Übersicht</a>
+                <a href="performance_analyse/performance_analyse.html" class="spa-tab">Performance</a>
+                <a href="margin_analyse/margin_analyse.html" class="spa-tab">Margin</a>
+                <a href="rollover_analyse/rollover_analyse.html" class="spa-tab">Rollover</a>
+                <a href="data_table/data_table.html" class="spa-tab">Data Table</a>
+                <a href="trading_monitor/trading_monitor.html" class="spa-tab">Monitor</a>
+                <a href="hebel_berechnung/hebel_berechnung.html" class="spa-tab">Hebel</a>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 16px;" id="server-status">
+                <span class="sp-status-badge sp-status-offline">Lade...</span>
+            </div>
+
+            <!-- Clocks + P&L Date -->
+            <div class="sp-clock-container">
+                <div class="sp-clock-card pnl-date-card">
+                    <span class="sp-clock-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        P&L Start
+                    </span>
+                    <input type="date" id="pnlStartDate" class="sp-date-input" value="2024-11-28" onchange="updatePnlFromDate()">
+                </div>
+                <div class="sp-clock-card">
+                    <span class="sp-clock-label">
+                        <svg width="21" height="15" viewBox="0 0 32 32" style="vertical-align: middle; border-radius: 2px;"><rect width="32" height="32" fill="#D52B1E"/><rect x="13" y="6" width="6" height="20" fill="#fff"/><rect x="6" y="13" width="20" height="6" fill="#fff"/></svg>
+                        Zürich
+                    </span>
+                    <span class="sp-clock-time" id="clock-ch">--:--:--</span>
+                </div>
+                <div class="sp-clock-card">
+                    <span class="sp-clock-label">
+                        <svg width="21" height="15" viewBox="0 0 7410 3900" style="vertical-align: middle; border-radius: 2px;"><rect width="7410" height="3900" fill="#b22234"/><path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><g fill="#fff"><g id="s18"><g id="s9"><g id="s5"><g id="s4"><path id="s" d="M247,90 317.534230,307.082039 132.873218,172.917961H361.126782L176.465770,307.082039z"/><use href="#s" y="420"/><use href="#s" y="840"/><use href="#s" y="1260"/></g><use href="#s" y="1680"/></g><use href="#s4" x="247" y="210"/></g><use href="#s9" x="494"/></g><use href="#s18" x="988"/><use href="#s9" x="1976"/><use href="#s5" x="2470"/></g></svg>
+                        Chicago
+                    </span>
+                    <span class="sp-clock-time" id="clock-chi">--:--:--</span>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="sp-stats-grid" id="metrics">
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Konto-Wert</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Aktueller Hebel</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">MES Kurs</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Avg Position Cost</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Unrealized P&L</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Realized P&L Gross</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Realized P&L Net</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Offene Orders</div></div>
+            </div>
+
+
+            <!-- Transactions -->
+            <div class="sp-section">
+                <h2 class="sp-section-title">Letzte Transaktionen</h2>
+                <div id="transactions-container">
+                    <div class="sp-table-container">
+                        <div class="sp-table-scroll">
+                            <table class="sp-table" id="transactions">
+                                <thead>
+                                    <tr>
+                                        <th>Zeitpunkt (CHI)</th>
+                                        <th>Aktion</th>
+                                        <th class="text-right">Delta</th>
+                                        <th class="text-right">Ausgeführt</th>
+                                        <th>Status</th>
+                                        <th class="text-right">Hebel Neu</th>
+                                        <th class="text-right">Kosten/ Kontraktkurs</th>
+                                        <th class="text-right">Margin (%)</th>
+                                        <th>Rollover</th>
+                                        <th>Reason Code</th>
+                                        <th>Changed Columns</th>
+                                        <th class="text-right">Unrealized P&L</th>
+                                        <th class="text-right">Realized Gross</th>
+                                        <th class="text-right">Realized Net</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="14" style="text-align:center">Lade Daten...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="sp-last-update" id="last-update"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../shared/js/common.js"></script>
+    <script src="../../shared/js/nav.js" data-active="trading"></script>
+    <script>
+        const OVERVIEW_URL = './overview.json';
+        const SERVER_STATUS_URL = '../../dashboard_analyse.json';
+        let cachedOverviewData = null;
+
+        startClocks();
+
+        function calculatePnlFromDate(chartData, startDate) {
+            if (!chartData || chartData.length === 0) return { gross: 0, net: 0 };
+            const filtered = chartData.filter(d => d.date >= startDate);
+            let totalGross = 0, totalNet = 0;
+            filtered.forEach(d => { totalGross += d.daily_gross || 0; totalNet += d.daily_net || 0; });
+            return { gross: totalGross, net: totalNet };
+        }
+
+        function updatePnlFromDate() {
+            if (!cachedOverviewData) return;
+            const startDate = document.getElementById('pnlStartDate').value;
+            const pnl = calculatePnlFromDate(cachedOverviewData.realized_pnl_chart, startDate);
+            const fmt = new Date(startDate).toLocaleDateString('de-DE');
+            const grossCard = document.querySelector('#metrics .sp-stat-card:nth-child(6)');
+            const netCard = document.querySelector('#metrics .sp-stat-card:nth-child(7)');
+            if (grossCard) grossCard.innerHTML = '<div class="sp-stat-number ' + (pnl.gross >= 0 ? 'val-positive' : 'val-negative') + '">' + formatCurrency(pnl.gross, 2) + '</div><div class="sp-stat-label">Realized P&L Gross</div><div class="sp-stat-sublabel">seit ' + fmt + '</div>';
+            if (netCard) netCard.innerHTML = '<div class="sp-stat-number ' + (pnl.net >= 0 ? 'val-positive' : 'val-negative') + '">' + formatCurrency(pnl.net, 2) + '</div><div class="sp-stat-label">Realized P&L Net</div><div class="sp-stat-sublabel">seit ' + fmt + '</div>';
+        }
+
+        function updateMetrics(overview, chartData) {
+            if (!overview) return;
+            const startDate = document.getElementById('pnlStartDate').value || '2024-11-28';
+            const fmt = new Date(startDate).toLocaleDateString('de-DE');
+            const pnl = calculatePnlFromDate(chartData, startDate);
+            document.getElementById('metrics').innerHTML =
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + formatCurrency(overview.konto_wert_nlv) + getSourceBadge(overview.konto_wert_from_ib) + '</div><div class="sp-stat-label">Konto-Wert</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + (overview.neuer_hebel ? parseFloat(overview.neuer_hebel).toFixed(3) + 'x' : '—') + '</div><div class="sp-stat-label">Aktueller Hebel</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + (overview.mes_preis ? '$' + parseFloat(overview.mes_preis).toFixed(2) : '—') + getSourceBadge(overview.mes_preis_from_ib) + '</div><div class="sp-stat-label">MES Kurs</div><div class="sp-stat-sublabel">' + (overview.kontraktname || '') + '</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + (overview.avg_position_cost ? '$' + parseFloat(overview.avg_position_cost).toFixed(2) : '—') + getSourceBadge(overview.avg_cost_from_ib) + '</div><div class="sp-stat-label">Avg Position Cost</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number ' + (parseFloat(overview.unrealized_pnl || 0) >= 0 ? 'val-positive' : 'val-negative') + '">' + formatCurrency(overview.unrealized_pnl, 2) + getSourceBadge(overview.unrealized_pnl_from_ib) + '</div><div class="sp-stat-label">Unrealized P&L</div><div class="sp-stat-sublabel">Floating</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number ' + (pnl.gross >= 0 ? 'val-positive' : 'val-negative') + '">' + formatCurrency(pnl.gross, 2) + '</div><div class="sp-stat-label">Realized P&L Gross</div><div class="sp-stat-sublabel">seit ' + fmt + '</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number ' + (pnl.net >= 0 ? 'val-positive' : 'val-negative') + '">' + formatCurrency(pnl.net, 2) + '</div><div class="sp-stat-label">Realized P&L Net</div><div class="sp-stat-sublabel">seit ' + fmt + '</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + (overview.offene_orders_anzahl ?? '0') + '</div><div class="sp-stat-label">Offene Orders</div></div>';
+        }
+
+        function updateTransactions(transactions) {
+            var tbody = document.querySelector('#transactions tbody');
+            if (!transactions || transactions.length === 0) { tbody.innerHTML = '<tr><td colspan="14" style="text-align:center">Keine Transaktionen</td></tr>'; return; }
+            tbody.innerHTML = transactions.map(function(t) {
+                var formatPnlCell = function(val) {
+                    if (val === null || val === undefined) return '—';
+                    var num = parseFloat(val);
+                    return '<span class="' + (num >= 0 ? 'pnl-positive' : 'pnl-negative') + '">' + formatCurrency(num, 2) + '</span>';
+                };
+                var kostenRaw = t.kosten_transaktion != null ? parseFloat(t.kosten_transaktion) : 0;
+                var slippageRaw = t.slippage_kosten != null ? parseFloat(t.slippage_kosten) : 0;
+                var ausgefuehrt = t.ausgefuehrte_menge != null ? parseFloat(t.ausgefuehrte_menge) : 0;
+                var totalPK = ausgefuehrt > 0 ? ((kostenRaw + slippageRaw) / ausgefuehrt) / 5 : 0;
+                var kostenAngepasst = totalPK > 0 ? '$' + totalPK.toFixed(4) : '—';
+                var kostenStyle = totalPK > 0.38 ? 'color:#ef4444' : totalPK > 0.25 ? 'color:#f97316' : '';
+                var rollover = t.is_rollover === 1 ? 'Ja' : 'Nein';
+                var hebel = t.leverage_new != null ? parseFloat(t.leverage_new).toFixed(3) + 'x' : '—';
+                var marginA = t.margin_auslastung != null ? parseFloat(t.margin_auslastung).toFixed(2) + '%' : '—';
+                var statusVal = t.status || '—';
+                var statusStyle = statusVal !== 'Filled' ? 'color:#ef4444' : '';
+                var deltaVal = t.delta_zu_handeln != null ? Math.abs(parseFloat(t.delta_zu_handeln)) : null;
+                var ausgVal = t.ausgefuehrte_menge != null ? parseFloat(t.ausgefuehrte_menge) : null;
+                var ausgStyle = (deltaVal !== null && ausgVal !== null && deltaVal !== ausgVal) ? 'color:#ef4444' : '';
+                return '<tr><td>' + new Date(t.date_chi).toLocaleString('de-DE') + '</td><td><strong>' + (t.aktion || '—') + '</strong></td><td class="text-right">' + (t.delta_zu_handeln ?? '—') + '</td><td class="text-right" style="' + ausgStyle + '">' + (t.ausgefuehrte_menge ?? '—') + '</td><td style="' + statusStyle + '">' + statusVal + '</td><td class="text-right">' + hebel + '</td><td class="text-right" style="' + kostenStyle + '">' + kostenAngepasst + '</td><td class="text-right">' + marginA + '</td><td>' + rollover + '</td><td>' + (t.reason_code || '—') + '</td><td>' + (t.changed_columns || '—') + '</td><td class="text-right">' + formatPnlCell(t.unrealized_pnl) + '</td><td class="text-right">' + formatPnlCell(t.realized_pnl_gross) + '</td><td class="text-right">' + formatPnlCell(t.realized_pnl_net) + '</td></tr>';
+            }).join('');
+        }
+
+        async function loadDashboard() {
+            try {
+                var overviewData = await loadJSONData(OVERVIEW_URL);
+                cachedOverviewData = overviewData;
+                updateMetrics(overviewData.overview, overviewData.realized_pnl_chart);
+                updateTransactions(overviewData.recent_transactions);
+                if (overviewData.timestamp) updateLastUpdate(overviewData.timestamp);
+                try {
+                    var serverData = await loadJSONData(SERVER_STATUS_URL);
+                    updateServerStatus(serverData.server_status);
+                } catch (e) { console.warn('Server-Status konnte nicht geladen werden:', e); }
+            } catch (error) {
+                console.error('Fehler beim Laden des Dashboards:', error);
+                document.getElementById('metrics').innerHTML = '<div class="sp-stat-card" style="grid-column:1/-1;border-color:var(--color-negative)"><div class="sp-stat-number val-negative">Fehler</div><div class="sp-stat-label">' + error.message + '</div></div>';
+            }
+        }
+
+        loadDashboard();
+        setInterval(loadDashboard, 60000);
+    </script>
+</body>
+</html>

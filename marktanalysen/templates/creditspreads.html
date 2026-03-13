@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Credit Spreads: HY/IG OAS, Treasury Spreads als Rezessionsindikator mit S&P 500 Overlay">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%23dc2626' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Credit Spreads | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('1Y', this)">1J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('3Y', this)">3J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                    <button class="toggle-btn active" id="btnSpx" onclick="toggleOption('spx', this)">S&amp;P 500</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">HY Spread (OAS)</div>
+                    <div id="statHY" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div id="statHYPctl" style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Perzentil: --</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">IG Spread (OAS)</div>
+                    <div id="statIG" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div id="statIGPctl" style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Perzentil: --</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">HY minus IG</div>
+                    <div id="statHYIG" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Risikoappetit</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">10Y-2Y Spread</div>
+                    <div id="statT10Y2Y" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Treasury Kurve</div>
+                </div>
+            </div>
+
+            <!-- Chart 1: HY + IG Spreads mit SPX -->
+            <div class="chart-container">
+                <h3 class="section-title">Credit Spreads: HY &amp; IG OAS mit S&amp;P 500</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    ICE BofA High Yield und Investment Grade Option-Adjusted Spread (Basispunkte) mit S&amp;P 500 Overlay
+                </p>
+                <div id="creditSpreadChart"></div>
+            </div>
+
+            <!-- Chart 2: HY minus IG -->
+            <div class="chart-container">
+                <h3 class="section-title">HY minus IG Spread (Risikoappetit)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Steigend = zunehmendes Kreditrisiko; Fallend = Risk-On Sentiment
+                </p>
+                <div id="hyIgChart"></div>
+            </div>
+
+            <!-- Chart 3: Treasury Spreads -->
+            <div class="chart-container">
+                <h3 class="section-title">Treasury Spreads (10Y-2Y, 10Y-3M)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Negativ = Invertierte Zinskurve (Rezessionswarnung)
+                </p>
+                <div id="treasurySpreadChart"></div>
+            </div>
+
+            <!-- Chart 4: Perzentile -->
+            <div class="chart-container">
+                <h3 class="section-title">Historische Perzentile (aktueller Stand)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Wo steht der aktuelle Spread im historischen Vergleich? 50 = Median
+                </p>
+                <div id="percentileChart"></div>
+            </div>
+
+            <!-- Chart 5: SLOOS Lending Standards -->
+            <div class="chart-container">
+                <h3 class="section-title">SLOOS Kreditstandards (Net % Tightening)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Senior Loan Officer Opinion Survey &ndash; positiv = Versch&auml;rfung, negativ = Lockerung (quartalsweise)
+                </p>
+                <div id="sloosChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Credit Spreads</strong> messen den Risikoaufschlag von Unternehmensanleihen &uuml;ber risikofreie Staatsanleihen.
+                    Ein steigender HY-Spread signalisiert wachsende Kreditrisikopr&auml;mien und oft bevorstehende Rezessionen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>SLOOS</strong> zeigt wie Banken ihre Kreditvergabe-Standards anpassen.
+                    Steigende Werte (Versch&auml;rfung) sind ein f&uuml;hrender Indikator f&uuml;r wirtschaftliche Abschw&auml;chung.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (BAMLH0A0HYM2, BAMLC0A0CM, T10Y2Y, T10Y3M, DRTSCILM, DRTSCIS, DRTSCLCC, SUBLPDRCSC, USREC), Yahoo Finance (^GSPC).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Credit Spreads &middot; Daten: FRED (ICE BofA, Treasury), Yahoo Finance</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    var csData = __CREDITSPREADS_DATA__;
+
+    if (!csData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_creditspreads.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 70, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+    var showSpx = true;
+
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var weeksMap = { '1Y': 52, '3Y': 156, '5Y': 260, '10Y': 520 };
+        var weeks = weeksMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - weeks), end: len };
+    }
+
+    function sl(arr, range) { return arr.slice(range.start, range.end); }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !csData.nber_recessions) return [];
+        var d0 = dates[range.start], d1 = dates[range.end - 1];
+        var shapes = [];
+        csData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({ type: 'rect', xref: 'x', yref: 'paper', x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1], y0: 0, y1: 1, fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 }, layer: 'below' });
+        });
+        return shapes;
+    }
+
+    function zeroLine() { return { type: 'line', xref: 'paper', yref: 'y', x0: 0, x1: 1, y0: 0, y1: 0, line: { color: '#333', width: 1.5 } }; }
+
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') showNber = !showNber;
+        if (option === 'spx') showSpx = !showSpx;
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // Chart 1: Credit Spreads + SPX
+    function updateCreditSpreadChart() {
+        var dates = csData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            { x: d, y: sl(csData.series['BAMLH0A0HYM2'], range), type: 'scatter', mode: 'lines', line: { color: '#dc2626', width: 2.5 }, name: 'HY OAS', hovertemplate: 'HY: %{y:.0f} bps<extra></extra>' },
+            { x: d, y: sl(csData.series['BAMLC0A0CM'], range), type: 'scatter', mode: 'lines', line: { color: '#2598C3', width: 2 }, name: 'IG OAS', hovertemplate: 'IG: %{y:.0f} bps<extra></extra>' }
+        ];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'OAS (Basispunkte)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400, showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 5 },
+            shapes: nberShapes(dates, range)
+        });
+
+        if (showSpx && csData.spx && csData.spx.length > 0) {
+            traces.push({ x: d, y: sl(csData.spx, range), type: 'scatter', mode: 'lines', line: { color: 'rgba(26,46,74,0.3)', width: 1 }, name: 'S&P 500', yaxis: 'y2', hovertemplate: 'SPX: %{y:,.0f}<extra></extra>', connectgaps: true });
+            layout.yaxis2 = { title: 'S&P 500', overlaying: 'y', side: 'right', showgrid: false, type: 'log' };
+        }
+
+        Plotly.newPlot('creditSpreadChart', traces, layout, plotlyConfig);
+        baseShapeCount.creditSpreadChart = (layout.shapes || []).length;
+    }
+
+    // Chart 2: HY minus IG
+    function updateHyIgChart() {
+        var dates = csData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [{ x: d, y: sl(csData.hy_ig, range), type: 'scatter', mode: 'lines', fill: 'tozeroy', fillcolor: 'rgba(26,46,74,0.1)', line: { color: '#1A2E4A', width: 2 }, name: 'HY - IG', hovertemplate: '%{y:.0f} bps<extra></extra>' }];
+
+        var shapes = nberShapes(dates, range);
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Spread (Basispunkte)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 300, showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('hyIgChart', traces, layout, plotlyConfig);
+        baseShapeCount.hyIgChart = shapes.length;
+    }
+
+    // Chart 3: Treasury Spreads
+    function updateTreasurySpreadChart() {
+        var dates = csData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        if (csData.series['T10Y2Y']) {
+            traces.push({ x: d, y: sl(csData.series['T10Y2Y'], range), type: 'scatter', mode: 'lines', line: { color: '#8b5cf6', width: 2 }, name: '10Y-2Y', hovertemplate: '10Y-2Y: %{y:+.2f}%<extra></extra>' });
+        }
+        if (csData.series['T10Y3M']) {
+            traces.push({ x: d, y: sl(csData.series['T10Y3M'], range), type: 'scatter', mode: 'lines', line: { color: '#16a34a', width: 2 }, name: '10Y-3M', hovertemplate: '10Y-3M: %{y:+.2f}%<extra></extra>' });
+        }
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Spread (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 350, showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('treasurySpreadChart', traces, layout, plotlyConfig);
+    }
+
+    // Chart 4: Perzentile
+    function updatePercentileChart() {
+        if (!csData.percentiles) return;
+        var labels = [], values = [], colors = [];
+        var mapping = [
+            ['BAMLH0A0HYM2', 'HY OAS'],
+            ['BAMLC0A0CM', 'IG OAS'],
+            ['hy_ig', 'HY - IG'],
+            ['T10Y2Y', '10Y-2Y'],
+            ['T10Y3M', '10Y-3M']
+        ];
+        mapping.forEach(function(m) {
+            if (csData.percentiles[m[0]] != null) {
+                labels.push(m[1]);
+                values.push(csData.percentiles[m[0]]);
+                var v = csData.percentiles[m[0]];
+                colors.push(v > 80 ? '#dc2626' : (v > 60 ? '#F79645' : (v > 40 ? '#16a34a' : '#2598C3')));
+            }
+        });
+
+        var traces = [{ x: labels, y: values, type: 'bar', marker: { color: colors }, text: values.map(function(v) { return v.toFixed(1) + '%'; }), textposition: 'outside', hovertemplate: '%{x}: %{y:.1f}. Perzentil<extra></extra>' }];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: false },
+            yaxis: { title: 'Perzentil (%)', showgrid: true, gridcolor: '#E8E8E8', range: [0, 105] },
+            height: 300, showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 50 },
+            shapes: [{ type: 'line', xref: 'paper', yref: 'y', x0: 0, x1: 1, y0: 50, y1: 50, line: { color: '#999', width: 1, dash: 'dash' } }]
+        });
+
+        Plotly.newPlot('percentileChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 5: SLOOS LENDING STANDARDS
+    // ============================================================
+    function updateSloosChart() {
+        if (!csData.sloos || !csData.sloos_dates) return;
+        var dates = csData.sloos_dates;
+        var sloosColors = { DRTSCILM: '#1A2E4A', DRTSCIS: '#2598C3', DRTSCLCC: '#F79645', SUBLPDRCSC: '#dc2626' };
+        var sloosLabels = { DRTSCILM: 'C&I Large', DRTSCIS: 'C&I Small', DRTSCLCC: 'Credit Cards', SUBLPDRCSC: 'Subprime Mortgage' };
+        var traces = [];
+        Object.keys(csData.sloos).forEach(function(sid) {
+            traces.push({
+                x: dates, y: csData.sloos[sid], type: 'scatter', mode: 'lines',
+                name: sloosLabels[sid] || sid, line: { color: sloosColors[sid] || '#999', width: 2 }
+            });
+        });
+        var shapes = csData.nber_recessions.filter(function(r) { return showRecessions; }).map(function(r) {
+            return { type:'rect',xref:'x',yref:'paper',x0:r[0],x1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.3)',line:{width:0} };
+        });
+        shapes.push({ type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:0,y1:0,line:{color:'#999',width:1,dash:'dot'} });
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { range: getXRange(dates), gridcolor: '#f0f0f0' },
+            yaxis: { title: 'Net % Tightening', gridcolor: '#f0f0f0' },
+            shapes: shapes
+        });
+        Plotly.newPlot('sloosChart', traces, layout, plotlyConfig);
+    }
+
+    function updateStats() {
+        var c = csData.current;
+        function fmtBps(el, val) { if (val != null) { el.textContent = val.toFixed(0) + ' bps'; el.style.color = val > 500 ? '#dc2626' : (val > 300 ? '#F79645' : '#16a34a'); } }
+        fmtBps(document.getElementById('statHY'), c.hy_oas);
+        fmtBps(document.getElementById('statIG'), c.ig_oas);
+        fmtBps(document.getElementById('statHYIG'), c.hy_ig);
+
+        var t102 = document.getElementById('statT10Y2Y');
+        if (c.t10y2y != null) { t102.textContent = (c.t10y2y >= 0 ? '+' : '') + c.t10y2y.toFixed(2) + '%'; t102.style.color = c.t10y2y >= 0 ? '#16a34a' : '#dc2626'; }
+
+        if (csData.percentiles) {
+            var hyP = csData.percentiles['BAMLH0A0HYM2'];
+            var igP = csData.percentiles['BAMLC0A0CM'];
+            if (hyP != null) document.getElementById('statHYPctl').textContent = 'Perzentil: ' + hyP.toFixed(0) + '%';
+            if (igP != null) document.getElementById('statIGPctl').textContent = 'Perzentil: ' + igP.toFixed(0) + '%';
+        }
+
+        document.getElementById('currentInfo').innerHTML =
+            'HY: <strong>' + (c.hy_oas != null ? c.hy_oas.toFixed(0) + ' bps' : '--') + '</strong> &middot; ' +
+            'IG: ' + (c.ig_oas != null ? c.ig_oas.toFixed(0) + ' bps' : '--') + ' &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    var chartIds = ['creditSpreadChart', 'hyIgChart', 'sloosChart'];
+    var baseShapeCount = { creditSpreadChart: 0, hyIgChart: 0, sloosChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = { type: 'line', xref: 'x', yref: 'paper', x0: xVal, x1: xVal, y0: 0, y1: 1, line: { color: '#666', width: 1, dash: 'dash' } };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            Plotly.relayout(id, { shapes: (el.layout.shapes || []).slice(0, baseShapeCount[id]) });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) { if (data.points && data.points.length > 0) syncCrosshair(id, data.points[0].x); });
+            el.on('plotly_unhover', function() { clearCrosshair(); });
+        });
+    }
+
+    function updateAll() {
+        if (!csData) return;
+        updateStats();
+        updateCreditSpreadChart();
+        updateHyIgChart();
+        updateTreasurySpreadChart();
+        updatePercentileChart();
+        updateSloosChart();
+        attachCrosshairListeners();
+    }
+
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

@@ -1,0 +1,192 @@
+{
+    "timestamp": "2026-03-11T21:41:02.816868",
+    "exchange": "NYSE",
+    "exchange_full": "New York Stock Exchange",
+    "calendar": "XNYS",
+    "timezone": "ET (America/New_York)",
+    "trading_hours": "Mo-Fr 09:30 - 16:00 ET",
+    "products": [
+        "SPY",
+        "QQQ",
+        "IWM",
+        "DIA",
+        "GLD",
+        "SLV",
+        "USO",
+        "TLT",
+        "IEF",
+        "SHY",
+        "AAPL",
+        "MSFT",
+        "AMZN",
+        "GOOGL",
+        "META",
+        "NVDA",
+        "TSLA"
+    ],
+    "trading_holidays": {
+        "upcoming": [
+            {
+                "date": "2026-04-03",
+                "name": "Good Friday",
+                "status": "Closed",
+                "close_time": null,
+                "days_until": 23,
+                "weekday": "Friday",
+                "closure_start": "Fri 03.04. ganztags",
+                "closure_end": "Mon 06.04. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Mon 06.04. 09:30 ET"
+            },
+            {
+                "date": "2026-05-25",
+                "name": "Memorial Day",
+                "status": "Closed",
+                "close_time": null,
+                "days_until": 75,
+                "weekday": "Monday",
+                "closure_start": "Mon 25.05. ganztags",
+                "closure_end": "Tue 26.05. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 26.05. 09:30 ET"
+            }
+        ],
+        "all_2026": [
+            {
+                "date": "2026-01-01",
+                "name": "New Year's Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Thu 01.01. ganztags",
+                "closure_end": "Fri 02.01. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Fri 02.01. 09:30 ET"
+            },
+            {
+                "date": "2026-01-19",
+                "name": "Martin Luther King Jr. Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Mon 19.01. ganztags",
+                "closure_end": "Tue 20.01. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 20.01. 09:30 ET"
+            },
+            {
+                "date": "2026-02-16",
+                "name": "Presidents Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Mon 16.02. ganztags",
+                "closure_end": "Tue 17.02. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 17.02. 09:30 ET"
+            },
+            {
+                "date": "2026-04-03",
+                "name": "Good Friday",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Fri 03.04. ganztags",
+                "closure_end": "Mon 06.04. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Mon 06.04. 09:30 ET"
+            },
+            {
+                "date": "2026-05-25",
+                "name": "Memorial Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Mon 25.05. ganztags",
+                "closure_end": "Tue 26.05. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 26.05. 09:30 ET"
+            },
+            {
+                "date": "2026-06-19",
+                "name": "Juneteenth",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Fri 19.06. ganztags",
+                "closure_end": "Mon 22.06. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Mon 22.06. 09:30 ET"
+            },
+            {
+                "date": "2026-07-03",
+                "name": "Independence Day (observed)",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Fri 03.07. ganztags",
+                "closure_end": "Mon 06.07. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Mon 06.07. 09:30 ET"
+            },
+            {
+                "date": "2026-09-07",
+                "name": "Labor Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Mon 07.09. ganztags",
+                "closure_end": "Tue 08.09. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 08.09. 09:30 ET"
+            },
+            {
+                "date": "2026-11-26",
+                "name": "Thanksgiving Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Thu 26.11. ganztags",
+                "closure_end": "Fri 27.11. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Fri 27.11. 09:30 ET"
+            },
+            {
+                "date": "2026-11-27",
+                "name": "Day after Thanksgiving",
+                "status": "Early Close 13:00 ET",
+                "close_time": "13:00 ET",
+                "closure_start": "Fri 27.11. 13:00",
+                "closure_end": "Fri 27.11. 16:00",
+                "closure_description": "Schliesst 13:00 ET (statt 16:00 ET)"
+            },
+            {
+                "date": "2026-12-24",
+                "name": "Christmas Eve",
+                "status": "Early Close 13:00 ET",
+                "close_time": "13:00 ET",
+                "closure_start": "Thu 24.12. 13:00",
+                "closure_end": "Thu 24.12. 16:00",
+                "closure_description": "Schliesst 13:00 ET (statt 16:00 ET)"
+            },
+            {
+                "date": "2026-12-25",
+                "name": "Christmas Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Fri 25.12. ganztags",
+                "closure_end": "Mon 28.12. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Mon 28.12. 09:30 ET"
+            }
+        ],
+        "all_2027": [
+            {
+                "date": "2027-01-01",
+                "name": "New Year's Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Fri 01.01. ganztags",
+                "closure_end": "Mon 04.01. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Mon 04.01. 09:30 ET"
+            },
+            {
+                "date": "2027-01-18",
+                "name": "Martin Luther King Jr. Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Mon 18.01. ganztags",
+                "closure_end": "Tue 19.01. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 19.01. 09:30 ET"
+            },
+            {
+                "date": "2027-02-15",
+                "name": "Presidents Day",
+                "status": "Closed",
+                "close_time": null,
+                "closure_start": "Mon 15.02. ganztags",
+                "closure_end": "Tue 16.02. 09:30",
+                "closure_description": "Geschlossen, öffnet wieder Tue 16.02. 09:30 ET"
+            }
+        ]
+    }
+}

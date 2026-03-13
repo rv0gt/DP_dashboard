@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marktanalysen - Trading Portal</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <style>
+        /* Analysis Tiles Grid */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+        .analysis-tile {
+            position: relative;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 32px;
+            text-decoration: none;
+            color: inherit;
+            transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+            cursor: pointer;
+            display: block;
+            overflow: hidden;
+        }
+        .analysis-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border-color: var(--color-blue);
+        }
+        .tile-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--color-blue) 0%, #1d7a9e 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 16px;
+        }
+        .tile-title {
+            font-size: 1.35em;
+            font-weight: 700;
+            color: var(--color-navy);
+            margin-bottom: 8px;
+        }
+        .tile-description {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+        .tile-arrow {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            color: var(--color-text-muted);
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: all 0.2s;
+        }
+        .analysis-tile:hover .tile-arrow {
+            opacity: 1;
+            transform: translateX(0);
+            color: var(--color-blue);
+        }
+        /* Tile Rating - Balken unten rechts */
+        .tile-rating {
+            position: absolute;
+            bottom: 24px;
+            right: 32px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+        }
+        .tile-rating-bar {
+            width: 6px;
+            border-radius: 2px;
+            background: var(--color-border);
+        }
+        .tile-rating-bar:nth-child(1) { height: 10px; }
+        .tile-rating-bar:nth-child(2) { height: 16px; }
+        .tile-rating-bar:nth-child(3) { height: 22px; }
+        .tile-rating-bar.filled { background: currentColor; }
+        .tile-rating.level-1 { color: var(--color-negative); }
+        .tile-rating.level-2 { color: var(--color-orange); }
+        .tile-rating.level-3 { color: var(--color-positive); }
+        .tile-rating { cursor: pointer; }
+        .tile-rating:hover { opacity: 0.7; }
+        [data-theme="dark"] .analysis-tile:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        /* Local search */
+        .ma-search-wrap {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .ma-search-input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .ma-search-input:focus {
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 3px rgba(37,152,195,0.15);
+        }
+        .ma-search-input::placeholder { color: var(--color-text-muted); }
+        .ma-search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-muted);
+            pointer-events: none;
+        }
+        .ma-search-count {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+        .analysis-tile.hidden-by-search {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+
+        <main class="main-content">
+
+            <!-- Hero Banner -->
+            <div class="site-hero">
+                <h1>Marktanalysen</h1>
+                <p>Finanzanalyse-Dashboard &mdash; Makro&ouml;konomische Analysen &amp; Indikatoren</p>
+            </div>
+
+            <!-- Analyse-Suche -->
+            <div class="ma-search-wrap">
+                <svg class="ma-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="ma-search-input" placeholder="Analysen durchsuchen &mdash; z.B. CPI, Yield Curve, S&amp;P 500, SOFR ...">
+                <span class="ma-search-count"></span>
+            </div>
+
+            <!-- Analyse-Kacheln -->
+            <h2 class="section-heading">Analysen</h2>
+            <div class="analysis-grid">
+                <!-- Währungsanalyse -->
+                <a href="waehrungsanalyse/index.html" class="analysis-tile" data-tags="DXY EUR/USD CHF/USD GBP/USD AUD/USD JPY/USD SEK/USD NOK/USD CAD/USD DKK/USD PPP Kaufkraftparität Korrelation Wechselkurs FX Misvaluation Staatsanleihen Rendite-Spread">
+                    <div class="tile-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="tile-title">W&auml;hrungsanalyse</div>
+                    <div class="tile-description">Kaufkraftparit&auml;t (PPP), Korrelationsanalysen, Staatsanleihen-Renditen und FX-Rendite-Spreads.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Zinskurvenanalyse -->
+                <a href="zinskurve/index.html" class="analysis-tile" data-tags="Yield Curve 10Y-2Y 10Y-3M 2Y-5Y 5Y-10Y 3M-2Y Spread Treasury DGS2 DGS5 DGS10 DGS3MO DFII5 DFII10 ACM Term Premium SPX S&P 500 Regime Inversion">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #F79645 0%, #e5812e 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 14 11 8 15 12 21 6"/></svg>
+                    </div>
+                    <div class="tile-title">Zinskurvenanalyse</div>
+                    <div class="tile-description">Yield Curve Regime-Analyse: US Treasury Zinskurven-Dynamik mit S&amp;P 500 Overlay.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Inflationsanalyse -->
+                <a href="inflation/index.html" class="analysis-tile" data-tags="CPI PCE Breakeven TIPS Inflation Inflationserwartung DGS5 DGS10 DGS20 DGS30 DFII5 DFII10 DFII20 DFII30 reale Zinsen Gold GLD SLV Silber nominale Yields">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="tile-title">Inflationsanalyse</div>
+                    <div class="tile-description">Implied Inflation (Breakeven Rates), reale Zinss&auml;tze (TIPS Yields) und nominale US Treasury Yields.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- TMS2-Analyse -->
+                <a href="tms2/index.html" class="analysis-tile" data-tags="True Money Supply TMS2 Geldmenge M2 M2V Velocity CURRSL DEMDEPSL SAVINGS CPIAUCSL Inflation Trend S&P 500 SPX NBER Rezession">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 5 5-9"/></svg>
+                    </div>
+                    <div class="tile-title">TMS2-Analyse</div>
+                    <div class="tile-description">True Money Supply: Inflationsbereinigtes TMS2 mit exponentiellem Trend, Velocity und S&amp;P 500.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Employment-Analyse -->
+                <a href="employment/index.html" class="analysis-tile" data-tags="NFP Nonfarm Payrolls UNRATE Unemployment Arbeitslosenquote Sahm Rule ICSA Jobless Claims CCSA TEMPHELPS PAYEMS MANEMP DMANEMP Residential Building Durable Manufacturing CIVPART Participation EMRATIO JTSQUR JOLTS">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="tile-title">Employment-Analyse</div>
+                    <div class="tile-description">F&uuml;hrende vs. breite Besch&auml;ftigungsindikatoren: Residential Building &amp; Durable Manufacturing.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Loan-Analyse -->
+                <a href="loans/index.html" class="analysis-tile" data-tags="Mortgage Credit Card Student Loan Auto Loan Delinquency Charge-Off REVOLSL NONREVSL SLOAS MVLOAS TDSP Debt Service Household Debt Bankkredite Kreditwachstum DRCCLACBS DRSFRMACBS">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #d97706 0%, #b45309 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                    </div>
+                    <div class="tile-title">Loan-Analyse</div>
+                    <div class="tile-description">Household Debt Composition: Mortgage, Credit Card, Student Loan, Auto Loan mit Delinquency Rates.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Produktionszyklus -->
+                <a href="production/index.html" class="analysis-tile" data-tags="ISM PMI NAPM Industrieproduktion INDPRO Kupfer PCOPPUSDM Heavy Trucks HTRUCKSSAAR Corrugated Boxes Halbleiter Housing Starts HOUST PERMIT CFNAI Capacity Utilization TCU DGORDER Durable Goods Empire State Philadelphia Fed">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20V8l5 4V8l5 4V4l10 8v8z"/></svg>
+                    </div>
+                    <div class="tile-title">Produktionszyklus</div>
+                    <div class="tile-description">Fr&uuml;hzyklische G&uuml;ter: Kupfer, Heavy Trucks, Corrugated Boxes, Halbleiter, Housing Starts.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Elektrizitätsverbrauch -->
+                <a href="electricity/index.html" class="analysis-tile" data-tags="Strom Stromerzeugung IPUTIL Utilities Hydroelectric Nuclear Renewables Strompreis kWh CPI Electricity CPIENGSL Kapazitätsauslastung IP Electric">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #eab308 0%, #ca8a04 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div class="tile-title">Elektrizit&auml;tsverbrauch</div>
+                    <div class="tile-description">Stromerzeugung (IP), Erzeugungsquellen, Strompreise und Kapazit&auml;tsauslastung.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Lohn-Preis-Spirale -->
+                <a href="wages/index.html" class="analysis-tile" data-tags="Lohn Average Hourly Earnings AHE AHETPI CPI Core CPI Inflation UNRATE Phillips-Kurve ECIWAG Unit Labor Costs ULCNFB Productivity OPHNFB FEDFUNDS Fed Funds reale Löhne Lohnwachstum">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><path d="M20 16l-4-4 4-4"/></svg>
+                    </div>
+                    <div class="tile-title">Lohn-Preis-Spirale</div>
+                    <div class="tile-description">Lohnwachstum vs. Inflation: Average Hourly Earnings, CPI, reale Lohnver&auml;nderung und Phillips-Kurve.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Credit Spreads -->
+                <a href="creditspreads/index.html" class="analysis-tile" data-tags="High Yield HY Investment Grade IG OAS Option-Adjusted Spread BAMLH0A0HYM2 BAMLC0A0CM T10Y2Y T10Y3M Treasury Spread SLOOS Tightening Credit Card C&I Loans Subprime S&P 500 Perzentile">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 12h4v5H7zM13 8h4v9h-4z"/></svg>
+                    </div>
+                    <div class="tile-title">Credit Spreads</div>
+                    <div class="tile-description">HY &amp; IG Option-Adjusted Spreads, Treasury Spreads, historische Perzentile und S&amp;P 500 Overlay.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Demographie -->
+                <a href="demographics/index.html" class="analysis-tile" data-tags="CIVPART Labor Force Participation UNRATE Arbeitslosenquote Produktivität OPHNFB Unit Labor Costs PRS85006092 Bevölkerung Altersstruktur Prime Age 25-54 CLF16OV">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #0369a1 0%, #075985 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="tile-title">Demographie</div>
+                    <div class="tile-description">Labor Force Participation Rate, Arbeitslosenquote, Produktivit&auml;t und Unit Labor Costs.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Immobilienmarkt -->
+                <a href="housing/index.html" class="analysis-tile" data-tags="Case-Shiller CSUSHPISA Housing Starts HOUST Building Permits PERMIT Mortgage 30Y MORTGAGE30US Median Sales Price MSPUS New Home Sales Existing Home Sales Immobilien Affordability Vacancy Rate">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #059669 0%, #047857 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="tile-title">Immobilienmarkt</div>
+                    <div class="tile-description">S&amp;P/Case-Shiller Home Price Index, Housing Starts, Building Permits, 30Y Mortgage Rate.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Globale Liquidität -->
+                <a href="liquidity/index.html" class="analysis-tile" data-tags="Fed Bilanz WALCL Reverse Repo RRPONTSYD TGA Treasury General Account WTREGEN Net Liquidity Trade-Weighted Dollar DTWEXBGS S&P 500 SPX Reserven RRP Netto-Liquidität">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #4338ca 0%, #3730a3 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div class="tile-title">Globale Liquidit&auml;t</div>
+                    <div class="tile-description">Fed-Bilanz, Reverse Repo, Treasury General Account, Netto-Liquidit&auml;t, Trade-Weighted Dollar.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Financial Conditions -->
+                <a href="financial_conditions/index.html" class="analysis-tile" data-tags="NFCI ANFCI STLFSI4 St. Louis FSI KCFSI Kansas City VIX VIXCLS CFNAI CFNAIMA3 Leading Economic Index USSLIND Rezession Chauvet-Piger RECPROUSM156N Sahm Rule SAHMREALTIME">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #be185d 0%, #9d174d 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </div>
+                    <div class="tile-title">Financial Conditions</div>
+                    <div class="tile-description">NFCI, St. Louis FSI, Kansas City FSI, VIX, CFNAI, Leading Economic Index und Rezessionsmodelle.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Sentiment -->
+                <a href="sentiment/index.html" class="analysis-tile" data-tags="Michigan Consumer Sentiment UMCSENT OECD Consumer Confidence Business Confidence MICH Inflationserwartungen Cleveland Fed EXPINF1YR EXPINF10YR S&P 500 SPX Fear Greed AAII Put/Call">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #ea580c 0%, #c2410c 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+                    </div>
+                    <div class="tile-title">Sentiment</div>
+                    <div class="tile-description">Michigan Consumer Sentiment, OECD Consumer &amp; Business Confidence, Inflationserwartungen.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Bewertung -->
+                <a href="valuation/index.html" class="analysis-tile" data-tags="Buffett Indicator Wilshire 5000 GDP P/E CAPE Tobin Q Corporate Profits CPATAX Nonfinancial National Income S&P 500 GSPC Bewertung Market Cap Earnings">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="tile-title">Bewertung</div>
+                    <div class="tile-description">Buffett Indicator (Wilshire 5000 / GDP), Corporate Profits / GDP, Profits YoY vs. S&amp;P 500.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Fiskal -->
+                <a href="fiscal/index.html" class="analysis-tile" data-tags="Federal Debt GFDEBTN Debt/GDP GFDEGDQ188S Zinszahlungen Surplus Deficit FYFSD Interest/GDP FYOIGDA188S Foreign Holdings Treasuries Staatsschulden BIP Zinslast Schulden">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #65a30d 0%, #4d7c0f 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 9h20M9 21V9"/></svg>
+                    </div>
+                    <div class="tile-title">Fiskal</div>
+                    <div class="tile-description">Staatsschulden/BIP, Federal Debt, Zinszahlungen, Surplus/Deficit und Zinslast/BIP.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Konsum & Einkommen -->
+                <a href="consumption/index.html" class="analysis-tile" data-tags="Sparquote PSAVERT PCE Personal Consumption Retail Sales RSXFS Real Disposable Income W875RX1 DSPIC96 Consumer Credit TOTALSL S&P 500 SPX Konsum Einkommen">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #c026d3 0%, #a21caf 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </div>
+                    <div class="tile-title">Konsum &amp; Einkommen</div>
+                    <div class="tile-description">Sparquote, PCE, Retail Sales, Real Disposable Income, Consumer Credit.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Bausektor -->
+                <a href="construction/index.html" class="analysis-tile" data-tags="Building Permits PERMIT Housing Units Under Construction UNDCONTSA Residential Employment Remodelers D.R. Horton Lennar PulteGroup NVR Toll Brothers KB Home Meritage Homebuilder Operating Margins">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #d97706 0%, #92400e 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M6 20V8l4-4v16M14 20V12l4-4v12"/></svg>
+                    </div>
+                    <div class="tile-title">Bausektor</div>
+                    <div class="tile-description">Building Permits, Housing Units under Construction, Homebuilder Profit Margins.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Corporate Profit Margins -->
+                <a href="profit_margins/index.html" class="analysis-tile" data-tags="Pre-Tax After-Tax Corporate Profits CP GDP Nonfinancial Financial Net Operating Surplus A053RC1Q027SBEA Gewinnmargen Domestic Rest of World Profit Margin">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #059669 0%, #047857 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+                    </div>
+                    <div class="tile-title">Corporate Profit Margins</div>
+                    <div class="tile-description">Pre-Tax &amp; After-Tax Margins, Financial vs. Nonfinancial, Net Operating Surplus.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Investitionsanalyse -->
+                <a href="investment/index.html" class="analysis-tile" data-tags="CapEx Business Investment GPDI Net Private Domestic Investment Structures Equipment Intellectual Property Productivity OPHNFB Gross Private Saving GPSAVE National Savings W875RX1A020NBEA Real Income Per Capita">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                    </div>
+                    <div class="tile-title">Investitionsanalyse</div>
+                    <div class="tile-description">Realeinkommen pro Kopf, Netto- &amp; Bruttoinvestition, Produktivit&auml;tswachstum, National Savings.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+
+                <!-- Futures Finanzierung -->
+                <a href="futures_financing/index.html" class="analysis-tile" data-tags="ES Futures S&P 500 Futures SOFR Fed Funds DFF DGS3MO Gold Futures GC=F Implied Financing Basis Dividendenrendite SPY COT Margin Debt Positionierung Days to Expiration">
+                    <div class="tile-icon" style="background:linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V8l4 4 4-8 4 6 3-4v14"/></svg>
+                    </div>
+                    <div class="tile-title">Futures Finanzierung</div>
+                    <div class="tile-description">Implizite Finanzierungskosten des ES-Futures, Basis, Dividendenrendite, SOFR-Spread.</div>
+                    <div class="tile-rating level-1"><div class="tile-rating-bar filled"></div><div class="tile-rating-bar"></div><div class="tile-rating-bar"></div></div>
+                    <div class="tile-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+<script src="../shared/js/nav.js" data-active="marktanalysen"></script>
+<script>
+(function() {
+    'use strict';
+
+    // --- Default ratings (pre-set) ---
+    var DEFAULTS = {
+        swillemin: {
+            'waehrungsanalyse': 3,
+            'zinskurve': 3,
+            'inflation': 3,
+            'tms2': 3,
+            'employment': 3,
+            'loans': 3,
+            'production': 3,
+            'futures_financing': 3
+        }
+    };
+
+    function ensureDefaults(userId) {
+        var key = 'ma_ratings_' + userId;
+        if (!localStorage.getItem(key) && DEFAULTS[userId]) {
+            localStorage.setItem(key, JSON.stringify(DEFAULTS[userId]));
+        }
+    }
+    if (window.portalAnalysts) {
+        window.portalAnalysts.forEach(function(a) { ensureDefaults(a.id); });
+    }
+
+    function getUser() { return (window.portalGetUser || function(){ return localStorage.getItem('ma_user') || ''; })(); }
+    function getRatings(userId) {
+        try { return JSON.parse(localStorage.getItem('ma_ratings_' + userId)) || {}; }
+        catch(e) { return {}; }
+    }
+    function saveRatings(userId, ratings) {
+        localStorage.setItem('ma_ratings_' + userId, JSON.stringify(ratings));
+    }
+
+    function tileId(tile) {
+        return tile.getAttribute('href').replace('/index.html', '');
+    }
+
+    function applyRatings() {
+        var userId = getUser();
+        var ratings = userId ? getRatings(userId) : {};
+        document.querySelectorAll('.analysis-tile').forEach(function(tile) {
+            var id = tileId(tile);
+            var level = ratings[id] || 1;
+            var ratingEl = tile.querySelector('.tile-rating');
+            if (!ratingEl) return;
+            ratingEl.className = 'tile-rating level-' + level;
+            ratingEl.querySelectorAll('.tile-rating-bar').forEach(function(bar, i) {
+                if (i < level) bar.classList.add('filled');
+                else bar.classList.remove('filled');
+            });
+        });
+    }
+
+    document.querySelectorAll('.tile-rating').forEach(function(ratingEl) {
+        ratingEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var userId = getUser();
+            if (!userId) { alert('Bitte zuerst einen Analysten ausw\u00e4hlen (oben rechts).'); return; }
+            var tile = ratingEl.closest('.analysis-tile');
+            var id = tileId(tile);
+            var ratings = getRatings(userId);
+            var current = ratings[id] || 1;
+            var next = current >= 3 ? 1 : current + 1;
+            ratings[id] = next;
+            saveRatings(userId, ratings);
+            applyRatings();
+        });
+    });
+
+    // Re-apply ratings when user switches account (event from nav.js)
+    document.addEventListener('portalUserChanged', applyRatings);
+
+    applyRatings();
+
+    // --- Local tile search / filter ---
+    var searchInput = document.querySelector('.ma-search-input');
+    var searchCount = document.querySelector('.ma-search-count');
+    var allTiles = document.querySelectorAll('.analysis-tile');
+    var totalTiles = allTiles.length;
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            var q = searchInput.value.trim().toLowerCase();
+            if (!q) {
+                allTiles.forEach(function(t) { t.classList.remove('hidden-by-search'); });
+                searchCount.textContent = '';
+                return;
+            }
+
+            var visible = 0;
+            allTiles.forEach(function(tile) {
+                var title = (tile.querySelector('.tile-title') || {}).textContent || '';
+                var desc  = (tile.querySelector('.tile-description') || {}).textContent || '';
+                var tags  = tile.getAttribute('data-tags') || '';
+                var haystack = (title + ' ' + desc + ' ' + tags).toLowerCase();
+
+                // Support multi-word: all terms must match
+                var terms = q.split(/\s+/);
+                var match = terms.every(function(term) {
+                    return haystack.indexOf(term) !== -1;
+                });
+
+                if (match) {
+                    tile.classList.remove('hidden-by-search');
+                    visible++;
+                } else {
+                    tile.classList.add('hidden-by-search');
+                }
+            });
+
+            searchCount.textContent = visible + ' / ' + totalTiles;
+        });
+    }
+})();
+</script>
+</body>
+</html>

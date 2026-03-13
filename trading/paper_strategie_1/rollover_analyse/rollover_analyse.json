@@ -1,0 +1,668 @@
+{
+    "timestamp": "2026-03-13T10:10:10.429306",
+    "rollover_data": {
+        "current": {
+            "kontraktname": "MES 20260320",
+            "kontrakt_verfall": "2026-03-20",
+            "tage_bis_verfall": 8,
+            "rollover_stattgefunden": 0,
+            "date_chi": "2026-03-12 17:10:22"
+        },
+        "events": [
+            {
+                "date_chi": "2025-12-15 00:10:10",
+                "rollover_stattgefunden": 1,
+                "alte_kontrakte_geschlossen": 54,
+                "rollover_schlusspreis": 6841.63,
+                "rollover_kosten": 33.48,
+                "rollover_aktion": "SELL",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20"
+            }
+        ],
+        "history": [
+            {
+                "datum": "2026-03-12 17:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 8
+            },
+            {
+                "datum": "2026-03-11 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 9
+            },
+            {
+                "datum": "2026-03-10 17:10:13",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 10
+            },
+            {
+                "datum": "2026-03-09 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 11
+            },
+            {
+                "datum": "2026-03-05 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 14
+            },
+            {
+                "datum": "2026-03-04 17:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 15
+            },
+            {
+                "datum": "2026-03-03 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 16
+            },
+            {
+                "datum": "2026-03-02 17:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 17
+            },
+            {
+                "datum": "2026-03-02 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 18
+            },
+            {
+                "datum": "2026-03-02 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 18
+            },
+            {
+                "datum": "2026-02-26 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 21
+            },
+            {
+                "datum": "2026-02-25 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 22
+            },
+            {
+                "datum": "2026-02-24 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 23
+            },
+            {
+                "datum": "2026-02-23 17:10:26",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 24
+            },
+            {
+                "datum": "2026-02-23 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 25
+            },
+            {
+                "datum": "2026-02-19 17:10:25",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 28
+            },
+            {
+                "datum": "2026-02-18 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 29
+            },
+            {
+                "datum": "2026-02-17 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 30
+            },
+            {
+                "datum": "2026-02-17 13:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 31
+            },
+            {
+                "datum": "2026-02-16 17:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 31
+            },
+            {
+                "datum": "2026-02-16 00:10:31",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 32
+            },
+            {
+                "datum": "2026-02-13 01:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 35
+            },
+            {
+                "datum": "2026-02-11 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 36
+            },
+            {
+                "datum": "2026-02-10 17:10:25",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 37
+            },
+            {
+                "datum": "2026-02-09 17:10:13",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 38
+            },
+            {
+                "datum": "2026-02-09 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 39
+            },
+            {
+                "datum": "2026-02-05 17:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 42
+            },
+            {
+                "datum": "2026-02-04 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 43
+            },
+            {
+                "datum": "2026-02-03 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 44
+            },
+            {
+                "datum": "2026-02-02 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 45
+            },
+            {
+                "datum": "2026-02-02 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 46
+            },
+            {
+                "datum": "2026-01-29 17:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 49
+            },
+            {
+                "datum": "2026-01-29 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 50
+            },
+            {
+                "datum": "2026-01-28 17:10:13",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 50
+            },
+            {
+                "datum": "2026-01-27 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 51
+            },
+            {
+                "datum": "2026-01-26 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 52
+            },
+            {
+                "datum": "2026-01-26 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 53
+            },
+            {
+                "datum": "2026-01-23 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 56
+            },
+            {
+                "datum": "2026-01-23 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 56
+            },
+            {
+                "datum": "2026-01-22 17:10:14",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 56
+            },
+            {
+                "datum": "2026-01-21 17:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 57
+            },
+            {
+                "datum": "2026-01-21 15:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 58
+            },
+            {
+                "datum": "2026-01-21 14:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 58
+            },
+            {
+                "datum": "2026-01-21 08:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 58
+            },
+            {
+                "datum": "2026-01-21 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 58
+            },
+            {
+                "datum": "2026-01-20 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 58
+            },
+            {
+                "datum": "2026-01-19 17:10:14",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 59
+            },
+            {
+                "datum": "2026-01-19 00:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 60
+            },
+            {
+                "datum": "2026-01-16 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 63
+            },
+            {
+                "datum": "2026-01-16 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 63
+            },
+            {
+                "datum": "2026-01-15 17:10:14",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 63
+            },
+            {
+                "datum": "2026-01-15 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 64
+            },
+            {
+                "datum": "2026-01-15 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 64
+            },
+            {
+                "datum": "2026-01-14 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 64
+            },
+            {
+                "datum": "2026-01-14 13:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 65
+            },
+            {
+                "datum": "2026-01-14 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 65
+            },
+            {
+                "datum": "2026-01-13 17:10:14",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 65
+            },
+            {
+                "datum": "2026-01-13 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 66
+            },
+            {
+                "datum": "2026-01-12 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 66
+            },
+            {
+                "datum": "2026-01-12 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 67
+            },
+            {
+                "datum": "2026-01-12 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 67
+            },
+            {
+                "datum": "2026-01-09 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 70
+            },
+            {
+                "datum": "2026-01-09 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 70
+            },
+            {
+                "datum": "2026-01-08 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 70
+            },
+            {
+                "datum": "2026-01-08 10:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 71
+            },
+            {
+                "datum": "2026-01-08 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 71
+            },
+            {
+                "datum": "2026-01-07 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 71
+            },
+            {
+                "datum": "2026-01-07 09:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 72
+            },
+            {
+                "datum": "2026-01-07 00:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 72
+            },
+            {
+                "datum": "2026-01-06 17:10:23",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 72
+            },
+            {
+                "datum": "2026-01-06 01:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 73
+            },
+            {
+                "datum": "2026-01-05 17:10:22",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 73
+            },
+            {
+                "datum": "2026-01-05 00:10:24",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 74
+            },
+            {
+                "datum": "2026-01-02 11:10:10",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 77
+            },
+            {
+                "datum": "2026-01-02 00:10:09",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 77
+            },
+            {
+                "datum": "2025-12-31 17:10:38",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 78
+            },
+            {
+                "datum": "2025-12-31 05:10:10",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 79
+            },
+            {
+                "datum": "2025-12-30 17:10:09",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 79
+            },
+            {
+                "datum": "2025-12-30 11:10:09",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 80
+            },
+            {
+                "datum": "2025-12-30 04:10:10",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 80
+            },
+            {
+                "datum": "2025-12-29 17:10:09",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 80
+            },
+            {
+                "datum": "2025-12-29 00:10:09",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 81
+            },
+            {
+                "datum": "2025-12-26 04:54:01",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-26 04:53:41",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-26 04:36:39",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-26 03:44:34",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-26 03:42:54",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-26 03:18:37",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-26 03:14:42",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 84
+            },
+            {
+                "datum": "2025-12-24 17:10:38",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 85
+            },
+            {
+                "datum": "2025-12-23 17:10:08",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 86
+            },
+            {
+                "datum": "2025-12-23 08:19:39",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 87
+            },
+            {
+                "datum": "2025-12-23 08:04:15",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 87
+            },
+            {
+                "datum": "2025-12-23 08:03:17",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 87
+            },
+            {
+                "datum": "2025-12-22 17:10:06",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 87
+            },
+            {
+                "datum": "2025-12-22 00:10:13",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 88
+            },
+            {
+                "datum": "2025-12-19 15:22:42",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 91
+            },
+            {
+                "datum": "2025-12-18 17:10:07",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 91
+            },
+            {
+                "datum": "2025-12-17 17:10:09",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 92
+            },
+            {
+                "datum": "2025-12-17 05:14:12",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 93
+            },
+            {
+                "datum": "2025-12-17 05:10:07",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 93
+            },
+            {
+                "datum": "2025-12-16 18:10:07",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 93
+            },
+            {
+                "datum": "2025-12-16 17:10:08",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 93
+            },
+            {
+                "datum": "2025-12-16 14:50:17",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 94
+            },
+            {
+                "datum": "2025-12-16 14:35:33",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 94
+            },
+            {
+                "datum": "2025-12-15 18:10:06",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 94
+            },
+            {
+                "datum": "2025-12-15 00:10:10",
+                "kontraktname": "MES 20260320",
+                "kontrakt_verfall": "2026-03-20",
+                "tage_bis_verfall": 95
+            }
+        ]
+    }
+}

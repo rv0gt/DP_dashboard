@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lohn-Preis-Spirale: Lohnwachstum vs. Inflation, reale Lohnentwicklung, Phillips-Kurve">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Lohn-Preis-Spirale | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">AHE YoY</div>
+                    <div id="statAHE" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Avg. Hourly Earnings</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">CPI YoY</div>
+                    <div id="statCPI" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Headline Inflation</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Core CPI YoY</div>
+                    <div id="statCoreCPI" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">ex Food &amp; Energy</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Reallohn YoY</div>
+                    <div id="statRealWage" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">AHE minus CPI</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Arbeitslosenquote</div>
+                    <div id="statUnrate" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">UNRATE</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Fed Funds Rate</div>
+                    <div id="statFedFunds" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">FEDFUNDS</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Realer Leitzins</div>
+                    <div id="statRealFF" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">FEDFUNDS &minus; CPI</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">ULC YoY</div>
+                    <div id="statULC" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Unit Labor Costs</div>
+                </div>
+            </div>
+
+            <!-- Chart 1: Lohnwachstum vs. Inflation -->
+            <div class="chart-container">
+                <h3 class="section-title">Lohnwachstum vs. Inflation (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Average Hourly Earnings (AHE) vs. CPI und Core CPI &ndash; Jahresver&auml;nderung
+                </p>
+                <div id="wageVsCpiChart"></div>
+            </div>
+
+            <!-- Chart 2: Reale Lohnveraenderung -->
+            <div class="chart-container">
+                <h3 class="section-title">Reale Lohnver&auml;nderung (AHE YoY minus CPI YoY)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Positiv = Kaufkraftzuwachs; Negativ = Kaufkraftverlust
+                </p>
+                <div id="realWageChart"></div>
+            </div>
+
+            <!-- Chart 3: Inflation vs. Arbeitslosigkeit (Zeitreihe) -->
+            <div class="chart-container">
+                <h3 class="section-title">Inflation &amp; Arbeitslosigkeit (Zeitreihe)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    CPI YoY (links) vs. Arbeitslosenquote (rechts, invertiert) &ndash; klassischer inverser Zusammenhang
+                </p>
+                <div id="inflUnemplChart"></div>
+            </div>
+
+            <!-- Chart 4: Phillips-Kurve (Löhne) -->
+            <div class="chart-container">
+                <h3 class="section-title">Phillips-Kurve: Arbeitslosenquote vs. Lohnwachstum</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Scatter-Plot mit Farbkodierung nach Jahrzehnt
+                </p>
+                <div id="phillipsChart"></div>
+            </div>
+
+            <!-- Chart 5: Phillips-Kurve (CPI = klassisch) -->
+            <div class="chart-container">
+                <h3 class="section-title">Phillips-Kurve: Arbeitslosenquote vs. Inflation (klassisch)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Die urspr&uuml;ngliche Phillips-Kurve: UNRATE vs. CPI YoY
+                </p>
+                <div id="phillipsCpiChart"></div>
+            </div>
+
+            <!-- Chart 6: Fed Funds vs. Inflation -->
+            <div class="chart-container">
+                <h3 class="section-title">Leitzins vs. Inflation</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Fed Funds Rate vs. CPI &amp; Core CPI &ndash; zeigt ob die Fed vor oder hinter der Kurve liegt
+                </p>
+                <div id="fedVsCpiChart"></div>
+            </div>
+
+            <!-- Chart 7: Realer Leitzins -->
+            <div class="chart-container">
+                <h3 class="section-title">Realer Leitzins (Fed Funds &minus; CPI YoY)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Positiv = restriktive Geldpolitik; Negativ = akkommodierende Geldpolitik
+                </p>
+                <div id="realFedFundsChart"></div>
+            </div>
+
+            <!-- Chart 8: Unit Labor Costs vs. Inflation -->
+            <div class="chart-container">
+                <h3 class="section-title">Unit Labor Costs vs. Inflation (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Wenn ULC &gt; CPI: Lohn-Preis-Spirale beschleunigt sich. ULC = wahrer Inflationstreiber.
+                </p>
+                <div id="ulcVsCpiChart"></div>
+            </div>
+
+            <!-- Chart 9: Produktivitaet vs. Loehne -->
+            <div class="chart-container">
+                <h3 class="section-title">Produktivit&auml;t vs. Lohnwachstum (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Wenn L&ouml;hne &gt; Produktivit&auml;t: ULC steigen &rarr; Inflationsdruck
+                </p>
+                <div id="prodVsWagesChart"></div>
+            </div>
+
+            <!-- Chart 10: Alle Lohn-Serien -->
+            <div class="chart-container">
+                <h3 class="section-title">Alle Lohn- und Preisserien (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    AHE (All Private), AHE (Production), ECI Wages, CPI, Core CPI
+                </p>
+                <div id="allSeriesChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Lohn-Preis-Spirale:</strong> Wenn L&ouml;hne schneller steigen als die Produktivit&auml;t (OPHNFB),
+                    steigen die Unit Labor Costs (ULCNFB). Steigende ULC zwingen Unternehmen zu Preiserh&ouml;hungen &rarr;
+                    h&ouml;here Inflation &rarr; h&ouml;here Lohnforderungen. Die Kausalkette: L&ouml;hne &gt; Produktivit&auml;t &rarr; ULC↑ &rarr; CPI↑.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Phillips-Kurve:</strong> Historisch inverse Beziehung zwischen Arbeitslosenquote und
+                    Inflation/Lohnwachstum. Gezeigt in zwei Varianten: L&ouml;hne (AHE YoY) und Inflation (CPI YoY) vs. UNRATE.
+                    Die Farbkodierung nach Jahrzehnt zeigt die Verschiebung der Kurve &uuml;ber die Zeit.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Geldpolitik:</strong> Der reale Leitzins (FEDFUNDS &minus; CPI YoY) zeigt die tats&auml;chliche
+                    Straffung der Geldpolitik. Positiv = restriktiv (bremst Inflation), negativ = akkommodierend (f&ouml;rdert Wachstum).
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (CES0500000003, AHETPI, ECIWAG, CPIAUCSL, CPILFESL, UNRATE,
+                    FEDFUNDS, ULCNFB, OPHNFB, USREC). Monatliche Frequenz, saisonbereinigt. ULC/Produktivit&auml;t: Quartalsdaten (BLS).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Lohn-Preis-Spirale &middot; Daten: FRED (BLS, BEA)</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var wData = __WAGES_DATA__;
+
+    if (!wData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_wages.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr.slice(range.start, range.end);
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !wData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        wData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART 1: Lohnwachstum vs. Inflation
+    // ============================================================
+    function updateWageVsCpiChart() {
+        var dates = wData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(wData.yoy['CES0500000003'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2.5 },
+                name: 'AHE (All Private)',
+                hovertemplate: 'AHE: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(wData.yoy['CPIAUCSL'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2 },
+                name: 'CPI',
+                hovertemplate: 'CPI: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(wData.yoy['CPILFESL'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 1.5, dash: 'dot' },
+                name: 'Core CPI',
+                hovertemplate: 'Core CPI: %{y:+.2f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('wageVsCpiChart', traces, layout, plotlyConfig);
+        baseShapeCount.wageVsCpiChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 2: Reale Lohnveraenderung
+    // ============================================================
+    function updateRealWageChart() {
+        var dates = wData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+        var rw = sl(wData.real_wage, range);
+
+        var colors = rw.map(function(v) {
+            return v != null ? (v >= 0 ? 'rgba(22,163,74,0.6)' : 'rgba(220,38,38,0.6)') : 'rgba(128,128,128,0.3)';
+        });
+
+        var traces = [{
+            x: d, y: rw,
+            type: 'bar',
+            marker: { color: colors },
+            name: 'Reallohn',
+            hovertemplate: '%{y:+.2f} Pp.<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Reallohn (Prozentpunkte)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 300,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 5 },
+            shapes: shapes,
+            bargap: 0
+        });
+
+        Plotly.newPlot('realWageChart', traces, layout, plotlyConfig);
+        baseShapeCount.realWageChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 3: Inflation vs. Arbeitslosigkeit (Zeitreihe)
+    // ============================================================
+    function updateInflUnemplChart() {
+        var dates = wData.broad_dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(wData.broad_yoy['CPIAUCSL'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2.5 },
+                name: 'CPI YoY',
+                hovertemplate: 'CPI: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(wData.broad_yoy['CPILFESL'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 1.5, dash: 'dot' },
+                name: 'Core CPI YoY',
+                hovertemplate: 'Core CPI: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(wData.broad_yoy['UNRATE'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2 },
+                name: 'Arbeitslosenquote',
+                yaxis: 'y2',
+                hovertemplate: 'UNRATE: %{y:.1f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Inflation YoY (%)', showgrid: true, gridcolor: '#E8E8E8', titlefont: { color: '#dc2626' } },
+            yaxis2: { title: 'Arbeitslosenquote (%)', overlaying: 'y', side: 'right', showgrid: false,
+                      autorange: 'reversed', titlefont: { color: '#2598C3' } },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('inflUnemplChart', traces, layout, plotlyConfig);
+        baseShapeCount.inflUnemplChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 4: Phillips-Kurve (Löhne)
+    // ============================================================
+    function updatePhillipsChart() {
+        if (!wData.phillips) return;
+
+        var decadeColors = {
+            '1960s': '#1f77b4', '1970s': '#ff7f0e', '1980s': '#2ca02c',
+            '1990s': '#d62728', '2000s': '#9467bd', '2010s': '#8c564b',
+            '2020s': '#e377c2'
+        };
+
+        // Group by decade
+        var decadeTraces = {};
+        for (var i = 0; i < wData.phillips.unrate.length; i++) {
+            var dec = wData.phillips.decades[i];
+            if (!decadeTraces[dec]) {
+                decadeTraces[dec] = { x: [], y: [], text: [] };
+            }
+            if (wData.phillips.unrate[i] != null && wData.phillips.wage_growth[i] != null) {
+                decadeTraces[dec].x.push(wData.phillips.unrate[i]);
+                decadeTraces[dec].y.push(wData.phillips.wage_growth[i]);
+                decadeTraces[dec].text.push(wData.phillips.dates[i]);
+            }
+        }
+
+        var traces = [];
+        Object.keys(decadeTraces).sort().forEach(function(dec) {
+            var dt = decadeTraces[dec];
+            traces.push({
+                x: dt.x, y: dt.y, text: dt.text,
+                type: 'scatter', mode: 'markers',
+                marker: { color: decadeColors[dec] || '#888', size: 5, opacity: 0.6 },
+                name: dec,
+                hovertemplate: dec + '<br>UNRATE: %{x:.1f}%<br>AHE YoY: %{y:+.2f}%<br>%{text}<extra></extra>'
+            });
+        });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { title: 'Arbeitslosenquote (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            yaxis: { title: 'Lohnwachstum AHE YoY (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 420,
+            hovermode: 'closest',
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 }
+        });
+
+        Plotly.newPlot('phillipsChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 5: Phillips-Kurve (CPI = klassisch)
+    // ============================================================
+    function updatePhillipsCpiChart() {
+        if (!wData.phillips_cpi) return;
+
+        var decadeColors = {
+            '1960s': '#1f77b4', '1970s': '#ff7f0e', '1980s': '#2ca02c',
+            '1990s': '#d62728', '2000s': '#9467bd', '2010s': '#8c564b',
+            '2020s': '#e377c2'
+        };
+
+        var decadeTraces = {};
+        for (var i = 0; i < wData.phillips_cpi.unrate.length; i++) {
+            var dec = wData.phillips_cpi.decades[i];
+            if (!decadeTraces[dec]) decadeTraces[dec] = { x: [], y: [], text: [] };
+            if (wData.phillips_cpi.unrate[i] != null && wData.phillips_cpi.cpi_yoy[i] != null) {
+                decadeTraces[dec].x.push(wData.phillips_cpi.unrate[i]);
+                decadeTraces[dec].y.push(wData.phillips_cpi.cpi_yoy[i]);
+                decadeTraces[dec].text.push(wData.phillips_cpi.dates[i]);
+            }
+        }
+
+        var traces = [];
+        Object.keys(decadeTraces).sort().forEach(function(dec) {
+            var dt = decadeTraces[dec];
+            traces.push({
+                x: dt.x, y: dt.y, text: dt.text,
+                type: 'scatter', mode: 'markers',
+                marker: { color: decadeColors[dec] || '#888', size: 5, opacity: 0.6 },
+                name: dec,
+                hovertemplate: dec + '<br>UNRATE: %{x:.1f}%<br>CPI YoY: %{y:+.2f}%<br>%{text}<extra></extra>'
+            });
+        });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { title: 'Arbeitslosenquote (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            yaxis: { title: 'CPI YoY (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 420,
+            hovermode: 'closest',
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 }
+        });
+
+        Plotly.newPlot('phillipsCpiChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 6: Fed Funds vs. Inflation
+    // ============================================================
+    function updateFedVsCpiChart() {
+        if (!wData.broad_yoy['FEDFUNDS'] || wData.broad_yoy['FEDFUNDS'].length === 0) return;
+        var dates = wData.broad_dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(wData.broad_yoy['FEDFUNDS'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2.5 },
+                name: 'Fed Funds Rate',
+                hovertemplate: 'Fed Funds: %{y:.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(wData.broad_yoy['CPIAUCSL'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2 },
+                name: 'CPI YoY',
+                hovertemplate: 'CPI: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(wData.broad_yoy['CPILFESL'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 1.5, dash: 'dot' },
+                name: 'Core CPI YoY',
+                hovertemplate: 'Core CPI: %{y:+.2f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Rate (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('fedVsCpiChart', traces, layout, plotlyConfig);
+        baseShapeCount.fedVsCpiChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 7: Realer Leitzins
+    // ============================================================
+    function updateRealFedFundsChart() {
+        if (!wData.real_fedfunds) return;
+        var dates = wData.broad_dates;
+        var range = getFilteredRange(dates)
+        var d = sl(dates, range);
+        var rff = sl(wData.real_fedfunds, range);
+
+        var colors = rff.map(function(v) {
+            return v != null ? (v >= 0 ? 'rgba(26,46,74,0.6)' : 'rgba(220,38,38,0.6)') : 'rgba(128,128,128,0.3)';
+        });
+
+        var traces = [{
+            x: d, y: rff,
+            type: 'bar',
+            marker: { color: colors },
+            name: 'Realer Leitzins',
+            hovertemplate: '%{y:+.2f}%<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Realer Leitzins (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 300,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 5 },
+            shapes: shapes,
+            bargap: 0
+        });
+
+        Plotly.newPlot('realFedFundsChart', traces, layout, plotlyConfig);
+        baseShapeCount.realFedFundsChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 8: Unit Labor Costs vs. Inflation
+    // ============================================================
+    function updateUlcVsCpiChart() {
+        var dates = wData.broad_dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        if (wData.broad_yoy['ULCNFB'] && wData.broad_yoy['ULCNFB'].length > 0) {
+            traces.push({
+                x: d, y: sl(wData.broad_yoy['ULCNFB'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#16a34a', width: 2.5 },
+                name: 'Unit Labor Costs YoY',
+                hovertemplate: 'ULC: %{y:+.2f}%<extra></extra>'
+            });
+        }
+        traces.push({
+            x: d, y: sl(wData.broad_yoy['CPIAUCSL'], range),
+            type: 'scatter', mode: 'lines',
+            line: { color: '#dc2626', width: 2 },
+            name: 'CPI YoY',
+            hovertemplate: 'CPI: %{y:+.2f}%<extra></extra>'
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('ulcVsCpiChart', traces, layout, plotlyConfig);
+        baseShapeCount.ulcVsCpiChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 9: Produktivitaet vs. Loehne
+    // ============================================================
+    function updateProdVsWagesChart() {
+        var dates = wData.broad_dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        if (wData.broad_yoy['AHETPI'] && wData.broad_yoy['AHETPI'].length > 0) {
+            traces.push({
+                x: d, y: sl(wData.broad_yoy['AHETPI'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2.5 },
+                name: 'AHE YoY (L\u00f6hne)',
+                hovertemplate: 'AHE: %{y:+.2f}%<extra></extra>'
+            });
+        }
+        if (wData.broad_yoy['OPHNFB'] && wData.broad_yoy['OPHNFB'].length > 0) {
+            traces.push({
+                x: d, y: sl(wData.broad_yoy['OPHNFB'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#0d9488', width: 2 },
+                name: 'Productivity YoY',
+                hovertemplate: 'Prod.: %{y:+.2f}%<extra></extra>'
+            });
+        }
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('prodVsWagesChart', traces, layout, plotlyConfig);
+        baseShapeCount.prodVsWagesChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 10: Alle Serien
+    // ============================================================
+    function updateAllSeriesChart() {
+        var dates = wData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var seriesOrder = ['CES0500000003', 'AHETPI', 'CPIAUCSL', 'CPILFESL'];
+        if (wData.yoy['ECIWAG']) seriesOrder.splice(2, 0, 'ECIWAG');
+
+        var traces = [];
+        seriesOrder.forEach(function(sid) {
+            if (!wData.yoy[sid]) return;
+            traces.push({
+                x: d, y: sl(wData.yoy[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: wData.colors[sid], width: (sid === 'CES0500000003' || sid === 'CPIAUCSL') ? 2.5 : 1.5 },
+                name: wData.labels[sid],
+                hovertemplate: wData.labels[sid] + ': %{y:+.2f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('allSeriesChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        var c = wData.current;
+
+        function fmtStat(el, val) {
+            if (val != null) {
+                el.textContent = (val >= 0 ? '+' : '') + val.toFixed(2) + '%';
+                el.style.color = val >= 0 ? '#16a34a' : '#dc2626';
+            }
+        }
+
+        fmtStat(document.getElementById('statAHE'), c.ahe_yoy);
+        fmtStat(document.getElementById('statCPI'), c.cpi_yoy);
+        fmtStat(document.getElementById('statCoreCPI'), c.core_cpi_yoy);
+        fmtStat(document.getElementById('statRealWage'), c.real_wage_yoy);
+
+        var unEl = document.getElementById('statUnrate');
+        if (c.unrate != null) {
+            unEl.textContent = c.unrate.toFixed(1) + '%';
+            unEl.style.color = c.unrate <= 4 ? '#16a34a' : (c.unrate <= 6 ? '#F79645' : '#dc2626');
+        }
+
+        var ffEl = document.getElementById('statFedFunds');
+        if (c.fedfunds != null) {
+            ffEl.textContent = c.fedfunds.toFixed(2) + '%';
+            ffEl.style.color = '#1A2E4A';
+        }
+
+        fmtStat(document.getElementById('statRealFF'), c.real_fedfunds);
+        fmtStat(document.getElementById('statULC'), c.ulc_yoy);
+
+        document.getElementById('currentInfo').innerHTML =
+            'AHE: <strong>' + (c.ahe_yoy != null ? (c.ahe_yoy >= 0 ? '+' : '') + c.ahe_yoy.toFixed(2) + '%' : '--') + '</strong> &middot; ' +
+            'CPI: ' + (c.cpi_yoy != null ? (c.cpi_yoy >= 0 ? '+' : '') + c.cpi_yoy.toFixed(2) + '%' : '--') + ' &middot; ' +
+            'Fed Funds: ' + (c.fedfunds != null ? c.fedfunds.toFixed(2) + '%' : '--') + ' &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR
+    // ============================================================
+    var chartIds = ['wageVsCpiChart', 'realWageChart', 'inflUnemplChart', 'fedVsCpiChart', 'realFedFundsChart', 'ulcVsCpiChart', 'prodVsWagesChart'];
+    var baseShapeCount = { wageVsCpiChart: 0, realWageChart: 0, inflUnemplChart: 0, fedVsCpiChart: 0, realFedFundsChart: 0, ulcVsCpiChart: 0, prodVsWagesChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!wData) return;
+        updateStats();
+        updateWageVsCpiChart();
+        updateRealWageChart();
+        updateInflUnemplChart();
+        updatePhillipsChart();
+        updatePhillipsCpiChart();
+        updateFedVsCpiChart();
+        updateRealFedFundsChart();
+        updateUlcVsCpiChart();
+        updateProdVsWagesChart();
+        updateAllSeriesChart();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

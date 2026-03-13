@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Performance Analyse</title>
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="../../../shared/css/common.css">
+    <!-- Chart.js Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+</head>
+<body>
+    <div class="layout"><main class="main-content">
+    <div class="spa-tabs">
+        <a href="../overview.html" class="spa-tab">Übersicht</a>
+        <a href="performance_analyse.html" class="spa-tab active">Performance</a>
+        <a href="../margin_analyse/margin_analyse.html" class="spa-tab">Margin</a>
+        <a href="../rollover_analyse/rollover_analyse.html" class="spa-tab">Rollover</a>
+        <a href="../data_table/data_table.html" class="spa-tab">Data Table</a>
+        <a href="../trading_monitor/trading_monitor.html" class="spa-tab">Monitor</a>
+        <a href="../hebel_berechnung/hebel_berechnung.html" class="spa-tab">Hebel</a>
+    </div>
+    <div class="sp-stats-grid" id="metrics" style="grid-template-columns:repeat(5,1fr)">
+        <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Startwert</div></div>
+        <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Aktueller Wert</div></div>
+        <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Rendite</div></div>
+        <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Kum. Kosten</div></div>
+        <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Kum. Slippage</div></div>
+    </div>
+    <div class="sp-section">
+        <div style="margin-bottom: 40px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+            <div style="display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                <label for="dateFilterFrom" style="font-size: 14px; color: #666; font-weight: 500;">Von:</label>
+                <input type="date" id="dateFilterFrom" value="2025-11-28" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                <label for="dateFilterTo" style="font-size: 14px; color: #666; font-weight: 500;">Bis:</label>
+                <input type="date" id="dateFilterTo" style="padding: 8px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                <button id="applyUnifiedFilter" style="padding: 8px 20px; font-size: 14px; background: var(--color-blue); color: white; border: none; border-radius: 6px; cursor: pointer;">Anwenden</button>
+                <button id="resetUnifiedFilter" style="padding: 8px 20px; font-size: 14px; background: var(--color-text-muted); color: white; border: none; border-radius: 6px; cursor: pointer;">Reset</button>
+            </div>
+        </div>
+        <h2 class="sp-section-title">Konto-Entwicklung</h2>
+        <div class="sp-chart-card">
+            <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)">Konto-Wert (absolut in USD)</div>
+            <div class="sp-chart-controls"><button onclick="accountValueChart?.resetZoom()">Reset Zoom</button></div>
+            <div class="sp-chart-wrapper"><canvas id="accountValueChart"></canvas></div>
+            <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+        </div>
+        <div class="sp-chart-card">
+            <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)">Konto-Wert (% Veränderung seit Start) mit Hebel</div>
+            <div class="sp-chart-controls"><button onclick="accountPctChart?.resetZoom()">Reset Zoom</button></div>
+            <div class="sp-chart-wrapper"><canvas id="accountPctChart"></canvas></div>
+            <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+        </div>
+        <div class="sp-chart-card">
+            <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)" id="deltaCompareTitle">Δ Konto vs Δ MES × Hebel (Vergleich)</div>
+            <div class="sp-chart-controls"><button onclick="deltaCompareChart?.resetZoom()">Reset Zoom</button></div>
+            <div class="sp-chart-wrapper"><canvas id="deltaCompareChart"></canvas></div>
+            <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+        </div>
+    </div>
+    <div class="sp-section">
+        <h2 class="sp-section-title">Kosten pro Kontraktkurs</h2>
+        <div class="sp-chart-card">
+            <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)">Transaktionskosten & Slippage (pro Kontraktkurs)</div>
+            <div class="sp-chart-controls"><button onclick="costsChart?.resetZoom()">Reset Zoom</button></div>
+            <div class="sp-chart-wrapper"><canvas id="costsChart"></canvas></div>
+            <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+        </div>
+    </div>
+    <div class="sp-section">
+        <h2 class="sp-section-title">Performance</h2>
+        <div class="sp-chart-card">
+            <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)">Unrealized P&L + Kumulativ Realized P&L + Kumulativ Transaktionskosten</div>
+            <div class="sp-chart-controls"><button onclick="performanceChart?.resetZoom()">Reset Zoom</button></div>
+            <div class="sp-chart-wrapper"><canvas id="performanceChart"></canvas></div>
+            <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #0066cc; border-radius: 4px;"></div><span>Performance (Summe)</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #8b5cf6; border-radius: 4px;"></div><span>Unrealized P&L</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div><span>Kumulativ Realized P&L Net</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #f87171; border-radius: 4px;"></div><span>Kumulativ Transaktionskosten</span></div>
+        </div>
+    </div>
+    <div class="sp-section">
+        <h2 class="sp-section-title">Realized P&L (Kumulativ)</h2>
+        <div class="sp-chart-card">
+            <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)">Realized P&L Gross & Net (kumulativ)</div>
+            <div class="sp-chart-controls"><button onclick="pnlChart?.resetZoom()">Reset Zoom</button></div>
+            <div class="sp-chart-wrapper"><canvas id="pnlChart"></canvas></div>
+            <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #3b82f6; border-radius: 4px;"></div><span>Realized P&L Gross</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666;"><div style="width: 16px; height: 16px; background: #10b981; border-radius: 4px;"></div><span>Realized P&L Net</span></div>
+        </div>
+    </div>
+    <div class="sp-section" id="table-container">
+        <h2 class="sp-section-title">Tägliche Übersicht</h2>
+        <div class="sp-table-container">
+            <div class="sp-table-scroll">
+            <table id="history-table">
+                <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Δ Konto</th><th>MES Preis</th><th>Δ MES</th><th>Neuer Hebel</th><th>Δ MES×Hebel (t-1)</th><th>Differenz</th><th>Diff × Konto</th><th>Fees/ Kontraktkurs</th><th>Slippage/ Kontraktkurs</th><th>Kosten/ Kontraktkurs</th><th>Zeitslippage</th></tr></thead>
+                <tbody><tr><td colspan="13" style="text-align:center">Lade Daten...</td></tr></tbody>
+            </table>
+            </div>
+        </div>
+        <div class="sp-last-update" id="last-update"></div>
+    </div>
+    <div class="sp-section">
+        <h2 class="sp-section-title">Transaktionsdetails mit Avg Cost</h2>
+        <div class="sp-table-container" style="overflow-x: auto;">
+            <div class="sp-table-scroll">
+            <table id="transactions-table">
+                <thead><tr><th>Zeitpunkt (CHI)</th><th>Aktion</th><th>Ausgeführt</th><th>Fill-Preis</th><th>Avg Cost (vorher)</th><th>Avg Cost (nachher)</th><th>Realized Gross</th><th>Realized Net</th><th>Status</th></tr></thead>
+                <tbody><tr><td colspan="9" style="text-align:center">Lade Daten...</td></tr></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    </main></div>
+    <script src="../../../shared/js/common.js"></script>
+    <script src="../../../shared/js/nav.js" data-active="trading"></script>
+    <script>
+        // Globale Variable für synchronisiertes Crosshair
+        let syncedCharts = [];
+        let currentHoverX = null;
+
+        // Crosshair Plugin für vertikale Linie beim Hover - synchronisiert über mehrere Charts
+        const syncedCrosshairPlugin = {
+            id: 'syncedCrosshair',
+            afterDraw: (chart) => {
+                if (currentHoverX !== null && syncedCharts.includes(chart)) {
+                    const ctx = chart.ctx;
+                    const xScale = chart.scales.x;
+                    const x = xScale.getPixelForValue(currentHoverX);
+
+                    if (x >= xScale.left && x <= xScale.right) {
+                        const topY = chart.scales.y.top;
+                        const bottomY = chart.scales.y.bottom;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(x, topY);
+                        ctx.lineTo(x, bottomY);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                        ctx.setLineDash([5, 5]);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            }
+        };
+        Chart.register(syncedCrosshairPlugin);
+
+        // Gemeinsame Zoom-Optionen für alle Charts
+        // deltaY (Mausrad drehen) = Zoom, deltaX (Mausrad kippen) = Panning
+        const zoomOptions = {
+            pan: {
+                enabled: true,
+                mode: 'x',
+                threshold: 5
+            },
+            zoom: {
+                wheel: {
+                    enabled: true // Mausrad-Zoom aktiviert (deltaY)
+                },
+                pinch: { enabled: true },
+                drag: {
+                    enabled: false
+                },
+                mode: 'x'
+            },
+            limits: {
+                x: { minRange: 86400000 }
+            }
+        };
+
+        // Zoom-Optionen für accountPctChart mit onPan/onZoom-Callback
+        const zoomOptionsPct = {
+            pan: {
+                enabled: true,
+                mode: 'x',
+                threshold: 5,
+                onPan: function() {
+                    recalculatePctFromVisibleRange();
+                }
+            },
+            zoom: {
+                wheel: {
+                    enabled: true // Mausrad-Zoom aktiviert (deltaY)
+                },
+                pinch: { enabled: true },
+                drag: {
+                    enabled: false
+                },
+                mode: 'x',
+                onZoom: function() {
+                    recalculatePctFromVisibleRange();
+                }
+            },
+            limits: {
+                x: { minRange: 86400000 }
+            }
+        };
+
+        // Funktion um horizontales Mausrad-Kippen für Panning zu nutzen
+        // deltaX (Mausrad nach rechts/links kippen) = NUR Panning (kein Zoom)
+        // deltaY (Mausrad drehen) = Zoom (vom Chart.js Zoom-Plugin behandelt)
+        function setupWheelPan(chart, onPanCallback) {
+            // Event-Listener mit capture: true, damit er VOR dem Zoom-Plugin ausgeführt wird
+            chart.canvas.addEventListener('wheel', (e) => {
+                const xScale = chart.scales.x;
+                if (!xScale) return;
+
+                // NUR horizontales Mausrad (deltaX) für Panning verwenden
+                // deltaX kommt vom Kippen des Mausrads nach rechts/links
+                if (e.deltaX !== 0) {
+                    // Stoppe Event komplett - verhindert Zoom durch das Plugin
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Normalisiere delta für sanftes Scrollen
+                    const normalizedDelta = Math.sign(e.deltaX) * Math.min(Math.abs(e.deltaX) / 100, 1);
+
+                    // Pan in Pixeln - ca. 50 Pixel pro Scroll-Schritt
+                    const pixelAmount = normalizedDelta * 50;
+
+                    // Wende Pan an (negative Werte = nach links, positive = nach rechts)
+                    chart.pan({ x: -pixelAmount }, undefined, 'default');
+
+                    // Callback nach dem Pan aufrufen (für dynamische Neuberechnung)
+                    if (onPanCallback) {
+                        onPanCallback();
+                    }
+                }
+                // deltaY (Mausrad drehen) wird nicht gestoppt -> geht zum Zoom-Plugin
+            }, { passive: false, capture: true });
+        }
+
+        const DATA_URL = './performance_analyse.json';
+        const OVERVIEW_URL = '../overview.json';
+        function parseDate(str) {
+            if (!str) return null;
+            return new Date(str.replace(' ', 'T'));
+        }
+        let accountValueChart, accountPctChart, deltaCompareChart, costsChart, pnlChart, performanceChart;
+        let fullHistory = [], fullPerfData = null, fullPnlChartData = [], fullTransactions = [];
+        let sortedChartData = []; // Sortierte Daten für dynamische Neuberechnung
+        let sortedPerformanceData = { history: [] }; // Für Performance-Chart dynamische Neuberechnung - alle Daten aus history
+
+        // Funktion um Performance-Chart basierend auf sichtbarem Bereich neu zu berechnen
+        function recalculatePerformanceFromVisibleRange() {
+            if (!performanceChart || sortedPerformanceData.history.length === 0) return;
+
+            const xScale = performanceChart.scales.x;
+            if (!xScale) return;
+
+            const visibleMin = xScale.min;
+
+            // Finde ersten sichtbaren Datenpunkt in History
+            let startIdx = 0;
+            for (let i = 0; i < sortedPerformanceData.history.length; i++) {
+                const dataTime = parseDate(sortedPerformanceData.history[i].datum).getTime();
+                if (dataTime >= visibleMin) {
+                    startIdx = i;
+                    break;
+                }
+            }
+
+            // Kumuliere Realized P&L Net ab dem sichtbaren Startpunkt
+            let cumNet = 0;
+            const newRealizedData = sortedPerformanceData.history.map((h, idx) => {
+                if (idx >= startIdx) {
+                    cumNet += h.realized_pnl_net || 0;
+                }
+                return {
+                    x: parseDate(h.datum),
+                    y: idx >= startIdx ? cumNet : 0
+                };
+            });
+
+            // Transaktionskosten ab sichtbarem Startpunkt
+            const startCosts = sortedPerformanceData.history.length > 0 && startIdx < sortedPerformanceData.history.length ?
+                ((sortedPerformanceData.history[startIdx].kosten_kumulativ || 0) +
+                 (sortedPerformanceData.history[startIdx].slippage_kumulativ || 0)) : 0;
+
+            const newCostsData = sortedPerformanceData.history.map((h, idx) => {
+                if (idx >= startIdx) {
+                    const totalCost = (h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0) - startCosts;
+                    return {
+                        x: parseDate(h.datum),
+                        y: -totalCost
+                    };
+                }
+                return {
+                    x: parseDate(h.datum),
+                    y: 0
+                };
+            });
+
+            // Unrealized P&L (Snapshot-Werte, nicht kumulativ) - null beibehalten für Index-Synchronisation
+            const unrealizedData = sortedPerformanceData.history.map(h => ({
+                x: parseDate(h.datum),
+                y: h.unrealized_pnl !== null && h.unrealized_pnl !== undefined ? h.unrealized_pnl : null
+            }));
+
+            // Performance (Summe) berechnen
+            const performanceData = sortedPerformanceData.history.map((h, idx) => {
+                const unrealized = h.unrealized_pnl || 0;
+                const realized = idx >= startIdx ? newRealizedData[idx].y : 0;
+                const costs = idx >= startIdx ? newCostsData[idx].y : 0;
+                return {
+                    x: parseDate(h.datum),
+                    y: unrealized + realized + costs
+                };
+            });
+
+            // Update Chart-Daten
+            performanceChart.data.datasets[0].data = performanceData;
+            performanceChart.data.datasets[1].data = unrealizedData;
+            performanceChart.data.datasets[2].data = newRealizedData;
+            performanceChart.data.datasets[3].data = newCostsData;
+            performanceChart.update('none');
+        }
+
+        // Funktion um Performance-Daten basierend auf sichtbarem Bereich neu zu berechnen
+        function recalculatePctFromVisibleRange() {
+            if (!accountPctChart || sortedChartData.length === 0) return;
+
+            const xScale = accountPctChart.scales.x;
+            if (!xScale) return;
+
+            const visibleMin = xScale.min;
+
+            // Finde den ersten sichtbaren Datenpunkt
+            let startIdx = 0;
+            for (let i = 0; i < sortedChartData.length; i++) {
+                const dataTime = parseDate(sortedChartData[i].datum).getTime();
+                if (dataTime >= visibleMin) {
+                    startIdx = i;
+                    break;
+                }
+            }
+
+            const startEntry = sortedChartData[startIdx];
+            const startValue = startEntry.konto_wert;
+            const startMesPreis = startEntry.mes_preis || 0;
+
+            // Berechne neue Prozent-Werte relativ zum sichtbaren Start
+            const newStrategyData = sortedChartData.map(h => ({
+                x: parseDate(h.datum),
+                y: ((h.konto_wert - startValue) / startValue * 100)
+            }));
+
+            const newBuyHoldData = sortedChartData.map(h => ({
+                x: parseDate(h.datum),
+                y: startMesPreis > 0 ? (((h.mes_preis || 0) - startMesPreis) / startMesPreis * 100) : 0
+            }));
+
+            // Update Chart-Daten
+            accountPctChart.data.datasets[0].data = newStrategyData;
+            accountPctChart.data.datasets[1].data = newBuyHoldData;
+            accountPctChart.update('none');
+        }
+
+        async function loadData() {
+            try {
+                const data = await loadJSONData(DATA_URL);
+                const perfData = data.performance_data;
+                if (perfData) {
+                    fullHistory = perfData.history || [];
+                    fullPerfData = perfData;
+                    updateMetrics(perfData);
+                    const today = new Date().toISOString().split('T')[0];
+                    const dateFilterTo = document.getElementById('dateFilterTo');
+                    if (dateFilterTo && !dateFilterTo.value) dateFilterTo.value = today;
+                    applyUnifiedFilter();
+                    updateTable(perfData.history);
+                }
+                updateLastUpdate(data.timestamp);
+                try {
+                    const overviewData = await loadJSONData(OVERVIEW_URL);
+                    if (overviewData.realized_pnl_chart && overviewData.realized_pnl_chart.length > 0) {
+                        fullPnlChartData = overviewData.realized_pnl_chart;
+                        initPnlChart(fullPnlChartData);
+                        applyUnifiedFilter();
+                    }
+                    if (overviewData.recent_transactions && overviewData.recent_transactions.length > 0) {
+                        fullTransactions = overviewData.recent_transactions;
+                        updateTransactionsTable(overviewData.recent_transactions);
+                    }
+                    // Performance Chart initialisieren - nur mit history aus performance_analyse.json
+                    if (fullHistory.length > 0) {
+                        initPerformanceChart(fullHistory);
+                    }
+                } catch (e) { console.warn('Konnte P&L Chart-Daten nicht laden:', e); }
+            } catch (error) { console.error('Fehler:', error); }
+        }
+
+
+        function applyUnifiedFilter() {
+            const fromDateInput = document.getElementById('dateFilterFrom');
+            const toDateInput = document.getElementById('dateFilterTo');
+
+            if (!fromDateInput || fullHistory.length === 0) return;
+
+            const fromDate = fromDateInput.value;
+            const toDate = toDateInput.value;
+
+            let filteredHistory;
+            if (!fromDate) {
+                filteredHistory = fullHistory;
+            } else {
+                filteredHistory = fullHistory.filter(h => {
+                    const recordDate = h.datum.substring(0, 10);
+                    if (recordDate < fromDate) return false;
+                    if (toDate && recordDate > toDate) return false;
+                    return true;
+                });
+            }
+
+            if (filteredHistory.length === 0) return;
+
+            // Sortiere nach Datum um den zeitlich ersten Eintrag zu finden
+            const sortedFiltered = [...filteredHistory].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+            const startEntry = sortedFiltered[0];
+            const startValue = startEntry.konto_wert;
+            const startMesPreis = startEntry.mes_preis || 0;
+            const startCosts = startEntry.kosten_kumulativ || 0, startSlippage = startEntry.slippage_kumulativ || 0;
+            const recalculatedHistory = filteredHistory.map(h => ({
+                ...h,
+                konto_wert_pct: ((h.konto_wert - startValue) / startValue * 100),
+                buy_hold_pct: startMesPreis > 0 ? (((h.mes_preis || 0) - startMesPreis) / startMesPreis * 100) : 0,
+                kosten_kumulativ: (h.kosten_kumulativ || 0) - startCosts,
+                slippage_kumulativ: (h.slippage_kumulativ || 0) - startSlippage,
+                total_kosten_kumulativ: ((h.kosten_kumulativ || 0) - startCosts) + ((h.slippage_kumulativ || 0) - startSlippage),
+                kosten_pro_kontrakt: h.kosten_pro_kontrakt,
+                slippage_pro_kontrakt: h.slippage_pro_kontrakt,
+                total_kosten_pro_kontrakt: h.total_kosten_pro_kontrakt,
+                neuer_hebel: h.neuer_hebel
+            }));
+            updateCharts(recalculatedHistory);
+            if (pnlChart && fullPnlChartData.length > 0) {
+                let filteredPnlData;
+                if (!fromDate) {
+                    filteredPnlData = fullPnlChartData;
+                } else {
+                    filteredPnlData = fullPnlChartData.filter(d => {
+                        if (d.date < fromDate) return false;
+                        if (toDate && d.date > toDate) return false;
+                        return true;
+                    });
+                }
+                let cumGross = 0, cumNet = 0;
+                const recalcPnl = filteredPnlData.map(d => {
+                    cumGross += d.daily_gross || 0;
+                    cumNet += d.daily_net || 0;
+                    return { ...d, cumulative_gross: cumGross, cumulative_net: cumNet };
+                });
+                pnlChart.data.datasets[0].data = recalcPnl.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross }));
+                pnlChart.data.datasets[1].data = recalcPnl.map(d => ({ x: parseDate(d.date), y: d.cumulative_net }));
+                pnlChart.update();
+
+            }
+
+            // Performance Chart aktualisieren - alle Daten aus recalculatedHistory
+            if (performanceChart && recalculatedHistory.length > 0) {
+                // Sortiere nach Datum
+                const sortedHistory = [...recalculatedHistory].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+
+                // Kumulative Werte neu berechnen ab Filterstart
+                let cumRealizedNet = 0;
+                let cumCosts = 0;
+                const recalcHistory = sortedHistory.map(h => {
+                    cumRealizedNet += h.realized_pnl_net || 0;
+                    cumCosts += (h.kosten_pro_kontrakt || 0) + (h.slippage_pro_kontrakt || 0);
+                    return {
+                        ...h,
+                        cumulative_realized_net_recalc: cumRealizedNet,
+                        cumulative_costs_recalc: (h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0)
+                    };
+                });
+
+                // Speichere für dynamische Neuberechnung
+                sortedPerformanceData.history = recalcHistory;
+
+                // Startkosten für Offset
+                const startCosts = recalcHistory.length > 0 ? recalcHistory[0].cumulative_costs_recalc : 0;
+
+                // Unrealized: null beibehalten für Index-Synchronisation beim Hover
+                const unrealizedData = recalcHistory.map(h => ({
+                    x: parseDate(h.datum),
+                    y: h.unrealized_pnl !== null && h.unrealized_pnl !== undefined ? h.unrealized_pnl : null
+                }));
+
+                const realizedPnlData = recalcHistory.map(h => ({
+                    x: parseDate(h.datum),
+                    y: h.cumulative_realized_net_recalc
+                }));
+
+                const costsData = recalcHistory.map(h => ({
+                    x: parseDate(h.datum),
+                    y: -(h.cumulative_costs_recalc - startCosts)
+                }));
+
+                // Performance (Summe) berechnen
+                const performanceSumData = recalcHistory.map(h => {
+                    const unrealized = h.unrealized_pnl || 0;
+                    const realized = h.cumulative_realized_net_recalc;
+                    const costs = -(h.cumulative_costs_recalc - startCosts);
+                    return {
+                        x: parseDate(h.datum),
+                        y: unrealized + realized + costs
+                    };
+                });
+
+                performanceChart.data.datasets[0].data = performanceSumData;
+                performanceChart.data.datasets[1].data = unrealizedData;
+                performanceChart.data.datasets[2].data = realizedPnlData;
+                performanceChart.data.datasets[3].data = costsData;
+                performanceChart.update();
+            }
+        }
+        function resetUnifiedFilter() {
+            const fromDateInput = document.getElementById('dateFilterFrom');
+            const toDateInput = document.getElementById('dateFilterTo');
+            if (fromDateInput) fromDateInput.value = '2025-11-28';
+            if (toDateInput) toDateInput.value = new Date().toISOString().split('T')[0];
+            applyUnifiedFilter();
+        }
+        function formatCurrency(num, decimals = 0) {
+            if (num === null || num === undefined) return '—';
+            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD', minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
+        }
+        function initPnlChart(chartData) {
+            fullPnlChartData = chartData;
+            const ctx = document.getElementById('pnlChart');
+            if (!ctx) return;
+            if (pnlChart) pnlChart.destroy();
+            pnlChart = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'Realized P&L Gross (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_gross })), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0, pointRadius: 2, pointHoverRadius: 6 },
+                        { label: 'Realized P&L Net (Kumulativ)', data: chartData.map(d => ({ x: parseDate(d.date), y: d.cumulative_net })), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0, pointRadius: 2, pointHoverRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { title: ctx => new Date(ctx[0].parsed.x).toLocaleDateString('de-DE'), label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y, 2)}` } },
+                        zoom: zoomOptions
+                    },
+                    scales: {
+                        x: { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { display: false } },
+                        y: { ticks: { callback: v => '$' + v.toLocaleString('de-DE') }, grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+                    }
+                }
+            });
+
+            // Doppelklick zum Reset
+            ctx.ondblclick = () => pnlChart?.resetZoom();
+            setupWheelPan(pnlChart);
+        }
+        function initPerformanceChart(history) {
+            const ctx = document.getElementById('performanceChart');
+            if (!ctx) return;
+            if (performanceChart) performanceChart.destroy();
+
+            // Sortierte Daten für dynamische Neuberechnung speichern - alle aus history
+            sortedPerformanceData.history = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+
+            // Alle Daten kommen jetzt aus derselben Quelle (history)
+            // Jeder Eintrag hat: unrealized_pnl, cumulative_realized_gross, kosten_kumulativ, slippage_kumulativ
+            // WICHTIG: Alle Datasets müssen dieselben X-Werte haben für korrektes Hover-Verhalten
+
+            // Unrealized: null-Werte beibehalten (nicht filtern!), damit Index synchron bleibt
+            const unrealizedData = sortedPerformanceData.history.map(h => ({
+                x: parseDate(h.datum),
+                y: h.unrealized_pnl !== null && h.unrealized_pnl !== undefined ? h.unrealized_pnl : null
+            }));
+
+            const realizedPnlData = sortedPerformanceData.history.map(h => ({
+                x: parseDate(h.datum),
+                y: h.cumulative_realized_gross || 0
+            }));
+
+            const costsData = sortedPerformanceData.history.map(h => ({
+                x: parseDate(h.datum),
+                y: -((h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0))
+            }));
+
+            // Performance (Summe) berechnen: Unrealized + Realized + Kosten (pro Eintrag)
+            const performanceSumData = sortedPerformanceData.history.map(h => {
+                const unrealized = h.unrealized_pnl || 0;
+                const realized = h.cumulative_realized_gross || 0;
+                const costs = -((h.kosten_kumulativ || 0) + (h.slippage_kumulativ || 0));
+                return {
+                    x: parseDate(h.datum),
+                    y: unrealized + realized + costs
+                };
+            });
+
+            // Zoom-Optionen mit onPan-Callback für dynamische Neuberechnung
+            const zoomOptionsPerformance = {
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                    threshold: 5,
+                    onPan: function() {
+                        recalculatePerformanceFromVisibleRange();
+                    }
+                },
+                zoom: {
+                    wheel: { enabled: true }, // Mausrad-Zoom aktiviert (deltaY)
+                    pinch: { enabled: true },
+                    drag: { enabled: false },
+                    mode: 'x',
+                    onZoom: function() {
+                        recalculatePerformanceFromVisibleRange();
+                    }
+                },
+                limits: {
+                    x: { minRange: 86400000 }
+                }
+            };
+
+            performanceChart = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Performance (Summe)',
+                            data: performanceSumData,
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Unrealized P&L',
+                            data: unrealizedData,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 2,
+                            spanGaps: false // null-Werte nicht verbinden
+                        },
+                        {
+                            label: 'Kumulativ Realized P&L Net',
+                            data: realizedPnlData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Kumulativ Transaktionskosten',
+                            data: costsData,
+                            borderColor: '#f87171',
+                            backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            filter: (tooltipItem) => tooltipItem.parsed.y !== null, // null-Werte ausblenden
+                            callbacks: {
+                                title: ctx => new Date(ctx[0].parsed.x).toLocaleDateString('de-DE'),
+                                label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y, 2)}`
+                            }
+                        },
+                        zoom: zoomOptionsPerformance
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: { callback: v => '$' + v.toLocaleString('de-DE') },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        }
+                    }
+                }
+            });
+
+            ctx.ondblclick = () => {
+                performanceChart?.resetZoom();
+                // Nach Reset: Neuberechnung mit Original-Startpunkt
+                setTimeout(recalculatePerformanceFromVisibleRange, 50);
+            };
+            setupWheelPan(performanceChart, recalculatePerformanceFromVisibleRange);
+        }
+        function updateMetrics(perfData) {
+            if (!perfData) return;
+            const metricsEl = document.getElementById('metrics');
+            if (!metricsEl) return;
+            const returnPct = parseFloat(perfData.total_return_pct || 0);
+            const returnClass = returnPct >= 0 ? 'val-positive' : 'val-negative';
+            const ibIndicator = perfData.current_value_from_ib ? '<span style="font-size: 10px; color: #4ade80; margin-left: 5px;">● IB</span>' : '<span style="font-size: 10px; color: #999; margin-left: 5px;">● DB</span>';
+            metricsEl.innerHTML = `
+                <div class="sp-stat-card"><div class="sp-stat-number">${formatCurrency(perfData.start_value)}</div><div class="sp-stat-label">Startwert</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">${formatCurrency(perfData.current_value)}${ibIndicator}</div><div class="sp-stat-label">Aktueller Wert</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number ${returnClass}">${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2)}%</div><div class="sp-stat-label">Rendite</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number val-negative">${formatCurrency(perfData.total_costs)}</div><div class="sp-stat-label">Kum. Kosten</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number val-negative">${formatCurrency(perfData.total_slippage)}</div><div class="sp-stat-label">Kum. Slippage</div></div>`;
+        }
+
+        // Funktion um synchronisiertes Hover zu handhaben
+        function setupSyncedHover(chart) {
+            chart.canvas.addEventListener('mousemove', (e) => {
+                const rect = chart.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const xScale = chart.scales.x;
+                if (x >= xScale.left && x <= xScale.right) {
+                    currentHoverX = xScale.getValueForPixel(x);
+                    syncedCharts.forEach(c => {
+                        if (c !== chart) c.update('none');
+                    });
+                }
+            });
+            chart.canvas.addEventListener('mouseleave', () => {
+                currentHoverX = null;
+                syncedCharts.forEach(c => c.update('none'));
+            });
+        }
+
+        function updateCharts(history) {
+            if (!history || history.length === 0) return;
+            const sorted = [...history].sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+            sortedChartData = sorted; // Speichere für dynamische Neuberechnung
+            const timeOpts = { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { color: '#f0f0f0' } };
+
+            // Reset synced charts array
+            syncedCharts = [];
+
+            // Chart 1: Konto-Wert absolut
+            const ctx1 = document.getElementById('accountValueChart').getContext('2d');
+            if (accountValueChart) accountValueChart.destroy();
+            accountValueChart = new Chart(ctx1, {
+                type: 'line',
+                data: { datasets: [{ label: 'Konto-Wert (USD)', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert })), borderColor: '#0066cc', backgroundColor: 'rgba(0, 102, 204, 0.1)', fill: true, tension: 0, pointRadius: 4, pointHoverRadius: 8, pointBackgroundColor: '#0066cc' }] },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
+            });
+            document.getElementById('accountValueChart').ondblclick = () => accountValueChart?.resetZoom();
+            setupWheelPan(accountValueChart);
+
+            // Chart 2: Konto-Wert % mit integriertem Hebel auf sekundärer Y-Achse
+            const ctx2 = document.getElementById('accountPctChart').getContext('2d');
+            if (accountPctChart) accountPctChart.destroy();
+            const lastPct = sorted[sorted.length - 1].konto_wert_pct;
+
+            // Hebel-Daten um t+1 verschieben: Der Hebel von t wird bei t+1 angezeigt
+            // WICHTIG: Gleiche X-Werte wie andere Datasets für korrektes Hover-Verhalten
+            const hebelDataShifted = sorted.map((h, idx) => {
+                // Erster Punkt hat keinen Vorgänger-Hebel
+                if (idx === 0) {
+                    return { x: parseDate(h.datum), y: null };
+                }
+                // Hebel vom vorherigen Zeitpunkt (t-1)
+                const prevHebel = sorted[idx - 1].neuer_hebel;
+                return { x: parseDate(h.datum), y: prevHebel };
+            });
+
+            // Plugin für horizontale Referenzlinie bei Hebel 1.0x auf der y1 Achse
+            const hebelRefLinePlugin = {
+                id: 'hebelRefLine',
+                afterDraw: (chart) => {
+                    const yScale = chart.scales.y1;
+                    if (!yScale) return;
+                    const ctx = chart.ctx;
+                    const y = yScale.getPixelForValue(1.0);
+                    if (y >= yScale.top && y <= yScale.bottom) {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(chart.chartArea.left, y);
+                        ctx.lineTo(chart.chartArea.right, y);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)';
+                        ctx.setLineDash([3, 3]);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
+
+            accountPctChart = new Chart(ctx2, {
+                type: 'line',
+                plugins: [hebelRefLinePlugin],
+                data: { datasets: [
+                    {
+                        label: 'Strategie (%)',
+                        data: sorted.map(h => ({ x: parseDate(h.datum), y: h.konto_wert_pct })),
+                        borderColor: '#0066cc',
+                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                        fill: true,
+                        tension: 0,
+                        pointRadius: 4,
+                        pointHoverRadius: 8,
+                        borderWidth: 2,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Buy & Hold MES (%)',
+                        data: sorted.map(h => ({ x: parseDate(h.datum), y: h.buy_hold_pct || 0 })),
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        fill: false,
+                        tension: 0,
+                        pointRadius: 3,
+                        pointHoverRadius: 7,
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Hebel (t-1)',
+                        data: hebelDataShifted,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        fill: true,
+                        tension: 0,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                        borderWidth: 2,
+                        yAxisID: 'y1',
+                        spanGaps: false // null-Werte nicht verbinden
+                    }
+                ] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        zoom: zoomOptionsPct,
+                        tooltip: {
+                            filter: (tooltipItem) => tooltipItem.parsed.y !== null, // null-Werte ausblenden
+                            callbacks: {
+                                label: (context) => {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    if (label.includes('Hebel')) {
+                                        return `${label}: ${value.toFixed(3)}x`;
+                                    }
+                                    return `${label}: ${value.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: timeOpts,
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: '#f0f0f0' },
+                            ticks: { callback: v => v.toFixed(2) + '%' },
+                            title: { display: true, text: 'Performance (%)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: v => v.toFixed(2) + 'x' },
+                            title: { display: true, text: 'Hebel' }
+                        }
+                    }
+                }
+            });
+            document.getElementById('accountPctChart').ondblclick = () => {
+                accountPctChart?.resetZoom();
+                // Nach Reset: Neuberechnung mit Original-Startpunkt
+                setTimeout(recalculatePctFromVisibleRange, 50);
+            };
+            setupWheelPan(accountPctChart, recalculatePctFromVisibleRange);
+
+            syncedCharts.push(accountPctChart);
+            setupSyncedHover(accountPctChart);
+
+            // Chart 4: Delta Vergleich - Δ Konto vs Δ MES × Hebel
+            const ctx4Compare = document.getElementById('deltaCompareChart').getContext('2d');
+            if (deltaCompareChart) deltaCompareChart.destroy();
+
+            // Berechne Δ Konto, Δ MES × Hebel und Differenz
+            const deltaData = sorted.map((h, idx) => {
+                if (idx === 0) return null;
+
+                const prev = sorted[idx - 1];
+                const prevKonto = prev.konto_wert || 0;
+                const currKonto = h.konto_wert || 0;
+                const prevMes = prev.mes_preis || 0;
+                const currMes = h.mes_preis || 0;
+                const hebel = prev.neuer_hebel || 0; // Hebel t-1
+
+                const deltaKontoPct = prevKonto !== 0 ? ((currKonto - prevKonto) / prevKonto * 100) : 0;
+                const deltaMesPct = prevMes !== 0 ? ((currMes - prevMes) / prevMes * 100) : 0;
+                const deltaMesHebelPct = deltaMesPct * hebel;
+                const differenz = deltaKontoPct - deltaMesHebelPct;
+
+                return {
+                    x: parseDate(h.datum),
+                    deltaKonto: deltaKontoPct,
+                    deltaMesHebel: deltaMesHebelPct,
+                    differenz: differenz
+                };
+            }).filter(d => d !== null);
+
+            // Durchschnittliche Differenz berechnen und im Titel anzeigen
+            const avgDifferenz = deltaData.length > 0 ? deltaData.reduce((sum, d) => sum + d.differenz, 0) / deltaData.length : 0;
+            const avgDiffSign = avgDifferenz >= 0 ? '+' : '';
+            const avgDiffClass = avgDifferenz >= 0 ? 'val-positive' : 'val-negative';
+            const titleEl = document.getElementById('deltaCompareTitle');
+            if (titleEl) titleEl.innerHTML = `Δ Konto vs Δ MES × Hebel (Vergleich) — <span class="${avgDiffClass}">Ø Differenz: ${avgDiffSign}${avgDifferenz.toFixed(4)}%</span>`;
+
+            deltaCompareChart = new Chart(ctx4Compare, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Δ Konto (%)',
+                            data: deltaData.map(d => ({ x: d.x, y: d.deltaKonto })),
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Δ MES × Hebel (%)',
+                            data: deltaData.map(d => ({ x: d.x, y: d.deltaMesHebel })),
+                            borderColor: '#f97316',
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Differenz (%)',
+                            data: deltaData.map(d => ({ x: d.x, y: d.differenz })),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            fill: true,
+                            tension: 0,
+                            pointRadius: 2,
+                            borderWidth: 2,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        zoom: zoomOptions,
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(4)}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: timeOpts,
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: '#f0f0f0' },
+                            ticks: { callback: v => v.toFixed(2) + '%' },
+                            title: { display: true, text: 'Δ Konto / Δ MES×Hebel / Differenz' }
+                        }
+                    }
+                }
+            });
+            document.getElementById('deltaCompareChart').ondblclick = () => deltaCompareChart?.resetZoom();
+            setupWheelPan(deltaCompareChart);
+            syncedCharts.push(deltaCompareChart);
+            setupSyncedHover(deltaCompareChart);
+
+            // Chart 5: Kosten
+            const ctx5 = document.getElementById('costsChart').getContext('2d');
+            if (costsChart) costsChart.destroy();
+            costsChart = new Chart(ctx5, {
+                type: 'line',
+                data: { datasets: [
+                    { label: 'Transaktionskosten / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)', fill: true, tension: 0, pointRadius: 3, pointHoverRadius: 7 },
+                    { label: 'Slippage / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.slippage_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', fill: true, tension: 0, pointRadius: 3, pointHoverRadius: 7 },
+                    { label: 'Total / Kontrakt', data: sorted.map(h => ({ x: parseDate(h.datum), y: h.total_kosten_pro_kontrakt })).filter(p => p.y > 0), borderColor: '#8b5cf6', borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0, pointRadius: 4, pointHoverRadius: 8 }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, zoom: zoomOptions }, scales: { x: timeOpts, y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => '$' + v.toFixed(2) } } } }
+            });
+            document.getElementById('costsChart').ondblclick = () => costsChart?.resetZoom();
+            setupWheelPan(costsChart);
+        }
+
+        function updateTable(history) {
+            const tbody = document.querySelector('#history-table tbody');
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="13" style="text-align:center">Keine Daten</td></tr>'; return; }
+            const reversed = [...history].reverse();
+            tbody.innerHTML = reversed.map((h, idx) => {
+                const hebel = h.neuer_hebel !== null && h.neuer_hebel !== undefined ? h.neuer_hebel.toFixed(3) + 'x' : '—';
+                const kostenProKontraktVal = h.kosten_pro_kontrakt > 0 ? h.kosten_pro_kontrakt : 0;
+                const slippageProKontraktVal = h.slippage_pro_kontrakt > 0 ? h.slippage_pro_kontrakt : 0;
+                const totalProKontraktVal = kostenProKontraktVal + slippageProKontraktVal;
+                const kostenProKontrakt = kostenProKontraktVal > 0 ? '$' + kostenProKontraktVal.toFixed(3) : '—';
+                const slippageProKontrakt = slippageProKontraktVal > 0 ? '$' + slippageProKontraktVal.toFixed(3) : '—';
+                const totalProKontrakt = totalProKontraktVal > 0 ? '$' + totalProKontraktVal.toFixed(3) : '—';
+                const mesPreis = h.mes_preis ? '$' + h.mes_preis.toFixed(2) : '—';
+
+                // Berechne Deltas
+                let deltaKonto = '—', deltaMes = '—', deltaMesHebel = '—', differenz = '—', diffKonto = '—';
+                let deltaKontoClass = '', deltaMesClass = '', deltaMesHebelClass = '', differenzClass = '', diffKontoClass = '';
+                let deltaKontoPctVal = 0, deltaMesPctVal = 0, deltaMesHebelPctVal = 0, differenzVal = 0;
+
+                // Wir brauchen den zeitlich früheren Wert (nächster in reversed array)
+                if (idx < reversed.length - 1) {
+                    const prev = reversed[idx + 1]; // Zeitlich früher
+                    const prevKonto = prev.konto_wert || 0;
+                    const currKonto = h.konto_wert || 0;
+                    const prevMes = prev.mes_preis || 0;
+                    const currMes = h.mes_preis || 0;
+                    const prevHebel = prev.neuer_hebel || 0; // Hebel t-1 für Berechnung
+
+                    if (prevKonto > 0) {
+                        deltaKontoPctVal = ((currKonto - prevKonto) / prevKonto * 100);
+                        deltaKontoClass = deltaKontoPctVal >= 0 ? 'val-positive' : 'val-negative';
+                        deltaKonto = (deltaKontoPctVal >= 0 ? '+' : '') + deltaKontoPctVal.toFixed(2) + '%';
+                    }
+
+                    if (prevMes > 0) {
+                        deltaMesPctVal = ((currMes - prevMes) / prevMes * 100);
+                        deltaMesClass = deltaMesPctVal >= 0 ? 'val-positive' : 'val-negative';
+                        deltaMes = (deltaMesPctVal >= 0 ? '+' : '') + deltaMesPctVal.toFixed(2) + '%';
+
+                        // Δ MES × Hebel
+                        deltaMesHebelPctVal = deltaMesPctVal * prevHebel;
+                        deltaMesHebelClass = deltaMesHebelPctVal >= 0 ? 'val-positive' : 'val-negative';
+                        deltaMesHebel = (deltaMesHebelPctVal >= 0 ? '+' : '') + deltaMesHebelPctVal.toFixed(2) + '%';
+                    }
+
+                    // Differenz = Δ Konto - Δ MES × Hebel
+                    if (prevKonto > 0 && prevMes > 0) {
+                        differenzVal = deltaKontoPctVal - deltaMesHebelPctVal;
+                        differenzClass = differenzVal >= 0 ? 'val-positive' : 'val-negative';
+                        differenz = (differenzVal >= 0 ? '+' : '') + differenzVal.toFixed(3) + '%';
+
+                        // Differenz × Kontowert
+                        const diffKontoVal = (differenzVal / 100) * currKonto;
+                        diffKontoClass = diffKontoVal >= 0 ? 'val-positive' : 'val-negative';
+                        diffKonto = formatCurrency(diffKontoVal, 2);
+                    }
+                }
+
+                // Farbe für Total/Kontraktkurs: rot wenn > $0.38, orange wenn > $0.25
+                const totalStyle = totalProKontraktVal > 0.38 ? 'class="val-negative"' : (totalProKontraktVal > 0.25 ? 'style="color: #f97316;"' : '');
+
+                // Zeitslippage: positiv = grün (gut), negativ = rot (schlecht)
+                const zeitslippageVal = h.zeitslippage;
+                let zeitslippage = '—';
+                let zeitslippageClass = '';
+                if (zeitslippageVal !== null && zeitslippageVal !== undefined) {
+                    zeitslippageClass = zeitslippageVal >= 0 ? 'val-positive' : 'val-negative';
+                    zeitslippage = (zeitslippageVal >= 0 ? '+' : '') + '$' + Math.abs(zeitslippageVal).toFixed(3);
+                }
+
+                return `<tr><td>${h.datum}</td><td style="text-align:right">${formatCurrency(h.konto_wert)}</td><td style="text-align:right" class="${deltaKontoClass}">${deltaKonto}</td><td style="text-align:right">${mesPreis}</td><td style="text-align:right" class="${deltaMesClass}">${deltaMes}</td><td style="text-align:right">${hebel}</td><td style="text-align:right" class="${deltaMesHebelClass}">${deltaMesHebel}</td><td style="text-align:right" class="${differenzClass}">${differenz}</td><td style="text-align:right" class="${diffKontoClass}">${diffKonto}</td><td style="text-align:right">${kostenProKontrakt}</td><td style="text-align:right">${slippageProKontrakt}</td><td style="text-align:right" ${totalStyle}>${totalProKontrakt}</td><td style="text-align:right" class="${zeitslippageClass}">${zeitslippage}</td></tr>`;
+            }).join('');
+        }
+
+        function updateTransactionsTable(transactions) {
+            const tbody = document.querySelector('#transactions-table tbody');
+            if (!transactions || transactions.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center">Keine Transaktionen</td></tr>'; return; }
+            tbody.innerHTML = transactions.map(t => {
+                const formatPnlCell = (val) => {
+                    if (val === null || val === undefined) return '—';
+                    const num = parseFloat(val);
+                    const cls = num >= 0 ? 'val-positive' : 'val-negative';
+                    return `<span class="${cls}">${formatCurrency(num, 2)}</span>`;
+                };
+                return `<tr>
+                    <td>${new Date(t.date_chi).toLocaleString('de-DE')}</td>
+                    <td><strong>${t.aktion || '—'}</strong></td>
+                    <td style="text-align:right">${t.ausgefuehrte_menge ?? '—'}</td>
+                    <td style="text-align:right">${t.durchschnittspreis ? '$' + parseFloat(t.durchschnittspreis).toFixed(2) : '—'}</td>
+                    <td style="text-align:right">${t.avg_position_cost_before ? '$' + parseFloat(t.avg_position_cost_before).toFixed(2) : '—'}</td>
+                    <td style="text-align:right">${t.avg_position_cost ? '$' + parseFloat(t.avg_position_cost).toFixed(2) : '—'}</td>
+                    <td style="text-align:right">${formatPnlCell(t.realized_pnl_gross)}</td>
+                    <td style="text-align:right">${formatPnlCell(t.realized_pnl_net)}</td>
+                    <td>${t.status || '—'}</td>
+                </tr>`;
+            }).join('');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('applyUnifiedFilter')?.addEventListener('click', applyUnifiedFilter);
+            document.getElementById('resetUnifiedFilter')?.addEventListener('click', resetUnifiedFilter);
+            document.getElementById('dateFilterFrom')?.addEventListener('change', applyUnifiedFilter);
+            document.getElementById('dateFilterTo')?.addEventListener('change', applyUnifiedFilter);
+            const toDateInput = document.getElementById('dateFilterTo');
+            if (toDateInput && !toDateInput.value) toDateInput.value = new Date().toISOString().split('T')[0];
+        });
+        loadData();
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>

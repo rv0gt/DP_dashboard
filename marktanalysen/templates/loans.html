@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Loan-Analyse: Household Debt Composition, Kreditarten, Delinquency Rates">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Crect x='6' y='10' width='20' height='14' rx='2' stroke='%23d97706' stroke-width='2' fill='none'/%3E%3Cpath d='M6 15h20' stroke='%23d97706' stroke-width='1.5'/%3E%3C/svg%3E">
+    <title>Loan-Analyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;" id="statBoxes"></div>
+
+            <!-- Chart: Absolute Balances -->
+            <div class="chart-container">
+                <h3 class="section-title">Kreditvolumen nach Kreditart (Bio. USD)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Absolute Bestandsh&ouml;he aller Kreditkategorien in Billionen US-Dollar
+                </p>
+                <div id="levelChart"></div>
+            </div>
+
+            <!-- Chart 3: YoY Growth -->
+            <div class="chart-container">
+                <h3 class="section-title">Wachstum nach Kreditart (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Jahresver&auml;nderungsrate der einzelnen Kreditkategorien
+                </p>
+                <div id="yoyChart"></div>
+            </div>
+
+            <!-- Chart 4: Delinquency Rates -->
+            <div class="chart-container">
+                <h3 class="section-title">Delinquency Rates (% of Balance)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Anteil der &uuml;berf&auml;lligen Kredite am Gesamtbestand nach Kreditart (Commercial Banks)
+                </p>
+                <div id="delinquencyChart"></div>
+            </div>
+
+            <!-- Chart 5: Charge-Off Rates -->
+            <div class="chart-container">
+                <h3 class="section-title">Charge-Off Rates (% of Average Loans)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Anteil der als uneinbringlich abgeschriebenen Kredite am durchschnittlichen Kreditbestand (Commercial Banks)
+                </p>
+                <div id="chargeoffChart"></div>
+            </div>
+
+            <!-- Debt Service Ratio -->
+            <div class="chart-container">
+                <h3 class="section-title">Debt Service &amp; Financial Obligations Ratio</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Anteil der Schuldenr&uuml;ckzahlung am verf&uuml;gbaren Einkommen. Financial Obligations inkl. Miete, Auto-Leasing, Versicherung.
+                </p>
+                <div id="debtServiceChart"></div>
+            </div>
+
+            <!-- Lending Standards (SLOOS) -->
+            <div class="chart-container">
+                <h3 class="section-title">Lending Standards (Senior Loan Officer Survey)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Netto-% der Banken, die Kreditstandards versch&auml;rfen. Positiv = Versch&auml;rfung, Negativ = Lockerung. Fr&uuml;hindikator f&uuml;r Kreditzyklen.
+                </p>
+                <div id="lendingStdChart"></div>
+            </div>
+
+            <!-- Credit Volume YoY -->
+            <div class="chart-container">
+                <h3 class="section-title">Kreditvolumen Wachstum (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Jahresver&auml;nderung der Kreditvolumina bei US Commercial Banks
+                </p>
+                <div id="creditVolChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Balance-Daten</strong>: Mortgage (MDOAH), Revolving Credit/Credit Cards (REVOLSL),
+                    Student Loans (SLOAS), Motor Vehicle Loans (MVLOAS), Home Equity Revolving (RHEACBW027SBOG).
+                    Alle auf Quartalsbasis aggregiert.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Composition</strong>: Jede Kreditart als prozentualer Anteil an der Summe aller verf&uuml;gbaren Kategorien.
+                    Nicht alle Kategorien haben identische Startdaten &ndash; fr&uuml;here Perioden k&ouml;nnen weniger Kategorien enthalten.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Delinquency Rates</strong>: Anteil der &uuml;berf&auml;lligen Kredite (30+ Tage) am ausstehenden Bestand
+                    bei US Commercial Banks. Serien: Mortgage, Credit Card, Consumer (excl. CC), All Loans,
+                    Commercial RE, Business (C&amp;I), Agricultural.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Charge-Off Rates</strong>: Anteil der als uneinbringlich abgeschriebenen Kredite am
+                    durchschnittlichen ausstehenden Kreditbestand (annualisiert). Serien: All Loans, Credit Card,
+                    Residential RE, Consumer, Commercial RE, Business (C&amp;I).
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Debt Service Ratio</strong> (TDSP): Anteil der Schuldenr&uuml;ckzahlung am verf&uuml;gbaren Einkommen.
+                    <strong>Financial Obligations Ratio</strong> (FODSP): Zus&auml;tzlich inkl. Miete, Auto-Leasing, Versicherung.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Lending Standards</strong> (SLOOS): Senior Loan Officer Opinion Survey. Netto-% der Banken,
+                    die Kreditstandards versch&auml;rfen. Starker Fr&uuml;hindikator f&uuml;r Kreditzyklen und Rezessionen.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED / Federal Reserve Board (Quarterly). Balance: MDOAH, REVOLSL,
+                    SLOAS, MVLOAS, RHEACBW027SBOG. Delinquency: DRSFRMACBS, DRCCLACBS, DRCLACBS, DRALACBS,
+                    DRCRELACBS, DRBLACBS, DRFACBS. Charge-Off: CORALACBS, CORCCACBS, CORSREACBS, CORCACBS,
+                    CORCRELACBS, COBLACBS. Debt Service: TDSP, FODSP. SLOOS: DRTSCILM, DRTSCIS, DRTSCLCC.
+                    Credit Volume: BUSLOANS, REALLN, TOTALSL, CONSUMER. Rezessionen: USREC (NBER).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Loan-Analyse &middot; Daten: FRED</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var loanData = __LOANS_DATA__;
+
+    if (!loanData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_loans.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var quartersMap = { '5Y': 20, '10Y': 40, '20Y': 80 };
+        var quarters = quartersMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - quarters), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr.slice(range.start, range.end);
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !loanData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        loanData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  STAT BOXES
+    // ============================================================
+    function updateStatBoxes() {
+        var c = loanData.current;
+        var container = document.getElementById('statBoxes');
+        var html = '';
+
+        // Total
+        html += '<div class="chart-container" style="padding:16px;text-align:center;">';
+        html += '<div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Total Debt</div>';
+        html += '<div style="font-size:24px;font-weight:700;color:var(--color-text-primary);">' +
+            (c.total_billions ? (c.total_billions / 1000).toFixed(1) + ' Bio.' : '--') + '</div>';
+        html += '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">USD</div>';
+        html += '</div>';
+
+        // Per-category boxes
+        loanData.balance.available.forEach(function(sid) {
+            var pct = c[sid + '_pct'];
+            var bil = c[sid + '_bil'];
+            var label = loanData.labels[sid];
+            var color = loanData.balance_colors[sid] || '#333';
+
+            html += '<div class="chart-container" style="padding:16px;text-align:center;">';
+            html += '<div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">' + label + '</div>';
+            html += '<div style="font-size:24px;font-weight:700;color:' + color + ';">' +
+                (pct != null ? pct.toFixed(1) + '%' : '--') + '</div>';
+            html += '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">' +
+                (bil != null ? (bil / 1000).toFixed(2) + ' Bio. USD' : '') + '</div>';
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    //  CHART: Absolute Balances (Stacked Area, Trillions)
+    // ============================================================
+    function updateLevelChart() {
+        var bal = loanData.balance;
+        var dates = bal.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        bal.available.forEach(function(sid) {
+            traces.push({
+                x: d, y: sl(bal.level[sid], range),
+                type: 'scatter', mode: 'lines',
+                stackgroup: 'one',
+                line: { width: 0 },
+                fillcolor: loanData.balance_colors[sid] || '#999',
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:.2f} Bio.<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: 'Balance (Bio. USD)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('levelChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 3: YoY Growth
+    // ============================================================
+    function updateYoyChart() {
+        var yoy = loanData.yoy;
+        var dates = yoy.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        loanData.balance.available.forEach(function(sid) {
+            if (!yoy.data[sid]) return;
+            traces.push({
+                x: d, y: sl(yoy.data[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: loanData.balance_colors[sid] || '#999', width: 1.5 },
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:+.1f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('yoyChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 4: Delinquency Rates
+    // ============================================================
+    function updateDelinquencyChart() {
+        var del = loanData.delinquency;
+        if (!del.available || del.available.length === 0) {
+            document.getElementById('delinquencyChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Delinquency-Daten verf&uuml;gbar</p>';
+            return;
+        }
+
+        var dates = del.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        del.available.forEach(function(sid) {
+            traces.push({
+                x: d, y: sl(del.data[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: loanData.delinquency_colors[sid] || '#999', width: sid === 'DRALACBS' ? 2.5 : 1.8 },
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:.2f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: 'Delinquency Rate (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('delinquencyChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 5: Charge-Off Rates
+    // ============================================================
+    function updateChargeoffChart() {
+        var co = loanData.chargeoff;
+        if (!co || !co.available || co.available.length === 0) {
+            document.getElementById('chargeoffChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Charge-Off-Daten verf&uuml;gbar</p>';
+            return;
+        }
+
+        var dates = co.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        co.available.forEach(function(sid) {
+            traces.push({
+                x: d, y: sl(co.data[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: loanData.chargeoff_colors[sid] || '#999', width: sid === 'CORALACBS' ? 2.5 : 1.8 },
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:.2f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: 'Charge-Off Rate (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('chargeoffChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  DEBT SERVICE RATIO
+    // ============================================================
+    function updateDebtServiceChart() {
+        if (!loanData.debt_service || !loanData.debt_service.available.length) {
+            document.getElementById('debtServiceChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Debt-Service-Daten verf\u00fcgbar</p>';
+            return;
+        }
+        var ds = loanData.debt_service;
+        var dates = ds.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        ds.available.forEach(function(sid) {
+            traces.push({
+                x: d, y: sl(ds.data[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: loanData.debt_service_colors[sid] || '#999', width: 2 },
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:.1f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: '% of Disposable Income', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('debtServiceChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  LENDING STANDARDS (SLOOS)
+    // ============================================================
+    function updateLendingStdChart() {
+        if (!loanData.lending_standards || !loanData.lending_standards.available.length) {
+            document.getElementById('lendingStdChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine SLOOS-Daten verf\u00fcgbar</p>';
+            return;
+        }
+        var ls = loanData.lending_standards;
+        var dates = ls.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        ls.available.forEach(function(sid) {
+            traces.push({
+                x: d, y: sl(ls.data[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: loanData.lending_std_colors[sid] || '#999', width: 2 },
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:+.1f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: 'Netto % Versch\u00e4rfung', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('lendingStdChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CREDIT VOLUME YoY
+    // ============================================================
+    function updateCreditVolChart() {
+        if (!loanData.credit_volume || !loanData.credit_volume.available.length) {
+            document.getElementById('creditVolChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Credit-Volume-Daten verf\u00fcgbar</p>';
+            return;
+        }
+        var cv = loanData.credit_volume;
+        var dates = cv.yoy_dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        cv.available.forEach(function(sid) {
+            if (!cv.yoy[sid]) return;
+            traces.push({
+                x: d, y: sl(cv.yoy[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: loanData.credit_vol_colors[sid] || '#999', width: 1.8 },
+                name: loanData.labels[sid],
+                hovertemplate: loanData.labels[sid] + ': %{y:+.1f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: 'Q%q %Y' },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('creditVolChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateCurrentInfo() {
+        var c = loanData.current;
+        document.getElementById('currentInfo').innerHTML =
+            'Total: <strong>' + (c.total_billions ? (c.total_billions / 1000).toFixed(1) + ' Bio. USD' : '--') + '</strong> &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!loanData) return;
+        updateStatBoxes();
+        updateCurrentInfo();
+        updateLevelChart();
+        updateYoyChart();
+        updateDelinquencyChart();
+        updateChargeoffChart();
+        updateDebtServiceChart();
+        updateLendingStdChart();
+        updateCreditVolChart();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

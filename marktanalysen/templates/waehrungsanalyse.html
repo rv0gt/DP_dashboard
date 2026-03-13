@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Währungsanalyse: Kaufkraftparität, Korrelationen, Anleihenrenditen und FX-Rendite-Spreads im internationalen Vergleich">
+    <meta name="theme-color" content="#1A2E4A">
+    <meta name="author" content="Finanzanalyse">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M7 24V11l5-2 4 6 4-8 5 5v12z' fill='%232598C3' opacity='.5'/%3E%3Cpath d='M7 22l5-8 4 5 4-8 5 6' stroke='%23F79645' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <title>Währungsanalyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="spa-tabs">
+            <button class="spa-tab active" onclick="switchView('ppp', this)">PPP-Analyse</button>
+            <button class="spa-tab" onclick="switchView('korrelation', this)">Korrelation</button>
+            <button class="spa-tab" onclick="switchView('anleihen', this)">Staatsanleihen</button>
+            <button class="spa-tab" onclick="switchView('fx_rendite', this)">FX-Rendite</button>
+        </div>
+
+        <!-- ==================== PPP-ANALYSE ==================== -->
+        <div id="view-ppp" class="spa-view">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="numerator">Zähler</label>
+                    <select id="numerator">__CURRENCY_OPTIONS_NUMERATOR__</select>
+                </div>
+                <div class="control-separator"></div>
+                <div class="control-group">
+                    <label for="denominator">Nenner</label>
+                    <select id="denominator">__CURRENCY_OPTIONS_DENOMINATOR__</select>
+                </div>
+                <button class="btn btn-primary" onclick="updateDashboard()">Aktualisieren</button>
+            </div>
+            <div class="page-content">
+                <div class="chart-container">
+                    <h3 class="section-title">Tägliche Wechselkursentwicklung</h3>
+                    <div id="dailyChart"></div>
+                    <div id="dailyMisvalChart" style="margin-top:16px;"></div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="section-title">Jährliche Bewertungsabweichung</h3>
+                    <div id="barChart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="section-title" id="currentChartTitle">Aktuelle Währungsbewertung gegenüber USD</h3>
+                    <div id="currentChart"></div>
+                    <div style="display:flex;gap:24px;margin-top:16px;font-size:12px;color:var(--color-text-muted);">
+                        <div style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:var(--color-blue);display:inline-block;"></span>Portfolio-Währungen</div>
+                        <div style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:var(--color-orange);display:inline-block;"></span>Ausgewählte Währung</div>
+                        <div style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#CBD5E0;display:inline-block;"></span>Weitere Währungen</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="section-title" id="trendTableTitle">PPP-Trend: X / USD (durchschnittliche jährliche Änderung)</h3>
+                    <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;">Positive Werte = Zählerwährung wird gemäss PPP relativ teurer (Aufwertungstendenz)</p>
+                    <table class="trend-table" id="trendTable"><thead><tr><th>Währung</th><th>3-Jahres-Trend (Durchschn. p.a.)</th><th>5-Jahres-Trend (Durchschn. p.a.)</th></tr></thead><tbody id="trendTableBody"></tbody></table>
+                </div>
+                <div class="chart-container">
+                    <h3 class="section-title" id="trendAdjTableTitle">Trend-adjustierte Währungsbewertung</h3>
+                    <p id="trendAdjInfo" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;"></p>
+                    <table class="trend-table" id="trendAdjTable"><thead><tr><th>Währung</th><th>Aktuelle Bewertung</th><th>Mit 3J-Trend adj.</th><th>Mit 5J-Trend adj.</th></tr></thead><tbody id="trendAdjTableBody"></tbody></table>
+                </div>
+                <div class="info-box">
+                    <h3>Purchasing Power Parity (PPP)</h3>
+                    <p>Purchasing Power Parity (PPP) ist ein Vergleichskurs. Er gibt zum Beispiel an, wie viele US-Dollar in den USA benötigt werden, um denselben Warenkorb zu kaufen wie in der Eurozone mit 1 Euro.</p>
+                    <p>Die Logik der Purchasing Power Parity (PPP) beruht auf dem Prinzip des Law of One Price: Güter und Dienstleistungen sollten bei freiem Handel und ohne Transaktionskosten in zwei Währungsräumen langfristig denselben Preis haben.</p>
+                    <p style="font-size:0.9em;color:var(--color-text-muted);"><strong>Datenquellen:</strong> PPP-Daten: OECD National Accounts; Wechselkurse: Federal Reserve Economic Data (FRED)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== KORRELATION ==================== -->
+        <div id="view-korrelation" class="spa-view" style="display:none;">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Ansicht</label>
+                    <div class="view-switcher">
+                        <button class="view-btn active" onclick="switchCorrView('single')">Einzelwährung</button>
+                        <button class="view-btn" onclick="switchCorrView('matrix')">Korrelationsmatrix</button>
+                    </div>
+                </div>
+                <div class="control-separator"></div>
+                <div class="control-group" id="corrPairSelect">
+                    <label for="corrNumerator">Zähler</label>
+                    <select id="corrNumerator" onchange="updateCorrelation()">__CURRENCY_OPTIONS_NUMERATOR__</select>
+                </div>
+                <div class="control-group" id="corrPairSelectDen">
+                    <label for="corrDenominator">Nenner</label>
+                    <select id="corrDenominator" onchange="updateCorrelation()">__CURRENCY_OPTIONS_DENOMINATOR__</select>
+                </div>
+                <div class="control-separator"></div>
+                <div class="control-group" id="corrPeriodSelect">
+                    <label>Zeitraum</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" onclick="switchCorrPeriod('1M', this)">1M</button>
+                        <button class="toggle-btn" onclick="switchCorrPeriod('6M', this)">6M</button>
+                        <button class="toggle-btn" onclick="switchCorrPeriod('1Y', this)">1Y</button>
+                        <button class="toggle-btn" onclick="switchCorrPeriod('5Y', this)">5Y</button>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div id="singleCorrView">
+                    <div class="stats-row">
+                        <div class="stat-box"><div class="stat-label">Korrelation (r)</div><div class="stat-value" id="statCorr">-</div></div>
+                        <div class="stat-box"><div class="stat-label">R² (Bestimmtheitsmass)</div><div class="stat-value" id="statR2">-</div></div>
+                        <div class="stat-box"><div class="stat-label">p-Wert</div><div class="stat-value" id="statP">-</div></div>
+                        <div class="stat-box"><div class="stat-label">Beobachtungen</div><div class="stat-value" id="statN">-</div></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="section-title" id="scatterTitle">Misvaluation vs. FX-Änderung (1M)</h3>
+                        <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;">X-Achse: PPP-Misvaluation (%) | Y-Achse: Folgende FX-Änderung (%)</p>
+                        <div id="scatterChart"></div>
+                    </div>
+                    <div class="chart-container" id="corrTrendAdjSection">
+                        <h3 class="section-title" id="corrTrendAdjTitle">Trend-adjustierte Bewertung & Erwartete FX-Änderung</h3>
+                        <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;">Basierend auf der Regressionsgerade: Erwartete FX-Änderung für aktuelle Bewertungsniveaus</p>
+                        <table class="trend-table"><thead><tr><th>Bewertungsart</th><th>Misvaluation (%)</th><th>Erwartete FX-Änderung (%)</th><th>70% Bereich (%)</th><th>90% Bereich (%)</th></tr></thead><tbody id="corrTrendAdjBody"></tbody></table>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="section-title" id="residualTitle">Verteilung der Residuen um die Regressionsgerade</h3>
+                        <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;">Abweichung der Datenpunkte von der Regressionsgerade (0 = auf der Linie)</p>
+                        <div id="residualChart"></div>
+                    </div>
+                </div>
+                <div id="matrixCorrView" style="display:none;">
+                    <div class="chart-container">
+                        <h3 class="section-title">Korrelationsmatrix: Misvaluation vs. FX-Änderung</h3>
+                        <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;">Negative Korrelation = Unterbewertung führt zu Aufwertung (mean reversion)</p>
+                        <div id="matrixHeatmap"></div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3>Korrelationsanalyse: Misvaluation vs. Wechselkursänderung</h3>
+                    <p>Diese Analyse untersucht, ob die PPP-Abweichung (Misvaluation) prädiktive Kraft für zukünftige Wechselkursänderungen hat.</p>
+                    <p><strong>Interpretation:</strong> Eine negative Korrelation deutet auf Mean Reversion hin - überbewertete Währungen tendieren zur Abwertung, unterbewertete zur Aufwertung.</p>
+                    <p><strong>Statistiken:</strong><br>Korrelation (r): Stärke und Richtung des linearen Zusammenhangs (-1 bis +1)<br>R² (Bestimmtheitsmass): Anteil der erklärten Varianz (0 bis 1)<br>p-Wert: Statistische Signifikanz (&lt; 0.05 = signifikant)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== STAATSANLEIHEN ==================== -->
+        <div id="view-anleihen" class="spa-view" style="display:none;">
+            <div class="page-content">
+                <div class="chart-container">
+                    <h3 class="section-title">Staatsanleihen-Renditen</h3>
+                    <p id="bondDataInfo" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:16px;"></p>
+                    <table class="data-table" id="bondTable"><thead><tr><th>Land</th><th class="text-right">6 Monate</th><th class="text-right">1 Jahr</th><th class="text-right">3 Jahre</th><th class="text-right">5 Jahre</th><th class="text-right">10 Jahre</th></tr></thead><tbody id="bondTableBody"></tbody></table>
+                </div>
+                <div class="chart-container mt-3">
+                    <h3 class="section-title">Rendite-Spreads (Abstände in Prozentpunkten)</h3>
+                    <div style="margin-bottom:16px;">
+                        <div class="control-group" style="display:inline-flex;align-items:center;gap:12px;">
+                            <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-text-muted);">Laufzeit:</label>
+                            <div class="toggle-group">
+                                <button class="toggle-btn" onclick="switchSpreadMaturity('6M',this)">6M</button>
+                                <button class="toggle-btn" onclick="switchSpreadMaturity('1Y',this)">1J</button>
+                                <button class="toggle-btn" onclick="switchSpreadMaturity('3Y',this)">3J</button>
+                                <button class="toggle-btn active" onclick="switchSpreadMaturity('5Y',this)">5J</button>
+                                <button class="toggle-btn" onclick="switchSpreadMaturity('10Y',this)">10J</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="spreadHeatmap" style="width:100%;"></div>
+                </div>
+                <div class="info-box">
+                    <h3>Staatsanleihen-Renditen</h3>
+                    <p>Aktuelle Renditen ausgewählter Staatsanleihen. Die Daten werden von Investing.com bezogen.</p>
+                    <p style="font-size:0.9em;color:var(--color-text-muted);"><strong>Datenquelle:</strong> Investing.com</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== FX-RENDITE ==================== -->
+        <div id="view-fx_rendite" class="spa-view" style="display:none;">
+            <div class="page-content">
+                <div class="chart-container">
+                    <h3 class="section-title">Erwartete FX-Änderung abzüglich Carry-Kosten</h3>
+                    <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Zelle (i,j) = Erwartete FX-Änderung(i/j) minus Carry-Kosten(i/j).</p>
+                    <div style="display:flex;gap:16px;margin-bottom:20px;font-size:0.82em;">
+                        <div style="background:rgba(247,150,69,0.1);border-left:3px solid var(--color-orange);padding:8px 14px;border-radius:4px;"><strong style="color:var(--color-orange-dark);">Positiv (+):</strong> <span style="color:var(--color-text);">In Zeilenwährung investiert sein (Long)</span></div>
+                        <div style="background:rgba(37,152,195,0.1);border-left:3px solid var(--color-blue);padding:8px 14px;border-radius:4px;"><strong style="color:var(--color-blue-dark);">Negativ (−):</strong> <span style="color:var(--color-text);">Fremdkapital in Zeilenwährung aufnehmen (Short)</span></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:24px;margin-bottom:20px;flex-wrap:wrap;">
+                        <div class="control-group" style="display:inline-flex;align-items:center;gap:10px;">
+                            <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-text-muted);">Laufzeit:</label>
+                            <div class="toggle-group" id="fxPeriodToggle">
+                                <button class="toggle-btn" onclick="switchFxYieldPeriod('6M',this)">6M</button>
+                                <button class="toggle-btn active" onclick="switchFxYieldPeriod('1Y',this)">1Y</button>
+                                <button class="toggle-btn" onclick="switchFxYieldPeriod('5Y',this)">5Y</button>
+                            </div>
+                        </div>
+                        <div class="control-group" style="display:inline-flex;align-items:center;gap:10px;">
+                            <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-text-muted);">Bewertung:</label>
+                            <div class="toggle-group" id="fxValToggle">
+                                <button class="toggle-btn active" onclick="switchFxYieldValuation('current',this)">Aktuell</button>
+                                <button class="toggle-btn" onclick="switchFxYieldValuation('3y',this)">3J-Trend adj.</button>
+                                <button class="toggle-btn" onclick="switchFxYieldValuation('5y',this)">5J-Trend adj.</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="fxYieldHeatmap" style="width:100%;"></div>
+                </div>
+                <div class="info-box">
+                    <h3>FX-Rendite-Spreads</h3>
+                    <p>Diese Analyse kombiniert die erwartete Wechselkursänderung (aus der PPP-Regression) mit den Rendite-Spreads der Staatsanleihen.</p>
+                    <p><strong>Berechnung:</strong> Erwartete FX-Änderung(i/j) - Carry-Kosten(i/j), wobei Carry-Kosten = (Rendite_j - Rendite_i) x Periodenfaktor. Positive Werte bedeuten: Die erwartete FX-Aufwertung von Währung i übersteigt den Zinsnachteil gegenüber Währung j.</p>
+                    <p><strong>Periodenfaktoren:</strong> 6M = 0.5, 1Y = 1.0, 5Y = 5.0 (Annualisierte Renditen werden auf die Periode skaliert).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">Finanzanalyse &middot; Daten: OECD, FRED, Investing.com</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  SHARED DATA (einmal geladen, immer im RAM)
+    // ============================================================
+    const allPairsData = __ALL_PAIRS_DATA__;
+    const allMisvalData = __ALL_MISVAL_DATA__;
+    const allTrendData = __ALL_TREND_DATA__;
+    const allTrendAdjData = __ALL_TREND_ADJ_DATA__;
+    const currencyConfig = __CURRENCY_CONFIG__;
+    const bondData = __BOND_DATA__;
+    const bondCountries = __BOND_COUNTRIES__;
+    const bondMaturities = __BOND_MATURITIES__;
+    const bondCountryToCurrency = __BOND_COUNTRY_TO_CURRENCY__;
+
+    // Lazy-loaded data (separate .js Dateien, kompatibel mit file://)
+    var correlationData = null;
+    var corrMatrix = null;
+    let _corrDataLoading = null;
+
+    function loadCorrelationData() {
+        if (correlationData !== null) return Promise.resolve(true);
+        if (_corrDataLoading) return _corrDataLoading;
+        _corrDataLoading = new Promise(function(resolve) {
+            const files = ['data/correlation_data.js', 'data/corr_matrix.js'];
+            let loaded = 0;
+            files.forEach(function(src) {
+                const s = document.createElement('script');
+                s.src = src;
+                s.onload = function() { if (++loaded === files.length) resolve(true); };
+                s.onerror = function() { if (++loaded === files.length) resolve(false); };
+                document.head.appendChild(s);
+            });
+        });
+        return _corrDataLoading;
+    }
+
+    const plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    const layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 80, r: 80, t: 40, b: 60 } };
+
+    // ============================================================
+    //  VIEW SWITCHING (sofortiger Tab-Wechsel)
+    // ============================================================
+    const viewInit = { ppp: false, korrelation: false, anleihen: false, fx_rendite: false };
+
+    function switchView(id, btn) {
+        document.querySelectorAll('.spa-view').forEach(v => v.style.display = 'none');
+        document.getElementById('view-' + id).style.display = 'block';
+        document.querySelectorAll('.spa-tab').forEach(t => t.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        if (!viewInit[id]) { initView(id); viewInit[id] = true; }
+    }
+
+    async function initView(id) {
+        if (id === 'ppp') updateDashboard();
+        else if (id === 'korrelation') {
+            document.getElementById('view-korrelation').querySelectorAll('.page-content')[0].style.opacity = '0.4';
+            const ok = await loadCorrelationData();
+            document.getElementById('view-korrelation').querySelectorAll('.page-content')[0].style.opacity = '1';
+            if (ok) updateCorrelation();
+        }
+        else if (id === 'anleihen') { populateBondTable(); updateSpreadHeatmap(); }
+        else if (id === 'fx_rendite') {
+            document.getElementById('view-fx_rendite').querySelectorAll('.page-content')[0].style.opacity = '0.4';
+            const ok = await loadCorrelationData();
+            document.getElementById('view-fx_rendite').querySelectorAll('.page-content')[0].style.opacity = '1';
+            if (ok) updateFxYieldSpreads();
+        }
+    }
+
+    // ============================================================
+    //  PPP-ANALYSE
+    // ============================================================
+    document.getElementById('numerator').addEventListener('change', function() {
+        if (this.value === document.getElementById('denominator').value) alert('Bitte wählen Sie zwei unterschiedliche Währungen aus.');
+    });
+    document.getElementById('denominator').addEventListener('change', function() {
+        if (this.value === document.getElementById('numerator').value) alert('Bitte wählen Sie zwei unterschiedliche Währungen aus.');
+    });
+
+    function updateDashboard() {
+        const numerator = document.getElementById('numerator').value;
+        const denominator = document.getElementById('denominator').value;
+        if (numerator === denominator) { alert('Bitte wählen Sie zwei unterschiedliche Währungen aus.'); return; }
+        const numCfg = currencyConfig[numerator], denCfg = currencyConfig[denominator];
+        const pairKey = `${numerator}_${denominator}`, pairData = allPairsData[pairKey];
+        if (!pairData) { console.error('Keine Daten für', pairKey); return; }
+        const dailyData = pairData.daily, annualData = pairData.annual;
+        const yAxisTitle = `${numCfg.symbol} / ${denCfg.symbol}`;
+
+        if (dailyData.dates.length > 0) {
+            const xRange = [dailyData.dates[0], dailyData.dates[dailyData.dates.length-1]];
+            Plotly.newPlot('dailyChart', [
+                { x: dailyData.dates, y: dailyData.ppp, name: 'PPP-Kurs', type: 'scatter', mode: 'lines', line: { color: '#2598C3', width: 2 }, connectgaps: false },
+                { x: dailyData.dates, y: dailyData.fx, name: 'Wechselkurs', type: 'scatter', mode: 'lines', line: { color: '#F79645', width: 1.5 } }
+            ], { ...layoutBase, xaxis: { showgrid: true, gridcolor: '#E0E0E0', showticklabels: false, range: xRange }, yaxis: { title: yAxisTitle, showgrid: true, gridcolor: '#E0E0E0' }, height: 300, showlegend: true, legend: { orientation: 'h', y: 1.1, x: 0.5, xanchor: 'center' }, margin: { l: 80, r: 80, t: 40, b: 20 } }, plotlyConfig);
+            const mD = [], mV = [];
+            for (let i = 0; i < dailyData.dates.length; i++) { if (dailyData.misval[i] !== null) { mD.push(dailyData.dates[i]); mV.push(dailyData.misval[i]); } }
+            Plotly.newPlot('dailyMisvalChart', [{ x: mD, y: mV, name: 'Über-/Unterbewertung (%)', type: 'scatter', mode: 'lines', line: { color: '#1A2E4A', width: 1.5 }, fill: 'tozeroy', fillcolor: 'rgba(37,152,195,0.08)' }], { ...layoutBase, xaxis: { title: 'Datum', showgrid: true, gridcolor: '#E0E0E0', range: xRange }, yaxis: { title: 'Über-/Unterbewertung (%)', showgrid: true, gridcolor: '#E0E0E0', zeroline: true, zerolinecolor: '#666', zerolinewidth: 2 }, height: 200, showlegend: false, margin: { l: 80, r: 80, t: 20, b: 60 } }, plotlyConfig);
+        } else { document.getElementById('dailyChart').innerHTML = '<div class="text-center text-muted" style="padding:40px;">Keine täglichen Daten verfügbar</div>'; document.getElementById('dailyMisvalChart').innerHTML = ''; }
+
+        if (annualData.years.length > 0) {
+            const vm = annualData.misval.filter(v => v !== null);
+            const avg = vm.length > 0 ? vm.reduce((a,b) => a+b, 0) / vm.length : 0;
+            Plotly.newPlot('barChart', [{ x: annualData.years, y: annualData.misval, type: 'bar', marker: { color: annualData.misval.map(v => v >= 0 ? '#16a34a' : '#dc2626') }, text: annualData.misval.map(v => v !== null ? v.toFixed(1)+'%' : ''), textposition: 'outside', textfont: { size: 10 }, hovertemplate: '%{x}: %{text}<extra></extra>' }], { ...layoutBase, xaxis: { title: 'Jahr', showgrid: false }, yaxis: { title: 'Über-/Unterbewertung (%)', showgrid: true, gridcolor: '#E0E0E0' }, height: 400, showlegend: false, shapes: [{ type:'line',x0:0,x1:1,xref:'paper',y0:0,y1:0,line:{color:'#666',width:1}},{type:'line',x0:0,x1:1,xref:'paper',y0:avg,y1:avg,line:{color:'#2598C3',width:1,dash:'dash'}}], annotations: [{x:1,y:avg,xref:'paper',text:`Durchschn.: ${avg.toFixed(1)}%`,showarrow:false,xanchor:'right',bgcolor:'rgba(255,255,255,0.8)'}] }, plotlyConfig);
+        } else { document.getElementById('barChart').innerHTML = '<div class="text-center text-muted" style="padding:40px;">Keine Daten verfügbar</div>'; }
+
+        document.getElementById('currentChartTitle').textContent = `Aktuelle Währungsbewertung: X / ${denCfg.symbol}`;
+        const cmd = allMisvalData[denominator] || {};
+        if (cmd.codes && cmd.codes.length > 0) {
+            const cc = cmd.codes.map(code => { if (code === numerator) return '#F79645'; if (cmd.in_portfolio[cmd.codes.indexOf(code)]) return '#2598C3'; return '#CBD5E0'; });
+            const nd = cmd.names.map((n,i) => `${n}<br><span style="font-size:10px;color:#999;">Stand: ${cmd.dates[i]}</span>`);
+            const mn = Math.min(...cmd.values), mx = Math.max(...cmd.values), rng = mx-mn, buf = Math.max(rng*0.15,10);
+            Plotly.newPlot('currentChart', [{ y: nd, x: cmd.values, type: 'bar', orientation: 'h', marker: { color: cc, line: { color: '#1A2E4A', width: 1 } }, text: cmd.values.map(v => v.toFixed(1)+'%'), textposition: 'outside', textfont: { size: 11 } }], { ...layoutBase, xaxis: { title: 'Unterbewertung (-) / Überbewertung (+) in %', showgrid: true, gridcolor: '#E0E0E0', range: [Math.floor((mn-buf)/10)*10, Math.ceil((mx+buf)/10)*10], dtick: 10, tick0: 0 }, yaxis: { showgrid: false }, height: 500, showlegend: false, margin: { l: 200, r: 80, t: 20, b: 60 } }, plotlyConfig);
+        } else { document.getElementById('currentChart').innerHTML = '<div class="text-center text-muted" style="padding:40px;">Keine Bewertungsdaten verfügbar</div>'; }
+
+        document.getElementById('trendTableTitle').textContent = `PPP-Trend: X / ${denCfg.symbol} (durchschnittliche jährliche Änderung)`;
+        const td = allTrendData[denominator] || {}, tb = document.getElementById('trendTableBody'); tb.innerHTML = '';
+        if (td.codes && td.codes.length > 0) { for (let i = 0; i < td.codes.length; i++) { const r = document.createElement('tr'), ip = td.in_portfolio[i], is = td.codes[i] === numerator, t3 = td.trend_3y[i], t5 = td.trend_5y[i]; if (ip) r.classList.add('portfolio-row'); if (is) r.style.background = 'rgba(247,150,69,0.1)'; r.innerHTML = `<td>${td.names[i]} ${ip ? '<span class="badge badge-blue">Portfolio</span>' : ''}</td><td class="${t3!==null?(t3>=0?'trend-positive':'trend-negative'):''}">${t3!==null?(t3>=0?'+':'')+t3.toFixed(2)+'% p.a.':'\u2013'}</td><td class="${t5!==null?(t5>=0?'trend-positive':'trend-negative'):''}">${t5!==null?(t5>=0?'+':'')+t5.toFixed(2)+'% p.a.':'\u2013'}</td>`; tb.appendChild(r); } }
+
+        document.getElementById('trendAdjTableTitle').textContent = `Trend-adjustierte Währungsbewertung: X / ${denCfg.symbol}`;
+        const ta = allTrendAdjData[denominator] || {}, tab = document.getElementById('trendAdjTableBody'); tab.innerHTML = '';
+        if (ta.last_date) document.getElementById('trendAdjInfo').innerHTML = `Stand: ${ta.last_date}. PPP wird mit dem durchschnittlichen Jahres-Trend (p.a.) fortgeschrieben.`;
+        if (ta.codes && ta.codes.length > 0) { for (let i = 0; i < ta.codes.length; i++) { const r = document.createElement('tr'), ip = ta.in_portfolio[i], is = ta.codes[i] === numerator, mc = ta.misval_current[i], m3 = ta.misval_3y_adj[i], m5 = ta.misval_5y_adj[i]; if (ip) r.classList.add('portfolio-row'); if (is) r.style.background = 'rgba(247,150,69,0.1)'; r.innerHTML = `<td>${ta.names[i]} ${ip?'<span class="badge badge-blue">Portfolio</span>':''}</td><td class="${mc!==null?(mc>=0?'trend-positive':'trend-negative'):''}">${mc!==null?(mc>=0?'+':'')+mc.toFixed(1)+'%':'\u2013'}</td><td class="${m3!==null?(m3>=0?'trend-positive':'trend-negative'):''}">${m3!==null?(m3>=0?'+':'')+m3.toFixed(1)+'%':'\u2013'}</td><td class="${m5!==null?(m5>=0?'trend-positive':'trend-negative'):''}">${m5!==null?(m5>=0?'+':'')+m5.toFixed(1)+'%':'\u2013'}</td>`; tab.appendChild(r); } }
+    }
+
+    // ============================================================
+    //  KORRELATIONSANALYSE
+    // ============================================================
+    let corrPeriod = '1M', corrView = 'single';
+
+    function switchCorrPeriod(p, btn) { corrPeriod = p; btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(t => t.classList.remove('active')); btn.classList.add('active'); if (corrView === 'single') updateCorrelation(); else if (corrView === 'matrix') updateMatrixView(); }
+
+    function switchCorrView(view) { corrView = view; document.querySelectorAll('#view-korrelation .view-switcher .view-btn').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); document.getElementById('singleCorrView').style.display = view==='single'?'block':'none'; document.getElementById('matrixCorrView').style.display = view==='matrix'?'block':'none'; document.getElementById('corrPairSelect').style.display = view==='single'?'flex':'none'; document.getElementById('corrPairSelectDen').style.display = view==='single'?'flex':'none'; document.getElementById('corrPeriodSelect').style.display = view==='single'?'flex':'none'; if (view==='single') updateCorrelation(); else updateMatrixView(); }
+
+    function updateCorrelation() {
+        if (!correlationData) return;
+        const num = document.getElementById('corrNumerator').value, den = document.getElementById('corrDenominator').value;
+        if (num === den) { ['statCorr','statR2','statP','statN'].forEach(id => document.getElementById(id).textContent = '-'); document.getElementById('scatterChart').innerHTML = '<div class="text-center text-muted" style="padding:40px;">Bitte wählen Sie zwei unterschiedliche Währungen aus.</div>'; return; }
+        const pk = `${num}_${den}`, pd = correlationData[pk];
+        if (!pd || !pd[corrPeriod]) { ['statCorr','statR2','statP','statN'].forEach(id => document.getElementById(id).textContent = '-'); document.getElementById('scatterChart').innerHTML = '<div class="text-center text-muted" style="padding:40px;">Keine Daten verfügbar</div>'; return; }
+        const d = pd[corrPeriod], corr = d.correlation, ce = document.getElementById('statCorr');
+        ce.textContent = corr !== null ? corr.toFixed(4) : '-'; ce.className = 'stat-value ' + (corr < 0 ? 'negative' : 'positive');
+        document.getElementById('statR2').textContent = d.r_squared !== null ? d.r_squared.toFixed(4) : '-';
+        document.getElementById('statP').textContent = d.p_value !== null ? d.p_value.toExponential(2) : '-';
+        document.getElementById('statN').textContent = d.n_obs;
+        const pts = pk.split('_'), ns = currencyConfig[pts[0]]?.symbol||pts[0], ds = currencyConfig[pts[1]]?.symbol||pts[1];
+        document.getElementById('scatterTitle').textContent = `${ns}/${ds} - Misvaluation vs. FX-Änderung (${corrPeriod})`;
+
+        if (d.x_data.length > 0) {
+            const xMn = Math.min(...d.x_data), xMx = Math.max(...d.x_data), sl = d.slope, ic = d.intercept;
+            const traces = [
+                { x: d.x_data, y: d.y_data, mode: 'markers', type: 'scatter', marker: { color: d.y_data.map((y,i) => { const x=d.x_data[i]; return (x<0&&y>0)||(x>0&&y<0)?'#16a34a':'#dc2626'; }), size: 6, opacity: 0.6 }, hovertemplate: 'Misval: %{x:.1f}%<br>FX-Änderung: %{y:.1f}%<extra></extra>', name: 'Datenpunkte' },
+                { x: [xMn,xMx], y: [sl*xMn+ic,sl*xMx+ic], mode: 'lines', type: 'scatter', line: { color: '#2598C3', width: 2, dash: 'dash' }, name: 'Regression' }
+            ];
+            let tRows = [];
+            const tad = allTrendAdjData[pts[1]];
+            if (tad && tad.codes) { const idx = tad.codes.indexOf(pts[0]); if (idx >= 0) {
+                [{name:"Aktuell",val:tad.misval_current[idx],color:"#F79645",sym:"circle"},{name:"3J-Trend adj.",val:tad.misval_3y_adj[idx],color:"#9900CC",sym:"diamond"},{name:"5J-Trend adj.",val:tad.misval_5y_adj[idx],color:"#009999",sym:"star-diamond"}].forEach(e => {
+                    if (e.val !== null && e.val !== undefined) { const ef = sl*e.val+ic; traces.push({ x:[e.val],y:[ef],mode:'markers',type:'scatter',name:e.name,marker:{color:e.color,size:14,symbol:e.sym,opacity:1,line:{color:'#000',width:1.5}},hovertemplate:`${e.name}<br>Misval: %{x:.1f}%<br>Erw. FX: %{y:.2f}%<extra></extra>`,showlegend:true }); tRows.push({name:e.name,misval:e.val,expectedFx:ef}); }
+                });
+            }}
+            Plotly.newPlot('scatterChart', traces, { ...layoutBase, xaxis:{title:'PPP-Misvaluation (%)',showgrid:true,gridcolor:'#E0E0E0',zeroline:true,zerolinecolor:'#666',zerolinewidth:1}, yaxis:{title:`FX-Änderung ${corrPeriod} (%)`,showgrid:true,gridcolor:'#E0E0E0',zeroline:true,zerolinecolor:'#666',zerolinewidth:1}, height:500, showlegend:true, legend:{orientation:'h',y:-0.15,x:0.5,xanchor:'center'} }, plotlyConfig);
+
+            const rMean = d.residuals_mean, rStd = d.residuals_std, rN = d.residuals_n;
+            document.getElementById('corrTrendAdjTitle').textContent = `Trend-adjustierte Bewertung & Erwartete FX-Änderung (${ns}/${ds}, ${corrPeriod})`;
+            const ctb = document.getElementById('corrTrendAdjBody'); ctb.innerHTML = '';
+            if (tRows.length > 0) { document.getElementById('corrTrendAdjSection').style.display = 'block'; tRows.forEach(row => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${row.name}</td><td class="${row.misval>=0?'trend-positive':'trend-negative'}">${row.misval>=0?'+':''}${row.misval.toFixed(1)}%</td><td class="${row.expectedFx>=0?'trend-positive':'trend-negative'}">${row.expectedFx>=0?'+':''}${row.expectedFx.toFixed(2)}%</td><td>${(row.expectedFx+d.pct15).toFixed(2)}% bis ${(row.expectedFx+d.pct85).toFixed(2)}%</td><td>${(row.expectedFx+d.pct5).toFixed(2)}% bis ${(row.expectedFx+d.pct95).toFixed(2)}%</td>`; ctb.appendChild(tr); }); } else { document.getElementById('corrTrendAdjSection').style.display = 'none'; }
+
+            document.getElementById('residualTitle').textContent = `Verteilung der Residuen (${ns}/${ds}, ${corrPeriod})`;
+            const bins = d.residuals_bins, counts = d.residuals_counts;
+            const barX = bins.slice(0,-1).map((b,i) => (b + bins[i+1]) / 2);
+            const bw = bins[1] - bins[0];
+            const rMin = bins[0], rMax = bins[bins.length-1], nX = [], nY = [];
+            for(let i=0;i<=100;i++){const x=rMin+(rMax-rMin)*i/100;nX.push(x);const z=(x-rMean)/rStd;nY.push(Math.exp(-0.5*z*z)/(rStd*Math.sqrt(2*Math.PI))*rN*bw);}
+            Plotly.newPlot('residualChart',[{x:barX,y:counts,type:'bar',width:bw*0.95,marker:{color:'rgba(37,152,195,0.5)',line:{color:'rgba(37,152,195,1)',width:1}},name:'Residuen',hovertemplate:'Residuum: %{x:.1f}%<br>Anzahl: %{y}<extra></extra>'},{x:nX,y:nY,mode:'lines',type:'scatter',name:'Normalverteilung',line:{color:'#dc2626',width:2}}],{...layoutBase,xaxis:{title:'Residuum (%)',showgrid:true,gridcolor:'#E0E0E0',zeroline:true,zerolinecolor:'#666',zerolinewidth:2},yaxis:{title:'Anzahl Beobachtungen',showgrid:true,gridcolor:'#E0E0E0'},height:350,showlegend:true,legend:{orientation:'h',y:-0.2,x:0.5,xanchor:'center'},shapes:[{type:"line",x0:0,x1:0,y0:0,y1:1,yref:"paper",line:{color:"#666",width:2,dash:"dash"}},{type:"line",x0:d.pct15,x1:d.pct15,y0:0,y1:1,yref:"paper",line:{color:"#F79645",width:2,dash:"dash"}},{type:"line",x0:d.pct85,x1:d.pct85,y0:0,y1:1,yref:"paper",line:{color:"#F79645",width:2,dash:"dash"}},{type:"line",x0:d.pct5,x1:d.pct5,y0:0,y1:1,yref:"paper",line:{color:"#dc2626",width:2,dash:"dot"}},{type:"line",x0:d.pct95,x1:d.pct95,y0:0,y1:1,yref:"paper",line:{color:"#dc2626",width:2,dash:"dot"}}],annotations:[{x:d.pct15,y:1.02,yref:'paper',text:'P15',showarrow:false,font:{color:'#F79645',size:11}},{x:d.pct85,y:1.02,yref:'paper',text:'P85',showarrow:false,font:{color:'#F79645',size:11}},{x:d.pct5,y:1.02,yref:'paper',text:'P5',showarrow:false,font:{color:'#dc2626',size:11}},{x:d.pct95,y:1.02,yref:'paper',text:'P95',showarrow:false,font:{color:'#dc2626',size:11}}],bargap:0.05},plotlyConfig);
+        } else { document.getElementById('scatterChart').innerHTML = '<div class="text-center text-muted" style="padding:40px;">Keine Daten verfügbar</div>'; document.getElementById('corrTrendAdjSection').style.display = 'none'; document.getElementById('residualChart').innerHTML = ''; }
+    }
+
+    function updateMatrixView() {
+        if (!corrMatrix) return;
+        const z=corrMatrix.correlations,xL=corrMatrix.periods,yL=corrMatrix.pairs,ann=[];
+        for(let i=0;i<yL.length;i++) for(let j=0;j<xL.length;j++){const v=z[i][j];if(v!==null)ann.push({x:xL[j],y:yL[i],text:v.toFixed(2),font:{color:Math.abs(v)>0.25?'white':'black',size:10},showarrow:false});}
+        Plotly.newPlot('matrixHeatmap',[{z,x:xL,y:yL,type:'heatmap',colorscale:[[0,'#16a34a'],[0.5,'#FFFFFF'],[1,'#dc2626']],zmin:-0.5,zmax:0.5,hoverinfo:'none',showscale:true,colorbar:{title:'Korrelation',titleside:'right'}}],{...layoutBase,xaxis:{title:'Zeitraum',side:'top'},yaxis:{title:'',automargin:true},height:Math.max(400,yL.length*25+100),annotations:ann,hovermode:false},plotlyConfig);
+    }
+
+    // ============================================================
+    //  HEATMAP HELPERS (Blue/Orange, brightness-adaptive text)
+    // ============================================================
+    function hmStyle(val, mx, neg, pos) {
+        if (mx === 0) return {bg:'rgb(248,250,252)',tc:'#1a202c',ts:'none',sc:'#718096'};
+        const t = Math.max(-1, Math.min(1, val/mx)), s = Math.pow(Math.abs(t), 0.75);
+        const c = t < 0 ? neg : pos;
+        const r = Math.round(255+(c[0]-255)*s), g = Math.round(255+(c[1]-255)*s), b = Math.round(255+(c[2]-255)*s);
+        const dark = (0.299*r + 0.587*g + 0.114*b) / 255 > 0.55;
+        return {bg:'rgb('+r+','+g+','+b+')',tc:dark?'#1a202c':'#fff',ts:dark?'none':'0 1px 2px rgba(0,0,0,0.4)',sc:dark?'#718096':'rgba(255,255,255,0.65)'};
+    }
+
+    // ============================================================
+    //  STAATSANLEIHEN
+    // ============================================================
+    let spreadMaturity = '5Y';
+    function switchSpreadMaturity(m, btn) { spreadMaturity = m; btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateSpreadHeatmap(); }
+
+    function updateSpreadHeatmap() {
+        if (!bondData.success) return;
+        const cs = bondCountries.filter(c => bondData.data[c] && bondData.data[c][spreadMaturity]);
+        if (cs.length < 2) { document.getElementById('spreadHeatmap').innerHTML = '<p class="text-center text-muted" style="padding:40px;">Nicht genügend Daten für diese Laufzeit.</p>'; return; }
+        const ys = cs.map(c => parseFloat(bondData.data[c][spreadMaturity]));
+        const spr = [], NEG = [37,152,195], POS = [247,150,69];
+        for (let i = 0; i < cs.length; i++) { const r = []; for (let j = 0; j < cs.length; j++) r.push(Math.round((ys[i]-ys[j])*1000)/1000); spr.push(r); }
+        const mx = Math.max(...spr.flat().map(v => Math.abs(v)), 0.5);
+        let h = '<table class="hm"><thead><tr><th class="hm-corner">Zeile \u2212 Spalte</th>';
+        for (const c of cs) h += '<th>' + c + '</th>';
+        h += '</tr></thead><tbody>';
+        for (let i = 0; i < cs.length; i++) {
+            h += '<tr><th>' + cs[i] + '</th>';
+            for (let j = 0; j < cs.length; j++) {
+                if (i === j) { h += '<td class="hm-diag">\u2014</td>'; }
+                else { const s = spr[i][j], st = hmStyle(s, mx, NEG, POS); h += '<td style="background:'+st.bg+';color:'+st.tc+';text-shadow:'+st.ts+';font-size:13px;font-weight:600;" title="'+cs[i]+' \u2212 '+cs[j]+': '+(s>=0?'+':'')+s.toFixed(3)+' Pp">'+(s>=0?'+':'')+s.toFixed(2)+'</td>'; }
+            }
+            h += '</tr>';
+        }
+        h += '</tbody></table>';
+        document.getElementById('spreadHeatmap').innerHTML = h;
+    }
+
+    function populateBondTable() {
+        const tb = document.getElementById('bondTableBody'); tb.innerHTML = '';
+        if (bondData.success) { document.getElementById('bondDataInfo').textContent = `Stand: ${bondData.date} | Quelle: Investing.com`;
+            for (const c of bondCountries) { const r = document.createElement('tr'), d = bondData.data[c]||{}; r.innerHTML = `<td>${c}</td><td class="text-right">${d['6M']?parseFloat(d['6M']).toFixed(3)+'%':'\u2013'}</td><td class="text-right">${d['1Y']?parseFloat(d['1Y']).toFixed(3)+'%':'\u2013'}</td><td class="text-right">${d['3Y']?parseFloat(d['3Y']).toFixed(3)+'%':'\u2013'}</td><td class="text-right">${d['5Y']?parseFloat(d['5Y']).toFixed(3)+'%':'\u2013'}</td><td class="text-right">${d['10Y']?parseFloat(d['10Y']).toFixed(3)+'%':'\u2013'}</td>`; tb.appendChild(r); }
+        } else { document.getElementById('bondDataInfo').textContent = 'Bond-Daten nicht verfügbar'; document.getElementById('bondTable').style.display = 'none'; }
+    }
+
+    // ============================================================
+    //  FX-RENDITE-SPREADS
+    // ============================================================
+    let fxPeriod = '1Y', fxVal = 'current';
+    function switchFxYieldPeriod(p, btn) { fxPeriod = p; document.getElementById('fxPeriodToggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateFxYieldSpreads(); }
+    function switchFxYieldValuation(v, btn) { fxVal = v; document.getElementById('fxValToggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateFxYieldSpreads(); }
+
+    function updateFxYieldSpreads() {
+        if (!correlationData) return;
+        const c2b = {"CHE":"Schweiz","USA":"USA","AUS":"Australien","GBR":"UK","EA20":"Deutschland","SWE":"Schweden"};
+        const pc = {"6M":{mat:"6M",f:0.5,cp:"6M"},"1Y":{mat:"1Y",f:1.0,cp:"1Y"},"5Y":{mat:"5Y",f:5.0,cp:"5Y"}};
+        const cfg = pc[fxPeriod]; if (!cfg) return;
+        const curs = Object.keys(c2b).filter(c => bondData.data[c2b[c]] && bondData.data[c2b[c]][cfg.mat]);
+        if (curs.length < 2) { document.getElementById('fxYieldHeatmap').innerHTML = '<p class="text-center text-muted" style="padding:40px;">Nicht genügend Daten.</p>'; return; }
+
+        function getEFx(n,d) { const cd=correlationData[`${n}_${d}`]; if(cd&&cd[cfg.cp]){const ci=cd[cfg.cp];if(ci.slope!==undefined){let m=null;const ta=allTrendAdjData[d];if(ta&&ta.codes){const i=ta.codes.indexOf(n);if(i>=0){if(fxVal==='current')m=ta.misval_current[i];else if(fxVal==='3y')m=ta.misval_3y_adj[i];else m=ta.misval_5y_adj[i];}}if(m!==null&&m!==undefined)return ci.slope*m+ci.intercept;}} return null; }
+
+        const labs = curs.map(c => currencyConfig[c]?.symbol||c), fxE = {}, NEG = [37,152,195], POS = [247,150,69];
+        for(let i=0;i<curs.length;i++) for(let j=0;j<curs.length;j++) if(i!==j) fxE[`${curs[i]}_${curs[j]}`] = getEFx(curs[i],curs[j]);
+        for(let i=0;i<curs.length;i++) for(let j=i+1;j<curs.length;j++){const kIJ=`${curs[i]}_${curs[j]}`,kJI=`${curs[j]}_${curs[i]}`,a=fxE[kIJ],b=fxE[kJI];if(a!==null&&b!==null){const avg=(Math.abs(a)+Math.abs(b))/2;fxE[kIJ]=a>=0?avg:-avg;fxE[kJI]=-fxE[kIJ];}else if(a!==null&&b===null)fxE[kJI]=-a;else if(b!==null&&a===null)fxE[kIJ]=-b;}
+
+        const cells=[];
+        for(let i=0;i<curs.length;i++){const row=[];for(let j=0;j<curs.length;j++){if(i===j){row.push({diag:true});continue;}
+            const ef=fxE[`${curs[i]}_${curs[j]}`],nc=c2b[curs[i]],dc=c2b[curs[j]];let ck=null;
+            if(bondData.data[nc]&&bondData.data[dc]){const yn=parseFloat(bondData.data[nc][cfg.mat]),yd=parseFloat(bondData.data[dc][cfg.mat]);if(!isNaN(yn)&&!isNaN(yd))ck=(yd-yn)*cfg.f;}
+            let cv=null;if(ef!==null&&ck!==null)cv=Math.round((ef-ck)*100)/100;
+            row.push({cv,ef,ck});}cells.push(row);}
+        const mx=Math.max(...cells.flat().filter(c=>!c.diag&&c.cv!==null).map(c=>Math.abs(c.cv)),1);
+
+        let h='<table class="hm" style="border-spacing:4px;"><thead><tr><th class="hm-corner">Long \u2193 / Short \u2192</th>';
+        for(const l of labs) h+='<th>'+l+'</th>';
+        h+='</tr></thead><tbody>';
+        for(let i=0;i<curs.length;i++){
+            h+='<tr><th>'+labs[i]+'</th>';
+            for(let j=0;j<curs.length;j++){
+                const c=cells[i][j];
+                if(c.diag){h+='<td class="hm-diag">\u2014</td>';continue;}
+                if(c.cv===null){h+='<td style="background:var(--color-surface-alt);color:#999;font-size:12px;">n/a</td>';continue;}
+                const st=hmStyle(c.cv,mx,NEG,POS);
+                const dv=(c.cv>=0?'+':'')+c.cv.toFixed(1)+'%';
+                const hasSub=c.ef!==null&&c.ck!==null;
+                const sub=hasSub?'<span class="hm-sub" style="color:'+st.sc+';text-shadow:'+st.ts+';">FX '+(c.ef>=0?'+':'')+c.ef.toFixed(1)+' | Carry '+(-c.ck>=0?'+':'')+(-c.ck).toFixed(1)+'</span>':'';
+                h+='<td style="background:'+st.bg+';color:'+st.tc+';text-shadow:'+st.ts+';padding:'+(hasSub?'8':'12')+'px 6px;" title="'+labs[i]+'/'+labs[j]+': Netto '+dv+'"><span class="hm-val" style="font-size:15px;">'+dv+'</span>'+sub+'</td>';
+            }
+            h+='</tr>';
+        }
+        h+='</tbody></table>';
+        document.getElementById('fxYieldHeatmap').innerHTML=h;
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { switchView('ppp', document.querySelector('.spa-tab')); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

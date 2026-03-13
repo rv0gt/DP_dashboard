@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Rollover Analyse</title>
+    <link rel="stylesheet" href="../../../shared/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <div class="spa-tabs">
+                <a href="../overview.html" class="spa-tab">Übersicht</a>
+                <a href="../performance_analyse/performance_analyse.html" class="spa-tab">Performance</a>
+                <a href="../margin_analyse/margin_analyse.html" class="spa-tab">Margin</a>
+                <a href="rollover_analyse.html" class="spa-tab active">Rollover</a>
+                <a href="../data_table/data_table.html" class="spa-tab">Data Table</a>
+                <a href="../trading_monitor/trading_monitor.html" class="spa-tab">Monitor</a>
+                <a href="../hebel_berechnung/hebel_berechnung.html" class="spa-tab">Hebel</a>
+            </div>
+
+            <!-- Metrics -->
+            <div class="sp-stats-grid" id="metrics" style="grid-template-columns:repeat(4,1fr)">
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Aktueller Kontrakt</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Verfall</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Tage bis Verfall</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Rollover Status</div></div>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="sp-section">
+                <h2 class="sp-section-title">Kontrakt-Übersicht</h2>
+                <div class="sp-info-cards" id="info-cards">
+                    <div class="sp-info-card"><h3>&#x1F4C5; Nächster Rollover</h3><div class="value" id="next-rollover">—</div><div class="label">Tage bis zum nächsten Rollover</div></div>
+                    <div class="sp-info-card"><h3>&#x1F4B5; Letzte Rollover-Kosten</h3><div class="value" id="last-rollover-cost">—</div><div class="label">Kosten des letzten Rollovers</div></div>
+                    <div class="sp-info-card"><h3>&#x1F4CA; Rollover-Anzahl</h3><div class="value" id="rollover-count">—</div><div class="label">Rollovers in den letzten 90 Tagen</div></div>
+                </div>
+                <div class="sp-chart-card">
+                    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;color:var(--color-text)">Tage bis Verfall (Verlauf)</h3>
+                    <div class="sp-chart-wrapper" style="height:300px"><canvas id="expiryChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Tables -->
+            <div class="sp-section">
+                <h2 class="sp-section-title">Rollover-Ereignisse</h2>
+                <div class="sp-table-container">
+                    <table class="sp-table" id="events-table">
+                        <thead><tr><th>Datum</th><th>Aktion</th><th>Kontrakt</th><th>Verfall</th><th>Schlusspreis</th><th>Kosten</th><th>Status</th></tr></thead>
+                        <tbody><tr><td colspan="7" style="text-align:center">Lade Daten...</td></tr></tbody>
+                    </table>
+                </div>
+
+                <h2 class="sp-section-title" style="margin-top:32px">Kontrakt-Historie</h2>
+                <div class="sp-table-container">
+                    <table class="sp-table" id="history-table">
+                        <thead><tr><th>Datum</th><th>Kontrakt</th><th>Verfall</th><th>Tage bis Verfall</th></tr></thead>
+                        <tbody><tr><td colspan="4" style="text-align:center">Lade Daten...</td></tr></tbody>
+                    </table>
+                </div>
+                <div class="sp-last-update" id="last-update"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../../shared/js/common.js"></script>
+    <script src="../../../shared/js/nav.js" data-active="trading"></script>
+    <script>
+        var DATA_URL = './rollover_analyse.json';
+        var expiryChart;
+
+        async function loadData() {
+            try {
+                var data = await loadJSONData(DATA_URL);
+                var rd = data.rollover_data;
+                if (rd) { updateMetrics(rd.current); updateInfoCards(rd); updateChart(rd.history, rd.current); updateEventsTable(rd.events); updateHistoryTable(rd.history); }
+                updateLastUpdate(data.timestamp);
+            } catch (e) { console.error('Fehler:', e); }
+        }
+
+        function updateMetrics(c) {
+            if (!c) return;
+            var days = parseInt(c.tage_bis_verfall || 0);
+            var cls = days <= 3 ? 'val-danger' : days <= 7 ? 'val-warning' : 'val-success';
+            document.getElementById('metrics').innerHTML =
+                '<div class="sp-stat-card"><div class="sp-stat-number" style="font-size:18px">' + (c.kontraktname || '—') + '</div><div class="sp-stat-label">Aktueller Kontrakt</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number" style="font-size:18px">' + (c.kontrakt_verfall || '—') + '</div><div class="sp-stat-label">Verfall</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number ' + cls + '">' + days + ' Tage</div><div class="sp-stat-label">Tage bis Verfall</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + (c.rollover_stattgefunden ? 'Ja' : 'Nein') + '</div><div class="sp-stat-label">Rollover Status</div></div>';
+        }
+
+        function updateInfoCards(rd) {
+            document.getElementById('next-rollover').textContent = (rd.current && rd.current.tage_bis_verfall || 0) + ' Tage';
+            var lastE = rd.events ? rd.events.find(function(e) { return e.rollover_kosten; }) : null;
+            document.getElementById('last-rollover-cost').textContent = lastE && lastE.rollover_kosten ? '$' + parseFloat(lastE.rollover_kosten).toFixed(2) : '—';
+            document.getElementById('rollover-count').textContent = rd.events ? rd.events.length : 0;
+        }
+
+        function updateChart(history, current) {
+            if (!history || history.length === 0) return;
+            var sorted = history.slice().sort(function(a, b) { return new Date(a.datum) - new Date(b.datum); });
+            var dataPoints = sorted.map(function(h) { return { x: new Date(h.datum), y: h.tage_bis_verfall }; });
+            var lastDate = dataPoints[dataPoints.length - 1].x;
+            var maxDate = new Date(lastDate.getTime() + 10 * 86400000);
+            var expiryDate = null;
+            if (current && current.kontrakt_verfall) expiryDate = new Date(current.kontrakt_verfall);
+            var ctx = document.getElementById('expiryChart').getContext('2d');
+            if (expiryChart) expiryChart.destroy();
+            expiryChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: [{ label: 'Tage bis Verfall', data: dataPoints, borderColor: '#2598C3', backgroundColor: 'rgba(37,152,195,0.1)', fill: true, tension: 0.1, pointRadius: 4, pointBackgroundColor: dataPoints.map(function(p) { return p.y <= 3 ? '#ef4444' : p.y <= 7 ? '#f59e0b' : '#2598C3'; }) }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ctx.parsed.y + ' Tage bis Verfall'; } } }, annotation: { annotations: expiryDate ? { expiryLine: { type: 'line', xMin: expiryDate, xMax: expiryDate, borderColor: '#ef4444', borderWidth: 2, borderDash: [6, 6], label: { display: true, content: 'Verfall', position: 'start', backgroundColor: '#ef4444', color: '#fff', font: { size: 11 } } } } : {} } },
+                    scales: { x: { type: 'time', time: { unit: 'day', displayFormats: { day: 'dd.MM.yy' }, tooltipFormat: 'dd.MM.yyyy HH:mm' }, max: maxDate, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Datum' } }, y: { grid: { color: 'rgba(0,0,0,0.05)' }, min: 0, ticks: { callback: function(v) { return v + ' Tage'; } }, title: { display: true, text: 'Tage bis Verfall' } } }
+                }
+            });
+        }
+
+        function updateEventsTable(events) {
+            var tbody = document.querySelector('#events-table tbody');
+            if (!events || events.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Keine Rollover-Ereignisse</td></tr>'; return; }
+            tbody.innerHTML = events.map(function(e) {
+                return '<tr><td>' + new Date(e.date_chi).toLocaleString('de-DE') + '</td><td>' + (e.rollover_aktion || '—') + '</td><td>' + (e.kontraktname || '—') + '</td><td>' + (e.kontrakt_verfall || '—') + '</td><td>' + (e.rollover_schlusspreis ? '$' + parseFloat(e.rollover_schlusspreis).toFixed(2) : '—') + '</td><td>' + (e.rollover_kosten ? '$' + parseFloat(e.rollover_kosten).toFixed(2) : '—') + '</td><td><span class="sp-badge ' + (e.rollover_stattgefunden ? 'sp-badge-success' : 'sp-badge-info') + '">' + (e.rollover_stattgefunden ? 'Abgeschlossen' : 'Ausstehend') + '</span></td></tr>';
+            }).join('');
+        }
+
+        function updateHistoryTable(history) {
+            var tbody = document.querySelector('#history-table tbody');
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Keine Daten</td></tr>'; return; }
+            tbody.innerHTML = history.slice(0, 30).map(function(h) {
+                var d = parseInt(h.tage_bis_verfall || 0);
+                return '<tr><td>' + h.datum + '</td><td>' + (h.kontraktname || '—') + '</td><td>' + (h.kontrakt_verfall || '—') + '</td><td><span class="sp-badge ' + (d <= 3 ? 'sp-badge-warning' : 'sp-badge-success') + '">' + d + ' Tage</span></td></tr>';
+            }).join('');
+        }
+
+        loadData();
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>

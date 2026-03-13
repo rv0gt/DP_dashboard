@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fiskal: Federal Debt, Deficit, Interest Payments, Foreign Holdings">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Fiskal | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group"><label>Zeitraum</label><div class="toggle-group" id="timeRangeToggle"><button class="toggle-btn" onclick="switchTimeRange('20Y',this)">20J</button><button class="toggle-btn active" onclick="switchTimeRange('max',this)">Max</button></div></div>
+            <div class="control-separator"></div>
+            <div class="control-group"><label>Optionen</label><div class="toggle-group"><button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber',this)">Rezessionen</button></div></div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Debt / GDP</div><div id="statDebtGDP" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Schuldenquote</div></div>
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Federal Debt</div><div id="statDebt" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Bio. USD</div></div>
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Interest / GDP</div><div id="statIntGDP" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Zinsausgaben</div></div>
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Defizit</div><div id="statDeficit" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Mrd. USD (j&auml;hrlich)</div></div>
+            </div>
+
+            <div class="chart-container"><h3 class="section-title">Federal Debt / GDP (%)</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Schuldenquote &ndash; Verh&auml;ltnis der &ouml;ffentlichen Schulden zum BIP</p><div id="debtGdpChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Federal Debt Total (Bio. USD) &amp; YoY-Wachstum</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Gesamtverschuldung (links) und j&auml;hrliches Wachstum (rechts)</p><div id="debtLevelChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Federal Interest Payments (Mrd. USD)</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Quartalswert der Zinszahlungen des Bundes</p><div id="interestChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Federal Surplus / Deficit (Mrd. USD)</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">J&auml;hrlicher Haushalts&uuml;berschuss (+) oder -defizit (-)</p><div id="deficitChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Interest / GDP &amp; Foreign Holdings (Bio. USD)</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Zinsausgaben als % des BIP (links) und ausl&auml;ndische Treasury-Halter (rechts)</p><div id="intGdpForeignChart"></div></div>
+
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;"><strong>Debt/GDP</strong>: Massgebliche Kennzahl f&uuml;r fiskalische Nachhaltigkeit. &Uuml;ber 100% = potenzieller Crowding-Out-Effekt f&uuml;r private Investitionen.</p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;"><strong>Interest/GDP</strong>: Zeigt die Zinslast relativ zur Wirtschaftsleistung. Steigende Werte bei hohen Zinsen und hoher Verschuldung signalisieren fiskalischen Stress.</p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;"><strong>Foreign Holdings</strong>: Ausl&auml;ndischer Besitz von US-Treasuries. R&uuml;ckgang kann Aufstieg der Langfristzinsen bewirken (weniger Nachfrage = h&ouml;here Renditen).</p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);"><strong>Datenquellen:</strong> FRED (GFDEBTN, GFDEGDQ188S, FYFSD, FDHBFIN, A091RC1Q027SBEA, FYOIGDA188S).</p>
+            </div>
+        </div>
+        <div class="footer">Fiskal &middot; Daten: FRED</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    var fData = __FISCAL_DATA__;
+    if (!fData) { document.querySelector('.page-content').innerHTML = '<div class="info-box"><h3>Keine Daten</h3><p>Bitte <code>python update_fiscal.py</code> und <code>python generate.py</code> ausf&uuml;hren.</p></div>'; }
+    var plotlyConfig = { displayModeBar:true, displaylogo:false, modeBarButtonsToRemove:['pan2d','lasso2d','select2d'], responsive:true };
+    var layoutBase = { font:{family:"'Inter','Segoe UI',sans-serif",size:12}, paper_bgcolor:'white', plot_bgcolor:'white', hovermode:'x unified', margin:{l:70,r:30,t:30,b:50} };
+    var currentTimeRange = 'max'; var showNber = true;
+
+    function getFilteredRange(dates,unit) { var len=dates.length; if(currentTimeRange==='max')return{start:0,end:len}; var n=parseInt(currentTimeRange); var items=unit==='annual'?n:n*4; return{start:Math.max(0,len-items),end:len}; }
+    function sl(a,r) { return a?a.slice(r.start,r.end):[]; }
+    function nberShapes(dates,range) { if(!showNber||!fData.nber_recessions)return[]; var d0=dates[range.start],d1=dates[range.end-1],s=[]; fData.nber_recessions.forEach(function(r){if(r[1]<d0||r[0]>d1)return;s.push({type:'rect',xref:'x',yref:'paper',x0:r[0]<d0?d0:r[0],x1:r[1]>d1?d1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.25)',line:{width:0},layer:'below'});}); return s; }
+
+    function switchTimeRange(r,btn) { currentTimeRange=r; document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); updateAll(); }
+    function toggleOption(o,btn) { if(o==='nber') showNber=!showNber; btn.classList.toggle('active'); updateAll(); }
+
+    function updateDebtGdpChart() {
+        var dates=fData.quarterly_dates, range=getFilteredRange(dates,'quarterly'), d=sl(dates,range);
+        if(!fData.quarterly.GFDEGDQ188S) return;
+        var traces=[{x:d,y:sl(fData.quarterly.GFDEGDQ188S,range),type:'scatter',mode:'lines',fill:'tozeroy',fillcolor:'rgba(220,38,38,0.1)',line:{color:'#dc2626',width:2.5},name:'Debt / GDP (%)',hovertemplate:'%{y:.1f}%<extra></extra>'}];
+        var shapes=nberShapes(dates,range);
+        shapes.push({type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:100,y1:100,line:{color:'#333',width:1.5,dash:'dash'}});
+        Plotly.newPlot('debtGdpChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Debt / GDP (%)',showgrid:true,gridcolor:'#E8E8E8'},height:380,showlegend:false,margin:{l:70,r:30,t:30,b:5},shapes:shapes}),plotlyConfig);
+    }
+
+    function updateDebtLevelChart() {
+        var dates=fData.quarterly_dates, range=getFilteredRange(dates,'quarterly'), d=sl(dates,range), traces=[];
+        if(fData.quarterly.GFDEBTN) traces.push({x:d,y:sl(fData.quarterly.GFDEBTN,range),type:'scatter',mode:'lines',line:{color:'#1A2E4A',width:2.5},name:'Debt (Bio. USD)',yaxis:'y',hovertemplate:'%{y:.2f} Bio. USD<extra></extra>'});
+        if(fData.debt_yoy&&fData.debt_yoy.length) traces.push({x:d,y:sl(fData.debt_yoy,range),type:'bar',marker:{color:'rgba(37,152,195,0.4)'},name:'Debt YoY %',yaxis:'y2',hovertemplate:'YoY: %{y:+.1f}%<extra></extra>'});
+        var shapes=nberShapes(dates,range);
+        Plotly.newPlot('debtLevelChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Bio. USD',showgrid:true,gridcolor:'#E8E8E8'},yaxis2:{title:'YoY %',overlaying:'y',side:'right',showgrid:false},height:380,showlegend:true,legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'},margin:{l:80,r:70,t:30,b:5},shapes:shapes}),plotlyConfig);
+    }
+
+    function updateInterestChart() {
+        var dates=fData.quarterly_dates, range=getFilteredRange(dates,'quarterly'), d=sl(dates,range);
+        if(!fData.quarterly.A091RC1Q027SBEA) return;
+        var traces=[{x:d,y:sl(fData.quarterly.A091RC1Q027SBEA,range),type:'scatter',mode:'lines',fill:'tozeroy',fillcolor:'rgba(247,150,69,0.15)',line:{color:'#F79645',width:2.5},name:'Interest Payments',hovertemplate:'%{y:.1f} Mrd. USD<extra></extra>'}];
+        var shapes=nberShapes(dates,range);
+        Plotly.newPlot('interestChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Mrd. USD',showgrid:true,gridcolor:'#E8E8E8'},height:380,showlegend:false,margin:{l:80,r:30,t:30,b:5},shapes:shapes}),plotlyConfig);
+    }
+
+    function updateDeficitChart() {
+        if(!fData.annual.FYFSD||!fData.annual_dates.length) return;
+        var dates=fData.annual_dates, range=getFilteredRange(dates,'annual'), d=sl(dates,range);
+        var vals=sl(fData.annual.FYFSD,range);
+        var colors=vals.map(function(v){return v!=null&&v>=0?'#16a34a':'#dc2626';});
+        var traces=[{x:d,y:vals,type:'bar',marker:{color:colors},name:'Surplus/Deficit',hovertemplate:'%{y:+,.0f} Mrd. USD<extra></extra>'}];
+        var shapes=nberShapes(dates,range);
+        Plotly.newPlot('deficitChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Mrd. USD',showgrid:true,gridcolor:'#E8E8E8'},height:380,showlegend:false,margin:{l:80,r:30,t:30,b:5},shapes:shapes}),plotlyConfig);
+    }
+
+    function updateIntGdpForeignChart() {
+        var traces=[];
+        if(fData.annual.FYOIGDA188S&&fData.annual_dates.length) {
+            var dates=fData.annual_dates, range=getFilteredRange(dates,'annual'), d=sl(dates,range);
+            traces.push({x:d,y:sl(fData.annual.FYOIGDA188S,range),type:'scatter',mode:'lines',line:{color:'#dc2626',width:2.5},name:'Interest / GDP (%)',yaxis:'y',hovertemplate:'%{y:.2f}%<extra></extra>'});
+        }
+        if(fData.fdhbfin&&fData.fdhbfin.length&&fData.monthly_dates.length) {
+            var md=fData.monthly_dates, mr=getFilteredRange(md,'monthly');
+            traces.push({x:sl(md,mr),y:sl(fData.fdhbfin,mr),type:'scatter',mode:'lines',line:{color:'#2598C3',width:2},name:'Foreign Holdings (Bio.)',yaxis:'y2',hovertemplate:'%{y:.2f} Bio. USD<extra></extra>'});
+        }
+        Plotly.newPlot('intGdpForeignChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y'},yaxis:{title:'Interest / GDP (%)',showgrid:true,gridcolor:'#E8E8E8',titlefont:{color:'#dc2626'},tickfont:{color:'#dc2626'}},yaxis2:{title:'Foreign Holdings (Bio. USD)',overlaying:'y',side:'right',showgrid:false,titlefont:{color:'#2598C3'},tickfont:{color:'#2598C3'}},height:380,showlegend:true,legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'},margin:{l:70,r:80,t:30,b:50}}),plotlyConfig);
+    }
+
+    function updateStats() {
+        var c=fData.current;
+        if(c.debt_gdp!=null){var e=document.getElementById('statDebtGDP');e.textContent=c.debt_gdp.toFixed(1)+'%';e.style.color=c.debt_gdp>100?'#dc2626':'#F79645';}
+        if(c.debt_total!=null){var e=document.getElementById('statDebt');e.textContent=c.debt_total.toFixed(1);e.style.color='var(--color-text-primary)';}
+        if(c.interest_gdp!=null){var e=document.getElementById('statIntGDP');e.textContent=c.interest_gdp.toFixed(2)+'%';e.style.color=c.interest_gdp>3?'#dc2626':'#F79645';}
+        if(c.deficit!=null){var e=document.getElementById('statDeficit');e.textContent=(c.deficit>=0?'+':'')+c.deficit.toFixed(0);e.style.color=c.deficit>=0?'#16a34a':'#dc2626';}
+    }
+
+    function updateAll() { if(!fData)return; updateStats(); updateDebtGdpChart(); updateDebtLevelChart(); updateInterestChart(); updateDeficitChart(); updateIntGdpForeignChart(); }
+    window.onload = function() { updateAll(); };
+    </script>
+    <script>(function(){var b=document.getElementById('hamburgerBtn'),o=document.getElementById('navOverlay'),d=document.getElementById('navDrawer'),c=document.getElementById('navClose');function op(){b.classList.add('active');o.classList.add('open');d.classList.add('open');document.body.style.overflow='hidden';}function cl(){b.classList.remove('active');o.classList.remove('open');d.classList.remove('open');document.body.style.overflow='';}b.addEventListener('click',function(){d.classList.contains('open')?cl():op();});o.addEventListener('click',cl);c.addEventListener('click',cl);document.addEventListener('keydown',function(e){if(e.key==='Escape')cl();});})();</script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>
+</html>

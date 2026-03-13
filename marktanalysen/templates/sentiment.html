@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sentiment: Michigan Consumer Sentiment, OECD Confidence, Inflationserwartungen">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Sentiment | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group"><label>Zeitraum</label><div class="toggle-group" id="timeRangeToggle"><button class="toggle-btn" onclick="switchTimeRange('5Y',this)">5J</button><button class="toggle-btn" onclick="switchTimeRange('10Y',this)">10J</button><button class="toggle-btn" onclick="switchTimeRange('20Y',this)">20J</button><button class="toggle-btn active" onclick="switchTimeRange('max',this)">Max</button></div></div>
+            <div class="control-separator"></div>
+            <div class="control-group"><label>Optionen</label><div class="toggle-group"><button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber',this)">Rezessionen</button></div></div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Michigan Sentiment</div><div id="statUMCSENT" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Consumer Confidence</div></div>
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">OECD Consumer</div><div id="statOECDC" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">100 = Langfrist-Avg</div></div>
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">OECD Business</div><div id="statOECDB" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">100 = Langfrist-Avg</div></div>
+                <div class="chart-container" style="padding:16px;text-align:center;"><div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Infl. Expect. (1Y)</div><div id="statMICH" style="font-size:24px;font-weight:700;">--</div><div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Michigan Survey</div></div>
+            </div>
+
+            <div class="chart-container"><h3 class="section-title">Consumer Sentiment: Michigan &amp; OECD</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Michigan (links) vs. OECD Consumer Confidence (rechts, 100=Langfrist-Avg)</p><div id="sentimentChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Business vs. Consumer Confidence (OECD)</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">OECD Consumer &amp; Business Confidence Indicators f&uuml;r die USA</p><div id="bizConsChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Inflationserwartungen</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Michigan 1Y, Cleveland Fed 1Y &amp; 10Y Inflationserwartungen</p><div id="inflExpChart"></div></div>
+
+            <div class="chart-container"><h3 class="section-title">Michigan Sentiment YoY vs. S&amp;P 500 YoY</h3><p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Kontr&auml;rindikator: Extremwerte im Sentiment korrelieren oft mit Wendepunkten</p><div id="sentVsSpxChart"></div></div>
+
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;"><strong>Michigan Sentiment</strong>: Telefonumfrage der Uni Michigan. Werte um 60 = extrem pessimistisch (historisch oft Kaufsignal f&uuml;r Aktien), &uuml;ber 100 = optimistisch.</p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;"><strong>OECD Confidence</strong>: Standardisierte Composite-Indikatoren. 100 = Langfristdurchschnitt. Werte unter 100 signalisieren unterdurchschnittliches Vertrauen.</p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;"><strong>Inflationserwartungen</strong>: Michigan 1Y misst kurzfristige Erwartungen (stark von Benzinpreisen beeinflusst). Cleveland Fed nutzt Marktdaten (TIPS, Swaps) f&uuml;r robustere Sch&auml;tzungen.</p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);"><strong>Datenquellen:</strong> FRED (UMCSENT, CSCICP03USM665S, BSCICP03USM665S, MICH, EXPINF1YR, EXPINF10YR).</p>
+            </div>
+        </div>
+        <div class="footer">Sentiment &middot; Daten: FRED, Yahoo Finance</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    var sData = __SENTIMENT_DATA__;
+    if (!sData) { document.querySelector('.page-content').innerHTML = '<div class="info-box"><h3>Keine Daten</h3><p>Bitte <code>python update_sentiment.py</code> und <code>python generate.py</code> ausf&uuml;hren.</p></div>'; }
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font:{family:"'Inter','Segoe UI',sans-serif",size:12}, paper_bgcolor:'white', plot_bgcolor:'white', hovermode:'x unified', margin:{l:70,r:30,t:30,b:50} };
+    var currentTimeRange = 'max'; var showNber = true;
+
+    function getFilteredRange(dates) { var len=dates.length; if(currentTimeRange==='max') return {start:0,end:len}; var m={'5Y':60,'10Y':120,'20Y':240}; return {start:Math.max(0,len-(m[currentTimeRange]||len)),end:len}; }
+    function sl(a,r) { return a?a.slice(r.start,r.end):[]; }
+    function nberShapes(dates,range) { if(!showNber||!sData.nber_recessions)return[]; var d0=dates[range.start],d1=dates[range.end-1],s=[]; sData.nber_recessions.forEach(function(r){if(r[1]<d0||r[0]>d1)return;s.push({type:'rect',xref:'x',yref:'paper',x0:r[0]<d0?d0:r[0],x1:r[1]>d1?d1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.25)',line:{width:0},layer:'below'});}); return s; }
+
+    function switchTimeRange(r,btn) { currentTimeRange=r; document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); updateAll(); }
+    function toggleOption(o,btn) { if(o==='nber') showNber=!showNber; btn.classList.toggle('active'); updateAll(); }
+
+    function updateSentimentChart() {
+        var dates=sData.dates, range=getFilteredRange(dates), d=sl(dates,range), traces=[];
+        if(sData.series.UMCSENT) traces.push({x:d,y:sl(sData.series.UMCSENT,range),type:'scatter',mode:'lines',line:{color:'#1A2E4A',width:2.5},name:'Michigan Sentiment',yaxis:'y',hovertemplate:'Michigan: %{y:.1f}<extra></extra>'});
+        if(sData.series.CSCICP03USM665S) traces.push({x:d,y:sl(sData.series.CSCICP03USM665S,range),type:'scatter',mode:'lines',line:{color:'#2598C3',width:2},name:'OECD Consumer',yaxis:'y2',hovertemplate:'OECD: %{y:.2f}<extra></extra>'});
+        var shapes=nberShapes(dates,range);
+        Plotly.newPlot('sentimentChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Michigan',showgrid:true,gridcolor:'#E8E8E8'},yaxis2:{title:'OECD (100=Avg)',overlaying:'y',side:'right',showgrid:false},height:380,showlegend:true,legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'},margin:{l:70,r:70,t:30,b:5},shapes:shapes}),plotlyConfig);
+        baseShapeCount.sentimentChart=shapes.length;
+    }
+
+    function updateBizConsChart() {
+        var dates=sData.dates, range=getFilteredRange(dates), d=sl(dates,range), traces=[];
+        if(sData.series.CSCICP03USM665S) traces.push({x:d,y:sl(sData.series.CSCICP03USM665S,range),type:'scatter',mode:'lines',line:{color:'#2598C3',width:2.5},name:'Consumer Confidence',hovertemplate:'Consumer: %{y:.2f}<extra></extra>'});
+        if(sData.series.BSCICP03USM665S) traces.push({x:d,y:sl(sData.series.BSCICP03USM665S,range),type:'scatter',mode:'lines',line:{color:'#F79645',width:2.5},name:'Business Confidence',hovertemplate:'Business: %{y:.2f}<extra></extra>'});
+        var shapes=nberShapes(dates,range);
+        shapes.push({type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:100,y1:100,line:{color:'#333',width:1.5,dash:'dash'}});
+        Plotly.newPlot('bizConsChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Index (100=Langfrist-Avg)',showgrid:true,gridcolor:'#E8E8E8'},height:380,showlegend:true,legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'},margin:{l:70,r:30,t:30,b:5},shapes:shapes}),plotlyConfig);
+        baseShapeCount.bizConsChart=shapes.length;
+    }
+
+    function updateInflExpChart() {
+        var dates=sData.dates, range=getFilteredRange(dates), d=sl(dates,range), traces=[];
+        if(sData.series.MICH) traces.push({x:d,y:sl(sData.series.MICH,range),type:'scatter',mode:'lines',line:{color:'#dc2626',width:2.5},name:'Michigan 1Y',hovertemplate:'Michigan 1Y: %{y:.1f}%<extra></extra>'});
+        if(sData.series.EXPINF1YR) traces.push({x:d,y:sl(sData.series.EXPINF1YR,range),type:'scatter',mode:'lines',line:{color:'#8b5cf6',width:2},name:'Cleveland Fed 1Y',hovertemplate:'Cleveland 1Y: %{y:.2f}%<extra></extra>'});
+        if(sData.series.EXPINF10YR) traces.push({x:d,y:sl(sData.series.EXPINF10YR,range),type:'scatter',mode:'lines',line:{color:'#16a34a',width:2},name:'Cleveland Fed 10Y',hovertemplate:'Cleveland 10Y: %{y:.2f}%<extra></extra>'});
+        var shapes=nberShapes(dates,range);
+        Plotly.newPlot('inflExpChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false},yaxis:{title:'Erwartete Inflation (%)',showgrid:true,gridcolor:'#E8E8E8'},height:380,showlegend:true,legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'},margin:{l:70,r:30,t:30,b:5},shapes:shapes}),plotlyConfig);
+        baseShapeCount.inflExpChart=shapes.length;
+    }
+
+    function updateSentVsSpxChart() {
+        var dates=sData.dates, range=getFilteredRange(dates), d=sl(dates,range), traces=[];
+        if(sData.umcsent_yoy&&sData.umcsent_yoy.length) traces.push({x:d,y:sl(sData.umcsent_yoy,range),type:'scatter',mode:'lines',line:{color:'#1A2E4A',width:2.5},name:'Michigan YoY %',yaxis:'y',hovertemplate:'Sentiment YoY: %{y:+.1f}%<extra></extra>'});
+        if(sData.spx_yoy&&sData.spx_yoy.length) traces.push({x:d,y:sl(sData.spx_yoy,range),type:'scatter',mode:'lines',line:{color:'rgba(220,38,38,0.6)',width:1.5},name:'S&P 500 YoY %',yaxis:'y2',hovertemplate:'S&P YoY: %{y:+.1f}%<extra></extra>'});
+        var shapes=nberShapes(dates,range);
+        shapes.push({type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:0,y1:0,line:{color:'#333',width:1}});
+        Plotly.newPlot('sentVsSpxChart',traces,Object.assign({},layoutBase,{xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y'},yaxis:{title:'Michigan YoY (%)',showgrid:true,gridcolor:'#E8E8E8'},yaxis2:{title:'S&P 500 YoY (%)',overlaying:'y',side:'right',showgrid:false},height:380,showlegend:true,legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'},margin:{l:70,r:70,t:30,b:50},shapes:shapes}),plotlyConfig);
+    }
+
+    function updateStats() {
+        var c=sData.current;
+        if(c.UMCSENT!=null){var e=document.getElementById('statUMCSENT');e.textContent=c.UMCSENT.toFixed(1);e.style.color=c.UMCSENT<70?'#dc2626':c.UMCSENT>90?'#16a34a':'#F79645';}
+        if(c.CSCICP03USM665S!=null){var e=document.getElementById('statOECDC');e.textContent=c.CSCICP03USM665S.toFixed(2);e.style.color=c.CSCICP03USM665S<99?'#dc2626':'#16a34a';}
+        if(c.BSCICP03USM665S!=null){var e=document.getElementById('statOECDB');e.textContent=c.BSCICP03USM665S.toFixed(2);e.style.color=c.BSCICP03USM665S<99?'#dc2626':'#16a34a';}
+        if(c.MICH!=null){var e=document.getElementById('statMICH');e.textContent=c.MICH.toFixed(1)+'%';e.style.color=c.MICH>4?'#dc2626':'#16a34a';}
+    }
+
+    var chartIds=['sentimentChart','bizConsChart','inflExpChart','sentVsSpxChart'];
+    var baseShapeCount={}; chartIds.forEach(function(id){baseShapeCount[id]=0;});
+    var crosshairActive=false;
+    function syncCrosshair(src,xVal){crosshairActive=true;var sh={type:'line',xref:'x',yref:'paper',x0:xVal,x1:xVal,y0:0,y1:1,line:{color:'#666',width:1,dash:'dash'}};chartIds.forEach(function(id){var el=document.getElementById(id);if(!el||!el._fullLayout)return;var s=(el.layout.shapes||[]).slice(0,baseShapeCount[id]);s.push(sh);Plotly.relayout(id,{shapes:s});});}
+    function clearCrosshair(){if(!crosshairActive)return;crosshairActive=false;chartIds.forEach(function(id){var el=document.getElementById(id);if(!el||!el._fullLayout)return;Plotly.relayout(id,{shapes:(el.layout.shapes||[]).slice(0,baseShapeCount[id])});});}
+    function attachCrosshair(){chartIds.forEach(function(id){var el=document.getElementById(id);if(!el)return;el.on('plotly_hover',function(d){if(d.points&&d.points.length)syncCrosshair(id,d.points[0].x);});el.on('plotly_unhover',function(){clearCrosshair();});});}
+
+    function updateAll() { if(!sData)return; updateStats(); updateSentimentChart(); updateBizConsChart(); updateInflExpChart(); updateSentVsSpxChart(); attachCrosshair(); }
+    window.onload = function() { updateAll(); };
+    </script>
+    <script>(function(){var b=document.getElementById('hamburgerBtn'),o=document.getElementById('navOverlay'),d=document.getElementById('navDrawer'),c=document.getElementById('navClose');function op(){b.classList.add('active');o.classList.add('open');d.classList.add('open');document.body.style.overflow='hidden';}function cl(){b.classList.remove('active');o.classList.remove('open');d.classList.remove('open');document.body.style.overflow='';}b.addEventListener('click',function(){d.classList.contains('open')?cl():op();});o.addEventListener('click',cl);c.addEventListener('click',cl);document.addEventListener('keydown',function(e){if(e.key==='Escape')cl();});})();</script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>
+</html>

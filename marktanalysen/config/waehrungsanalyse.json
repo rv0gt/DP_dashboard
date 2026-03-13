@@ -1,0 +1,252 @@
+{
+    "dashboard": {
+        "title": "Finanzanalyse",
+        "pages": [
+            {
+                "id": "waehrungsanalyse",
+                "title": "Währungsanalyse",
+                "template": "waehrungsanalyse.html",
+                "output": "waehrungsanalyse/index.html"
+            },
+            {
+                "id": "zinskurve",
+                "title": "Zinskurvenanalyse",
+                "template": "zinskurve.html",
+                "output": "zinskurve/index.html"
+            },
+            {
+                "id": "inflation",
+                "title": "Inflationsanalyse",
+                "template": "inflation.html",
+                "output": "inflation/index.html"
+            },
+            {
+                "id": "tms2",
+                "title": "TMS2-Analyse",
+                "template": "tms2.html",
+                "output": "tms2/index.html"
+            },
+            {
+                "id": "employment",
+                "title": "Employment-Analyse",
+                "template": "employment.html",
+                "output": "employment/index.html"
+            },
+            {
+                "id": "loans",
+                "title": "Loan-Analyse",
+                "template": "loans.html",
+                "output": "loans/index.html"
+            },
+            {
+                "id": "production",
+                "title": "Produktionszyklus",
+                "template": "production.html",
+                "output": "production/index.html"
+            },
+            {
+                "id": "electricity",
+                "title": "Elektrizitätsverbrauch",
+                "template": "electricity.html",
+                "output": "electricity/index.html"
+            },
+            {
+                "id": "wages",
+                "title": "Lohn-Preis-Spirale",
+                "template": "wages.html",
+                "output": "wages/index.html"
+            },
+            {
+                "id": "creditspreads",
+                "title": "Credit Spreads",
+                "template": "creditspreads.html",
+                "output": "creditspreads/index.html"
+            },
+            {
+                "id": "demographics",
+                "title": "Demographie-Analyse",
+                "template": "demographics.html",
+                "output": "demographics/index.html"
+            },
+            {
+                "id": "housing",
+                "title": "Immobilienmarkt",
+                "template": "housing.html",
+                "output": "housing/index.html"
+            },
+            {
+                "id": "liquidity",
+                "title": "Globale Liquidität",
+                "template": "liquidity.html",
+                "output": "liquidity/index.html"
+            },
+            {
+                "id": "financial_conditions",
+                "title": "Financial Conditions",
+                "template": "financial_conditions.html",
+                "output": "financial_conditions/index.html"
+            },
+            {
+                "id": "sentiment",
+                "title": "Sentiment",
+                "template": "sentiment.html",
+                "output": "sentiment/index.html"
+            },
+            {
+                "id": "valuation",
+                "title": "Bewertung",
+                "template": "valuation.html",
+                "output": "valuation/index.html"
+            },
+            {
+                "id": "fiscal",
+                "title": "Fiskal",
+                "template": "fiscal.html",
+                "output": "fiscal/index.html"
+            },
+            {
+                "id": "consumption",
+                "title": "Konsum",
+                "template": "consumption.html",
+                "output": "consumption/index.html"
+            },
+            {
+                "id": "futures_financing",
+                "title": "Futures Finanzierung",
+                "template": "futures_financing.html",
+                "output": "futures_financing/index.html"
+            },
+            {
+                "id": "construction",
+                "title": "Bausektor",
+                "template": "construction.html",
+                "output": "construction/index.html"
+            },
+            {
+                "id": "profit_margins",
+                "title": "Profit Margins",
+                "template": "profit_margins.html",
+                "output": "profit_margins/index.html"
+            },
+            {
+                "id": "investment",
+                "title": "Investitionsanalyse",
+                "template": "investment.html",
+                "output": "investment/index.html"
+            }
+        ]
+    },
+    "api": {
+        "oecd_base_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN10@DF_TABLE4,2.0",
+        "fred_api_key": "d33699e5e98ba3f8470531563d38834b",
+        "bls_api_key": "75eb21d7369a4fa69a4a5497a9a29b45",
+        "start_year": 1960
+    },
+    "currencies": {
+        "CHE": {
+            "name": "Schweizer Franken",
+            "fred_id": "DEXSZUS",
+            "fred_format": "nat_per_USD",
+            "symbol": "CHF",
+            "in_portfolio": true
+        },
+        "USA": {
+            "name": "US-Dollar",
+            "fred_id": null,
+            "fred_format": "base",
+            "symbol": "USD",
+            "in_portfolio": true
+        },
+        "AUS": {
+            "name": "Australischer Dollar",
+            "fred_id": "DEXUSAL",
+            "fred_format": "USD_per_nat",
+            "symbol": "AUD",
+            "in_portfolio": true
+        },
+        "GBR": {
+            "name": "Britisches Pfund",
+            "fred_id": "DEXUSUK",
+            "fred_format": "USD_per_nat",
+            "symbol": "GBP",
+            "in_portfolio": true
+        },
+        "EA20": {
+            "name": "Euro",
+            "fred_id": "DEXUSEU",
+            "fred_format": "USD_per_nat",
+            "symbol": "EUR",
+            "in_portfolio": true
+        },
+        "SWE": {
+            "name": "Schwedische Krone",
+            "fred_id": "DEXSDUS",
+            "fred_format": "nat_per_USD",
+            "symbol": "SEK",
+            "in_portfolio": true
+        },
+        "DNK": {
+            "name": "Dänische Krone",
+            "fred_id": "DEXDNUS",
+            "fred_format": "nat_per_USD",
+            "symbol": "DKK",
+            "in_portfolio": false
+        },
+        "NOR": {
+            "name": "Norwegische Krone",
+            "fred_id": "DEXNOUS",
+            "fred_format": "nat_per_USD",
+            "symbol": "NOK",
+            "in_portfolio": false
+        },
+        "CAN": {
+            "name": "Kanadischer Dollar",
+            "fred_id": "DEXCAUS",
+            "fred_format": "nat_per_USD",
+            "symbol": "CAD",
+            "in_portfolio": false
+        },
+        "JPN": {
+            "name": "Japanischer Yen",
+            "fred_id": "DEXJPUS",
+            "fred_format": "nat_per_USD",
+            "symbol": "JPY",
+            "in_portfolio": false
+        }
+    },
+    "portfolio_currencies": ["CHE", "USA", "AUS", "GBR", "EA20", "SWE"],
+    "bonds": {
+        "investing_slugs": {
+            "Schweiz": "switzerland",
+            "USA": "u.s.",
+            "Australien": "australia",
+            "UK": "uk",
+            "Deutschland": "germany",
+            "Finnland": "finland",
+            "Schweden": "sweden"
+        },
+        "maturity_slugs": {
+            "6M": "6-month",
+            "1Y": "1-year",
+            "3Y": "3-year",
+            "5Y": "5-year",
+            "10Y": "10-year"
+        },
+        "countries": ["Schweiz", "USA", "Australien", "UK", "Deutschland", "Finnland", "Schweden"],
+        "maturities": ["6M", "1Y", "3Y", "5Y", "10Y"],
+        "country_to_currency": {
+            "Schweiz": "CHE",
+            "USA": "USA",
+            "Australien": "AUS",
+            "UK": "GBR",
+            "Deutschland": "EA20",
+            "Schweden": "SWE"
+        }
+    },
+    "design": {
+        "primary_blue": "#2598C3",
+        "primary_orange": "#F79645",
+        "primary_navy": "#1A2E4A",
+        "font_family": "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif"
+    }
+}

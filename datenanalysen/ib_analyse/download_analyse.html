@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IB Download Fehleranalyse - Trading Portal</title>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        .ib-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .ib-stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .ib-stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-navy);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .ib-stat-label {
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+        .ib-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .ib-control-group {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .ib-control-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .ib-control-group input,
+        .ib-control-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+        .ib-control-group input:focus,
+        .ib-control-group select:focus {
+            outline: none;
+            border-color: var(--color-blue);
+        }
+        .ib-symbol-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 32px;
+        }
+        .ib-symbol-title {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .symbol-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: stretch;
+        }
+        .symbol-btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 2px solid;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            background: transparent;
+            transition: all 0.2s;
+        }
+        .symbol-btn.priority {
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+        .symbol-btn.inactive { opacity: 0.25; }
+        .symbol-btn:hover { transform: translateY(-1px); }
+        .symbol-divider {
+            width: 2px;
+            background: var(--color-border);
+            margin: 0 8px;
+            align-self: stretch;
+        }
+        .ib-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+        .ib-btn {
+            padding: 10px 24px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--color-blue);
+            background: var(--color-blue);
+            color: #fff;
+            transition: background 0.2s;
+        }
+        .ib-btn:hover { background: var(--color-blue-dark); }
+        .ib-btn-secondary {
+            background: transparent;
+            color: var(--color-blue);
+        }
+        .ib-btn-secondary:hover {
+            background: var(--color-blue);
+            color: #fff;
+        }
+        .ib-chart-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .ib-chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chart-wrapper { height: 350px; position: relative; }
+        .heatmap-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .heatmap-header select {
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 13px;
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+        .heatmap-container { overflow-x: auto; }
+        .heatmap {
+            display: grid;
+            grid-template-columns: 40px repeat(12, 1fr);
+            gap: 2px;
+            font-size: 11px;
+            min-width: 600px;
+        }
+        .heatmap-month {
+            background: var(--color-navy);
+            padding: 8px 4px;
+            text-align: center;
+            font-weight: 600;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .heatmap-row-label {
+            background: var(--color-surface-alt);
+            padding: 4px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-weight: 500;
+            border-radius: 4px;
+        }
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: default;
+            transition: transform 0.15s;
+            border: 1px solid var(--color-border);
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.15);
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .legend {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--color-border);
+        }
+        .ib-footer-info {
+            text-align: center;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 16px;
+        }
+        @media (max-width: 768px) {
+            .ib-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .ib-controls { grid-template-columns: 1fr; }
+            .chart-wrapper { height: 280px; }
+        }
+        @media (max-width: 480px) {
+            .ib-stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <div class="spa-tabs">
+                <a href="../index.html" class="spa-tab">Übersicht</a>
+                <a href="download_analyse.html" class="spa-tab active">IB Fehleranalyse</a>
+            </div>
+
+            <!-- Statistiken -->
+            <div class="ib-stats-grid">
+                <div class="ib-stat-card">
+                    <span class="ib-stat-number" id="statTotal">...</span>
+                    <div class="ib-stat-label">Gefilterte Fehler</div>
+                </div>
+                <div class="ib-stat-card">
+                    <span class="ib-stat-number" id="statSymbols">...</span>
+                    <div class="ib-stat-label">Aktive Symbole</div>
+                </div>
+                <div class="ib-stat-card">
+                    <span class="ib-stat-number" id="statDays">...</span>
+                    <div class="ib-stat-label">Tage mit Fehlern</div>
+                </div>
+                <div class="ib-stat-card">
+                    <span class="ib-stat-number" id="statRange" style="font-size:16px">...</span>
+                    <div class="ib-stat-label">Zeitraum</div>
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="ib-controls">
+                <div class="ib-control-group">
+                    <label>Ab Datum</label>
+                    <input type="date" id="fromDate">
+                </div>
+                <div class="ib-control-group">
+                    <label>Bis Datum</label>
+                    <input type="date" id="toDate">
+                </div>
+            </div>
+
+            <div class="ib-symbol-section">
+                <div class="ib-symbol-title">Symbole auswählen</div>
+                <div class="symbol-list" id="symbolList"></div>
+                <div class="ib-btn-group">
+                    <button class="ib-btn" id="selectAll">Alle auswählen</button>
+                    <button class="ib-btn ib-btn-secondary" id="deselectAll">Alle abwählen</button>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="ib-chart-card">
+                <h3 class="ib-chart-title">Fehler nach Tageszeit (Chicago Time)</h3>
+                <div class="chart-wrapper"><canvas id="timeChart"></canvas></div>
+            </div>
+
+            <div class="ib-chart-card">
+                <h3 class="ib-chart-title">Fehler nach Wochentag</h3>
+                <div class="chart-wrapper"><canvas id="weekdayChart"></canvas></div>
+            </div>
+
+            <div class="ib-chart-card">
+                <div class="heatmap-header">
+                    <h3 class="ib-chart-title" style="margin:0">Jahresübersicht</h3>
+                    <select id="yearSelect"></select>
+                </div>
+                <div class="heatmap-container"><div class="heatmap" id="heatmap"></div></div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#fff"></div>0</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#cce5ff"></div>1-2</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#66b3ff"></div>3-5</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#0066cc"></div>6-10</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#e74c3c"></div>10+</div>
+                </div>
+            </div>
+
+            <div class="ib-footer-info" id="footerText">Lade Daten...</div>
+
+        </main>
+    </div>
+
+    <script src="../../shared/js/common.js"></script>
+    <script src="../../shared/js/nav.js" data-active="datenanalysen"></script>
+    <script>
+        const DATA_URL = './download_analyse.json';
+
+        const weekdays = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+        const months = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+        const allTimes = Array.from({length:48}, (_,i) => `${String(Math.floor(i/2)).padStart(2,'0')}:${i%2===0?'00':'30'}`);
+
+        let rawData = [];
+        let config = {};
+        let activeSymbols = new Set();
+        let timeChart, weekdayChart;
+
+        async function loadData() {
+            try {
+                const json = await loadJSONData(DATA_URL);
+                rawData = json.events;
+                config = json.config;
+                activeSymbols = new Set(config.symbols);
+                initializeUI(json.meta, json.config);
+                updateAll();
+            } catch (error) {
+                console.error("Fehler beim Laden der Daten:", error);
+                const footerEl = document.getElementById('footerText');
+                if (footerEl) {
+                    footerEl.innerHTML = '<span style="color:var(--color-negative)">Fehler: Daten konnten nicht geladen werden. (' + DATA_URL + ')</span>';
+                }
+            }
+        }
+
+        function initializeUI(meta, conf) {
+            document.getElementById('footerText').innerText = 'Quelle: ' + meta.source_file + ' · Generiert: ' + meta.generated_at;
+
+            const fromInput = document.getElementById('fromDate');
+            const toInput = document.getElementById('toDate');
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            fromInput.value = conf.min_date;
+            toInput.value = todayStr;
+            fromInput.min = conf.min_date;
+            fromInput.max = todayStr;
+            toInput.min = conf.min_date;
+            toInput.max = todayStr;
+
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = new Date().getFullYear();
+            conf.years.forEach(function(y) {
+                const option = document.createElement('option');
+                option.value = y;
+                option.text = y;
+                if (y === currentYear || y === conf.years[conf.years.length - 1]) option.selected = true;
+                yearSelect.appendChild(option);
+            });
+
+            const symbolList = document.getElementById('symbolList');
+            let addedDivider = false;
+            conf.symbols.forEach(function(s) {
+                if (!conf.priority.includes(s) && !addedDivider) {
+                    const divider = document.createElement('div');
+                    divider.className = 'symbol-divider';
+                    symbolList.appendChild(divider);
+                    addedDivider = true;
+                }
+                const btn = document.createElement('button');
+                btn.className = 'symbol-btn' + (conf.priority.includes(s) ? ' priority' : '');
+                btn.textContent = s;
+                btn.style.borderColor = conf.colors[s];
+                btn.style.color = conf.colors[s];
+                btn.dataset.symbol = s;
+                btn.onclick = function() { toggleSymbol(s, btn); };
+                symbolList.appendChild(btn);
+            });
+
+            initCharts();
+        }
+
+        function toggleSymbol(symbol, btn) {
+            if (activeSymbols.has(symbol)) {
+                activeSymbols.delete(symbol);
+                btn.classList.add('inactive');
+            } else {
+                activeSymbols.add(symbol);
+                btn.classList.remove('inactive');
+            }
+            updateAll();
+        }
+
+        document.getElementById('selectAll').onclick = function() {
+            activeSymbols = new Set(config.symbols);
+            document.querySelectorAll('.symbol-btn').forEach(function(b) { b.classList.remove('inactive'); });
+            updateAll();
+        };
+
+        document.getElementById('deselectAll').onclick = function() {
+            activeSymbols.clear();
+            document.querySelectorAll('.symbol-btn').forEach(function(b) { b.classList.add('inactive'); });
+            updateAll();
+        };
+
+        document.getElementById('fromDate').onchange = updateAll;
+        document.getElementById('toDate').onchange = updateAll;
+        document.getElementById('yearSelect').onchange = function() { updateHeatmap(getFilteredData()); };
+
+        function getFilteredData() {
+            const from = document.getElementById('fromDate').value;
+            const to = document.getElementById('toDate').value;
+            return rawData.filter(function(e) {
+                return activeSymbols.has(e.symbol) && e.date >= from && e.date <= to;
+            });
+        }
+
+        function updateAll() {
+            if (!rawData || rawData.length === 0) return;
+            const filtered = getFilteredData();
+            const from = document.getElementById('fromDate').value;
+            const to = document.getElementById('toDate').value;
+
+            document.getElementById('statTotal').textContent = filtered.length;
+            document.getElementById('statSymbols').textContent = activeSymbols.size;
+            document.getElementById('statDays').textContent = new Set(filtered.map(function(e) { return e.date; })).size;
+            document.getElementById('statRange').textContent = from + ' – ' + to;
+
+            updateTimeChart(filtered);
+            updateWeekdayChart(filtered);
+            updateHeatmap(filtered);
+        }
+
+        function initCharts() {
+            var chartOpts = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {display: false},
+                    tooltip: {mode:'index', intersect:false}
+                },
+                scales: {
+                    x: {stacked:true, grid:{color:'rgba(0,0,0,0.05)'}, ticks:{color:'var(--color-text-muted)', maxRotation:90, minRotation:45}},
+                    y: {stacked:true, grid:{color:'rgba(0,0,0,0.05)'}, ticks:{color:'var(--color-text-muted)', stepSize:1}}
+                }
+            };
+
+            timeChart = new Chart(document.getElementById('timeChart'), {
+                type: 'bar', data: {labels: allTimes, datasets: []}, options: chartOpts
+            });
+
+            weekdayChart = new Chart(document.getElementById('weekdayChart'), {
+                type: 'bar', data: {labels: weekdays, datasets: []}, options: chartOpts
+            });
+        }
+
+        function updateTimeChart(filtered) {
+            timeChart.data.datasets = config.symbols.filter(function(s) { return activeSymbols.has(s); }).map(function(symbol) {
+                var counts = {};
+                filtered.filter(function(e) { return e.symbol === symbol; }).forEach(function(e) { counts[e.time] = (counts[e.time]||0) + 1; });
+                return { label: symbol, data: allTimes.map(function(t) { return counts[t] || 0; }), backgroundColor: config.colors[symbol] };
+            });
+            timeChart.update();
+        }
+
+        function updateWeekdayChart(filtered) {
+            weekdayChart.data.datasets = config.symbols.filter(function(s) { return activeSymbols.has(s); }).map(function(symbol) {
+                var counts = [0,0,0,0,0,0,0];
+                filtered.filter(function(e) { return e.symbol === symbol; }).forEach(function(e) { counts[e.weekday]++; });
+                return { label: symbol, data: counts, backgroundColor: config.colors[symbol] };
+            });
+            weekdayChart.update();
+        }
+
+        function updateHeatmap(filtered) {
+            var selectedYear = parseInt(document.getElementById('yearSelect').value);
+            var heatmap = document.getElementById('heatmap');
+            var counts = {};
+            filtered.filter(function(e) { return e.year === selectedYear; }).forEach(function(e) { counts[e.date] = (counts[e.date]||0) + 1; });
+
+            heatmap.innerHTML = '<div></div>' + months.map(function(m) { return '<div class="heatmap-month">' + m + '</div>'; }).join('');
+
+            for (var day = 0; day < 31; day++) {
+                heatmap.innerHTML += '<div class="heatmap-row-label">' + (day + 1) + '</div>';
+                for (var month = 0; month < 12; month++) {
+                    var dateStr = selectedYear + '-' + String(month+1).padStart(2,'0') + '-' + String(day+1).padStart(2,'0');
+                    var v = counts[dateStr] || 0;
+                    var bg = '#fff', textColor = '#999';
+                    if (v > 0) {
+                        textColor = v > 5 ? '#fff' : '#333';
+                        if (v <= 2) bg = '#cce5ff';
+                        else if (v <= 5) bg = '#66b3ff';
+                        else if (v <= 10) bg = '#0066cc';
+                        else bg = '#e74c3c';
+                    }
+                    var title = v > 0 ? dateStr + ': ' + v + ' Fehler' : dateStr;
+                    heatmap.innerHTML += '<div class="heatmap-cell" style="background:' + bg + ';color:' + textColor + '" title="' + title + '">' + (v||'') + '</div>';
+                }
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

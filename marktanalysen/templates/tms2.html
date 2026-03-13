@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TMS2-Analyse: True Money Supply, Geldmengenentwicklung, Velocity-Adjustierung, S&amp;P 500 Performance">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%2316a34a' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>TMS2-Analyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Geldmenge</label>
+                <div class="toggle-group" id="moneyToggle">
+                    <button class="toggle-btn active" onclick="switchMoney('tms2', this)">TMS2</button>
+                    <button class="toggle-btn" onclick="switchMoney('m2', this)">M2</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnTrend" onclick="toggleOption('trend', this)">Trend</button>
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                    <button class="toggle-btn active" id="btnSpx" onclick="toggleOption('spx', this)">S&amp;P 500</button>
+                    <button class="toggle-btn active" id="btnDrawdowns" onclick="toggleOption('drawdowns', this)">Drawdowns</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div id="statRealLabel" style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">TMS2 Real (Mrd. USD)</div>
+                    <div id="statReal" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">in 1982&ndash;84 Dollar</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Ver&auml;nderung YoY</div>
+                    <div id="statYoY" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Jahresver&auml;nderung</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Abweichung vom Trend</div>
+                    <div id="statDev" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">vs. Exponential-Trend</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div id="statNomLabel" style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">TMS2 Nominal (Mrd. USD)</div>
+                    <div id="statNom" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">aktuelle Geldmenge</div>
+                </div>
+            </div>
+
+            <!-- Chart 1: Real TMS2 + Exponential Trend -->
+            <div class="chart-container">
+                <h3 class="section-title" id="titleRealChart">Inflationsbereinigtes TMS2 (Real, logarithmisch)</h3>
+                <p id="descRealChart" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    True Money Supply in konstanten 1982&ndash;84 US-Dollar mit exponentiellem Wachstumstrend
+                </p>
+                <div style="display:flex;gap:8px;margin-bottom:10px;">
+                    <button class="toggle-btn active" id="btnVelOn" onclick="switchVelMode(true, this)">Velocity-bereinigt</button>
+                    <button class="toggle-btn" id="btnVelOff" onclick="switchVelMode(false, this)">Ohne Velocity</button>
+                </div>
+                <div id="realChart"></div>
+            </div>
+
+            <!-- Chart 2: Deviation from Trend -->
+            <div class="chart-container">
+                <h3 class="section-title" id="titleDevChart">Abweichung vom exponentiellen Trend (%)</h3>
+                <p id="descDevChart" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Prozentualer Abstand des realen TMS2 vom langfristigen Wachstumstrend
+                </p>
+                <div id="deviationChart"></div>
+            </div>
+
+            <!-- Chart 3: Component Breakdown -->
+            <div class="chart-container" id="componentSection">
+                <h3 class="section-title">TMS2-Komponentenaufteilung (ab 1970)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Aufschl&uuml;sselung der True Money Supply nach Geldmengenkomponenten
+                </p>
+                <div style="display:flex;gap:8px;margin-bottom:10px;">
+                    <button class="toggle-btn" id="btnCompLevel" onclick="switchCompMode('level', this)">Niveau (Bio. USD)</button>
+                    <button class="toggle-btn active" id="btnCompPct" onclick="switchCompMode('pct', this)">Anteil (%)</button>
+                </div>
+                <div id="componentChart"></div>
+            </div>
+
+            <!-- ====== PERFORMANCE-ANALYSE (6-Panel) ====== -->
+            <div class="chart-container" style="border-left:3px solid #16a34a;margin-top:30px;">
+                <h3 class="section-title" id="titlePerfHeader" style="font-size:1.1em;">S&amp;P 500 Performance-Analyse basierend auf TMS2-MA3 Signal (ohne Data Leakage)</h3>
+                <p id="descPerfHeader" style="color:var(--color-text-muted);font-size:0.85em;">
+                    Velocity-bereinigtes TMS2 (Real) mit 3-Monats Moving Average.
+                    Signal in Monat t &rarr; Trading in Monat t+1. Long S&amp;P 500 wenn TMS2-MA3 steigt, Cash wenn fallend.
+                </p>
+            </div>
+
+            <!-- Panel 1: TMS2-MA mit Signal-Hintergrund -->
+            <div class="chart-container">
+                <h3 class="section-title" id="titleMaChart">Velocity-bereinigtes TMS2 Real mit 3-Monats Moving Average</h3>
+                <div id="tms2MaChart"></div>
+            </div>
+
+            <!-- Panel 2: Renditeverteilung (Histogramm) -->
+            <div class="chart-container">
+                <h3 class="section-title" id="titleHistChart">Verteilung der S&amp;P 500 Renditen nach TMS2-MA3 Signal</h3>
+                <div id="histogramChart"></div>
+            </div>
+
+            <!-- Panel 3: Drawdown-Verlauf -->
+            <div class="chart-container">
+                <h3 class="section-title" id="titleDdChart">Drawdown-Verlauf: Buy-and-Hold vs. TMS2-Timing</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Buy-and-Hold Drawdowns (rot) mit hellroten Markierungen f&uuml;r Drawdowns &gt;20% (Peak bis Trough)
+                </p>
+                <div id="drawdownChart"></div>
+            </div>
+
+            <!-- Performance Stats Table -->
+            <div class="chart-container">
+                <h3 class="section-title">Performance-Statistiken</h3>
+                <div style="overflow-x:auto;">
+                    <table class="data-table" id="perfTable" style="width:100%;font-size:13px;">
+                        <thead>
+                            <tr>
+                                <th>Strategie</th>
+                                <th>Rendite p.a.</th>
+                                <th>Varianz p.a.</th>
+                                <th>Kelly f*</th>
+                                <th>Max DD</th>
+                                <th>Exposure %</th>
+                                <th>Rendite p.a. (adj.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="perfTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>TMS2 (True Money Supply)</strong> = Currency in Circulation + Demand Deposits + Other Checkable Deposits + Savings Deposits
+                    (ab Mai 2020: + Other Liquid Deposits statt OCD + Savings, da FRED-Umstellung).
+                    Die inflationsbereinigte Variante wird mit dem CPI (1982&ndash;84 = 100) deflationiert.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Exponentieller Trend</strong>: Log-lineare Regression &uuml;ber die gesamte Zeitreihe.
+                    Die Abweichung zeigt, ob die aktuelle Geldmenge &uuml;ber oder unter dem langfristigen Wachstumspfad liegt.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Velocity-Adjustierung</strong>: TMS2 Real &times; (M2V / M2V<sub>ref</sub>).
+                    Ber&uuml;cksichtigt, dass dieselbe Geldmenge bei h&ouml;herer Umlaufgeschwindigkeit mehr Nachfrage erzeugt.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>TMS2-Timing-Strategie</strong>: Long S&amp;P 500 wenn der 3-Monats-MA des velocity-bereinigten realen TMS2 steigt,
+                    Cash wenn er f&auml;llt. Signal mit 1 Monat Verz&ouml;gerung (kein Data Leakage).
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (CURRSL, DEMDEPSL, MDLM, OCDSL, SAVINGS, CPIAUCSL, USREC, M2V),
+                    Yahoo Finance (^GSPC). Monatliche Frequenz.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">TMS2-Analyse &middot; Daten: FRED, Yahoo Finance</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var tmsData = __TMS2_DATA__;
+
+    if (!tmsData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_tms2.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 70, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showTrend = true;
+    var showNber = true;
+    var showSpx = true;
+    var showDrawdowns = true;
+    var compMode = 'pct';
+    var velMode = true; // true = velocity-bereinigt, false = nur real
+    var moneyMode = 'tms2'; // 'tms2' oder 'm2'
+
+    // Gibt normalisierte Daten je nach moneyMode zurueck
+    function getMD() {
+        if (moneyMode === 'm2' && tmsData.m2) {
+            var m = tmsData.m2;
+            return {
+                dates: m.dates, real: m.m2_real, nominal: m.m2_nominal,
+                exp_trend: m.exp_trend, deviation_pct: m.deviation_pct, cagr: m.cagr,
+                vel_adj_dates: m.vel_adj_dates, vel_adj_real: m.vel_adj_real,
+                vel_adj_trend: m.vel_adj_trend, vel_adj_deviation: m.vel_adj_deviation,
+                performance: m.performance, yoy_change: m.yoy_change,
+                spx_values: m.spx_values,
+                cur_real: m.current.m2_real, cur_nominal: m.current.m2_nominal,
+                cur_deviation: m.current.deviation_pct, cur_yoy: m.current.yoy_change,
+                cur_date: m.current.date, label: 'M2'
+            };
+        }
+        return {
+            dates: tmsData.dates, real: tmsData.tms2_real, nominal: tmsData.tms2_nominal,
+            exp_trend: tmsData.exp_trend, deviation_pct: tmsData.deviation_pct, cagr: tmsData.cagr,
+            vel_adj_dates: tmsData.vel_adj_dates, vel_adj_real: tmsData.vel_adj_real,
+            vel_adj_trend: tmsData.vel_adj_trend, vel_adj_deviation: tmsData.vel_adj_deviation,
+            performance: tmsData.performance, yoy_change: tmsData.yoy_change,
+            spx_values: tmsData.spx.values,
+            cur_real: tmsData.current.tms2_real, cur_nominal: tmsData.current.tms2_nominal,
+            cur_deviation: tmsData.current.deviation_pct, cur_yoy: tmsData.current.yoy_change,
+            cur_date: tmsData.current.date, label: 'TMS2'
+        };
+    }
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr.slice(range.start, range.end);
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !tmsData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        tmsData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function drawdownShapes(dates, range) {
+        if (!showDrawdowns || !tmsData.spx.dd_events) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        tmsData.spx.dd_events.forEach(function(ev) {
+            if (ev.trough_date < d0 || ev.peak_date > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: ev.peak_date < d0 ? d0 : ev.peak_date, x1: ev.trough_date > d1 ? d1 : ev.trough_date,
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(220,38,38,0.12)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    var spxAxis = {
+        title: 'S&P 500 (log)',
+        type: 'log',
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        tickformat: ',.0f',
+        titlefont: { color: 'rgba(26,46,74,0.5)', size: 11 },
+        tickfont: { color: 'rgba(26,46,74,0.5)', size: 10 }
+    };
+
+    function addSpxTrace(traces, dates, range) {
+        var spxVals = getMD().spx_values;
+        if (!showSpx || !spxVals) return;
+        traces.push({
+            x: sl(dates, range),
+            y: sl(spxVals, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: 'rgba(26,46,74,0.3)', width: 1 },
+            name: 'S&P 500',
+            yaxis: 'y2',
+            connectgaps: true,
+            hovertemplate: 'S&P 500: %{y:,.0f}<extra></extra>'
+        });
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'trend') { showTrend = !showTrend; }
+        else if (option === 'nber') { showNber = !showNber; }
+        else if (option === 'spx') { showSpx = !showSpx; }
+        else if (option === 'drawdowns') { showDrawdowns = !showDrawdowns; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    function switchVelMode(mode, btn) {
+        velMode = mode;
+        document.getElementById('btnVelOn').classList.toggle('active', mode === true);
+        document.getElementById('btnVelOff').classList.toggle('active', mode === false);
+        updateRealChart();
+        updateDeviationChart();
+    }
+
+    function switchCompMode(mode, btn) {
+        compMode = mode;
+        document.getElementById('btnCompLevel').classList.toggle('active', mode === 'level');
+        document.getElementById('btnCompPct').classList.toggle('active', mode === 'pct');
+        updateComponentChart();
+    }
+
+    function switchMoney(mode, btn) {
+        moneyMode = mode;
+        document.getElementById('moneyToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART 1: Real TMS2 + Exponential Trend (mit Velocity-Toggle)
+    // ============================================================
+    function updateRealChart() {
+        var md = getMD();
+        var useDates = velMode ? md.vel_adj_dates : md.dates;
+        var useValues = velMode ? md.vel_adj_real : md.real;
+        var useTrend = velMode ? md.vel_adj_trend : md.exp_trend;
+        var lbl = md.label;
+
+        var range = getFilteredRange(useDates);
+        var dates = sl(useDates, range);
+        var traces = [];
+
+        traces.push({
+            x: dates,
+            y: sl(useValues, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: '#2598C3', width: 2 },
+            name: velMode ? lbl + ' Real (vel.-adj.)' : lbl + ' Real',
+            hovertemplate: (velMode ? lbl + ' Vel.-adj.: ' : lbl + ' Real: ') + '%{y:,.0f}<extra></extra>'
+        });
+
+        if (showTrend && useTrend) {
+            traces.push({
+                x: dates,
+                y: sl(useTrend, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 1.5, dash: 'dash' },
+                name: 'Exp. Trend (CAGR: ' + md.cagr + '% p.a.)',
+                hovertemplate: 'Trend: %{y:,.0f}<extra></extra>'
+            });
+        }
+
+        addSpxTrace(traces, useDates, range);
+
+        var shapes = nberShapes(useDates, range).concat(drawdownShapes(useDates, range));
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: velMode ? lbl + ' Vel.-adj. (Mrd. USD)' : lbl + ' Real (Mrd. USD, 1982-84)', type: 'log', showgrid: true, gridcolor: '#E8E8E8', tickformat: ',.0f' },
+            yaxis2: showSpx ? spxAxis : undefined,
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: showSpx ? 70 : 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('realChart', traces, layout, plotlyConfig);
+        baseShapeCount.realChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 2: Deviation from Trend (respects velocity mode)
+    // ============================================================
+    function updateDeviationChart() {
+        var md = getMD();
+        var useDates = velMode ? md.vel_adj_dates : md.dates;
+        var useDev = velMode ? md.vel_adj_deviation : md.deviation_pct;
+
+        var range = getFilteredRange(useDates);
+        var dates = sl(useDates, range);
+        var dev = sl(useDev, range);
+
+        var colors = dev.map(function(v) { return v != null ? (v >= 0 ? 'rgba(37,152,195,0.6)' : 'rgba(220,38,38,0.6)') : 'rgba(128,128,128,0.3)'; });
+
+        var traces = [{
+            x: dates, y: dev,
+            type: 'bar',
+            marker: { color: colors },
+            name: velMode ? 'Vel.-adj. Abweichung' : 'Abweichung',
+            hovertemplate: '%{y:+.1f}%<extra></extra>'
+        }];
+
+        addSpxTrace(traces, useDates, range);
+
+        var shapes = nberShapes(useDates, range).concat(drawdownShapes(useDates, range));
+        shapes.push({
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: velMode ? 'Vel.-adj. Abweichung (%)' : 'Abweichung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            yaxis2: showSpx ? spxAxis : undefined,
+            height: 280,
+            showlegend: false,
+            margin: { l: 70, r: showSpx ? 70 : 30, t: 10, b: 5 },
+            shapes: shapes,
+            bargap: 0
+        });
+
+        Plotly.newPlot('deviationChart', traces, layout, plotlyConfig);
+        baseShapeCount.deviationChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 3: Component Breakdown
+    // ============================================================
+    function updateComponentChart() {
+        var comp = tmsData.components;
+        var range = getFilteredRange(comp.dates);
+        var dates = sl(comp.dates, range);
+        var dataSource = compMode === 'level' ? comp.data : comp.pct;
+        var traces = [];
+
+        comp.order.forEach(function(sid) {
+            traces.push({
+                x: dates,
+                y: sl(dataSource[sid], range),
+                type: 'scatter',
+                mode: 'lines',
+                stackgroup: 'one',
+                groupnorm: compMode === 'pct' ? 'percent' : '',
+                line: { width: 0 },
+                fillcolor: comp.colors[sid],
+                name: comp.labels[sid],
+                hovertemplate: comp.labels[sid] + ': %{y:,.1f}' + (compMode === 'level' ? ' Bio.' : '%') + '<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(comp.dates, range);
+
+        var yTitle = compMode === 'level' ? 'TMS2 (Bio. USD, nominal)' : 'Anteil (%)';
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: yTitle, showgrid: true, gridcolor: '#E8E8E8', tickformat: compMode === 'level' ? ',.1f' : ',.0f' },
+            height: 350,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('componentChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  Helper: Signal-Hintergrund Shapes
+    // ============================================================
+    function signalShapes(dates, signal) {
+        var shapes = [];
+        var prevSig = signal[0];
+        var segStart = dates[0];
+        for (var i = 1; i <= dates.length; i++) {
+            var sig = i < dates.length ? signal[i] : !prevSig;
+            if (sig !== prevSig || i === dates.length) {
+                shapes.push({
+                    type: 'rect', xref: 'x', yref: 'paper',
+                    x0: segStart, x1: dates[Math.min(i, dates.length - 1)],
+                    y0: 0, y1: 1,
+                    fillcolor: prevSig ? 'rgba(22,163,74,0.1)' : 'rgba(220,38,38,0.1)',
+                    line: { width: 0 }, layer: 'below'
+                });
+                segStart = dates[i < dates.length ? i : i - 1];
+                prevSig = sig;
+            }
+        }
+        return shapes;
+    }
+
+    // ============================================================
+    //  PANEL 1: TMS2-MA Zeitreihe mit Signal-Hintergrund
+    // ============================================================
+    function updateTms2MaChart() {
+        var md = getMD();
+        var perf = md.performance;
+        var dates = perf.dates;
+        var shapes = signalShapes(dates, perf.signal);
+        var lbl = md.label;
+
+        var traces = [{
+            x: dates, y: perf.tms2_ma,
+            type: 'scatter', mode: 'lines',
+            line: { color: '#4682B4', width: 1.5 },
+            name: lbl + '-MA' + perf.ma_window,
+            hovertemplate: lbl + '-MA: %{y:,.0f}<extra></extra>'
+        }];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Wert (Mrd. USD)', type: 'log', showgrid: true, gridcolor: '#E8E8E8', tickformat: ',.0f' },
+            height: 300,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0, xanchor: 'left' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('tms2MaChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  PANEL 2: Renditeverteilung (Histogramm)
+    // ============================================================
+    function updateHistogramChart() {
+        var md = getMD();
+        var perf = md.performance;
+        var lbl = md.label;
+
+        var traces = [
+            {
+                x: perf.returns_up, type: 'histogram',
+                marker: { color: 'rgba(22,163,74,0.5)', line: { color: 'rgba(22,163,74,0.8)', width: 1 } },
+                name: lbl + '-MA steigt (n=' + perf.rising_months + ')',
+                xbins: { start: -20, end: 20, size: 1 },
+                histnorm: 'probability density',
+                opacity: 0.6
+            },
+            {
+                x: perf.returns_down, type: 'histogram',
+                marker: { color: 'rgba(220,38,38,0.5)', line: { color: 'rgba(220,38,38,0.8)', width: 1 } },
+                name: lbl + '-MA f\u00e4llt (n=' + perf.falling_months + ')',
+                xbins: { start: -20, end: 20, size: 1 },
+                histnorm: 'probability density',
+                opacity: 0.6
+            }
+        ];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { title: 'Monatliche S&P 500 Rendite (%)', showgrid: true, gridcolor: '#E8E8E8', range: [-18, 18] },
+            yaxis: { title: 'Dichte', showgrid: true, gridcolor: '#E8E8E8' },
+            barmode: 'overlay',
+            height: 300,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 60, r: 30, t: 30, b: 50 },
+            shapes: [{
+                type: 'line', xref: 'x', yref: 'paper',
+                x0: 0, x1: 0, y0: 0, y1: 1,
+                line: { color: '#333', width: 1 }
+            }]
+        });
+
+        Plotly.newPlot('histogramChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  PANEL 3: Drawdown-Verlauf (nur Buy & Hold, leichtes Rot)
+    // ============================================================
+    function updateDrawdownChart() {
+        var md = getMD();
+        var perf = md.performance;
+        var lbl = md.label;
+        var dates = perf.dates;
+
+        var traces = [
+            {
+                x: dates, y: perf.drawdown_bh,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#999', width: 1.5 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(160,160,160,0.15)',
+                name: 'S&P 500 Buy-and-Hold',
+                hovertemplate: 'B&H DD: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: dates, y: perf.drawdown_timing,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 1.5 },
+                name: lbl + '-Timing',
+                hovertemplate: 'Timing DD: %{y:.1f}%<extra></extra>'
+            }
+        ];
+
+        // Hellrote Rechtecke fuer Drawdown-Perioden (Peak bis Trough, >20%)
+        var shapes = [];
+
+        perf.dd_events_bh.forEach(function(ev) {
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: ev.peak_date, x1: ev.trough_date,
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(220,38,38,0.12)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+
+        shapes.push({
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1 }
+        });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Drawdown (%)', showgrid: true, gridcolor: '#E8E8E8', range: [-100, 0] },
+            height: 350,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('drawdownChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  PERFORMANCE TABLE
+    // ============================================================
+    function updatePerfTable() {
+        var perf = getMD().performance;
+        var rows = [perf.stats_rising, perf.stats_falling, perf.stats_bh, perf.stats_timing];
+        var colors = ['#16a34a', '#dc2626', '#1A2E4A', '#F79645'];
+        var tbody = document.getElementById('perfTableBody');
+        var html = '';
+        function fv(v) { return v != null ? v.toFixed(2) : '--'; }
+        rows.forEach(function(s, i) {
+            if (!s || s.n_months === 0) return;
+            html += '<tr>';
+            html += '<td style="font-weight:600;color:' + colors[i] + ';">' + s.label + '</td>';
+            html += '<td style="color:' + (s.ret_pa >= 0 ? '#16a34a' : '#dc2626') + ';font-weight:600;">' + (s.ret_pa >= 0 ? '+' : '') + fv(s.ret_pa) + '%</td>';
+            html += '<td>' + fv(s.var_pa) + '%&sup2;</td>';
+            html += '<td>' + fv(s.kelly) + '</td>';
+            html += '<td style="color:#dc2626;">-' + s.max_drawdown + '%</td>';
+            html += '<td>' + (s.exposure != null ? s.exposure.toFixed(1) : '--') + '%</td>';
+            html += '<td style="font-weight:600;color:' + (s.ret_pa_adj != null && s.ret_pa_adj >= 0 ? '#16a34a' : '#dc2626') + ';">' + fv(s.ret_pa_adj) + '%</td>';
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        var md = getMD();
+        var lbl = md.label;
+
+        document.getElementById('statRealLabel').textContent = lbl + ' Real (Mrd. USD)';
+        document.getElementById('statReal').textContent = md.cur_real != null ? md.cur_real.toLocaleString('de-DE', {maximumFractionDigits: 0}) : '--';
+
+        var yoyEl = document.getElementById('statYoY');
+        if (md.cur_yoy != null) {
+            yoyEl.textContent = (md.cur_yoy >= 0 ? '+' : '') + md.cur_yoy.toFixed(1) + '%';
+            yoyEl.style.color = md.cur_yoy >= 0 ? '#16a34a' : '#dc2626';
+        }
+
+        var devEl = document.getElementById('statDev');
+        if (md.cur_deviation != null) {
+            devEl.textContent = (md.cur_deviation >= 0 ? '+' : '') + md.cur_deviation.toFixed(1) + '%';
+            devEl.style.color = md.cur_deviation >= 0 ? '#2598C3' : '#dc2626';
+        }
+
+        document.getElementById('statNomLabel').textContent = lbl + ' Nominal (Mrd. USD)';
+        document.getElementById('statNom').textContent = md.cur_nominal != null ? md.cur_nominal.toLocaleString('de-DE', {maximumFractionDigits: 0}) : '--';
+
+        document.getElementById('currentInfo').innerHTML =
+            lbl + ' Real: <strong>' + (md.cur_real != null ? md.cur_real.toLocaleString('de-DE', {maximumFractionDigits: 0}) : '--') + '</strong> &middot; ' +
+            'Abweichung: ' + (md.cur_deviation != null ? (md.cur_deviation >= 0 ? '+' : '') + md.cur_deviation.toFixed(1) + '%' : '--') + ' &middot; ' +
+            'Stand: ' + md.cur_date;
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR
+    // ============================================================
+    var chartIds = ['realChart', 'deviationChart'];
+    var baseShapeCount = { realChart: 0, deviationChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateTitles() {
+        var lbl = moneyMode === 'm2' ? 'M2' : 'TMS2';
+        var desc = moneyMode === 'm2' ? 'M2 Money Stock' : 'True Money Supply';
+        document.getElementById('titleRealChart').textContent = 'Inflationsbereinigtes ' + lbl + ' (Real, logarithmisch)';
+        document.getElementById('descRealChart').innerHTML = desc + ' in konstanten 1982&ndash;84 US-Dollar mit exponentiellem Wachstumstrend';
+        document.getElementById('titleDevChart').textContent = 'Abweichung vom exponentiellen Trend (%)';
+        document.getElementById('descDevChart').textContent = 'Prozentualer Abstand des realen ' + lbl + ' vom langfristigen Wachstumstrend';
+        document.getElementById('titlePerfHeader').innerHTML = 'S&P 500 Performance-Analyse basierend auf ' + lbl + '-MA3 Signal (ohne Data Leakage)';
+        document.getElementById('descPerfHeader').innerHTML = 'Velocity-bereinigtes ' + lbl + ' (Real) mit 3-Monats Moving Average. Signal in Monat t &rarr; Trading in Monat t+1. Long S&P 500 wenn ' + lbl + '-MA3 steigt, Cash wenn fallend.';
+        document.getElementById('titleMaChart').textContent = 'Velocity-bereinigtes ' + lbl + ' Real mit 3-Monats Moving Average';
+        document.getElementById('titleHistChart').innerHTML = 'Verteilung der S&P 500 Renditen nach ' + lbl + '-MA3 Signal';
+        document.getElementById('titleDdChart').textContent = 'Drawdown-Verlauf: Buy-and-Hold vs. ' + lbl + '-Timing';
+        // Komponentenchart nur bei TMS2 zeigen
+        document.getElementById('componentSection').style.display = moneyMode === 'm2' ? 'none' : '';
+    }
+
+    function updateAll() {
+        if (!tmsData) return;
+        updateTitles();
+        updateStats();
+        updateRealChart();
+        updateDeviationChart();
+        if (moneyMode !== 'm2') updateComponentChart();
+        updateTms2MaChart();
+        updateHistogramChart();
+        updateDrawdownChart();
+        updatePerfTable();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

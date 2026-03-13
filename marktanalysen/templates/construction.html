@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bausektoranalyse: Building Permits, Units Under Construction, Homebuilder Profit Margins, Residential Employment, Remodelers">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Bausektor | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Building Permits</div>
+                    <div id="statPermit" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">SAAR (Tsd.)</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Under Construction</div>
+                    <div id="statUndConst" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">SAAR (Tsd.)</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Res. Employment</div>
+                    <div id="statResEmp" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Tsd. Besch&auml;ftigte</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Remodelers-Anteil</div>
+                    <div id="statRemodeler" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">% der Res. Besch.</div>
+                </div>
+            </div>
+
+            <!-- Erklaerungstext -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Warum der Bausektor?</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    Der Wohnungsbau und die damit verbundene Besch&auml;ftigung sind deshalb so aussagekr&auml;ftig,
+                    weil dieser Sektor extrem zinssensitiv ist. Ver&auml;nderungen treten hier zuerst auf, bevor sie
+                    andere Sektoren erfassen. Bestellungen gehen der Produktion voraus, Produktion geht dem Umsatz
+                    voraus, und Umsatzver&auml;nderungen beeinflussen Personalentscheidungen. Bis sich dieser Prozess
+                    vollst&auml;ndig durchzieht, kann es lange dauern.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    F&uuml;hrende Indikatoren <strong>verursachen</strong> jedoch keine Rezession &ndash; sie messen
+                    den Anfang einer Sequenz, die, wenn sie vollst&auml;ndig durchlaufen wird, eine Rezession erzeugen
+                    <strong>kann</strong>. Zudem erfassen sie nur einen Teil der gesamten wirtschaftlichen Aktivit&auml;t.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    Die Kausalkette verl&auml;uft wie folgt:
+                </p>
+                <p style="color:var(--color-text-primary);font-size:0.9em;line-height:1.6;font-weight:500;">
+                    Building Permits &rarr; Housing Units under Construction &rarr; Residential Employment &rarr;
+                    Broader Labor Market &rarr; Consumer Spending &rarr; Recession Risks
+                </p>
+            </div>
+
+            <!-- Chart 1: Building Permits (Level + YoY) -->
+            <div class="chart-container">
+                <h3 class="section-title">Building Permits (SAAR, Tsd.)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Neue Baugenehmigungen f&uuml;r private Wohneinheiten (PERMIT) &ndash; saisonbereinigt, annualisiert
+                </p>
+                <div id="permitChart"></div>
+            </div>
+
+            <!-- Chart 2: Housing Units Under Construction -->
+            <div class="chart-container">
+                <h3 class="section-title">Housing Units Under Construction (SAAR, Tsd.)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Wohneinheiten im Bau (UNDCONTSA) &ndash; saisonbereinigt, annualisiert
+                </p>
+                <div id="undconstChart"></div>
+            </div>
+
+            <!-- Chart 3: Homebuilder Profit Margin -->
+            <div class="chart-container">
+                <h3 class="section-title">Aggregated Homebuilder Operating Margin (TTM)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Umsatzgewichteter Durchschnitt der Operating Margins (Trailing 12 Monate) der gr&ouml;ssten
+                    b&ouml;rsennotierten US-Homebuilder (DHI, LEN, PHM, NVR, TOL, KBH, MTH, MHO)
+                </p>
+                <div id="profitMarginChart"></div>
+            </div>
+
+            <!-- Chart 4: Residential Building Employment -->
+            <div class="chart-container">
+                <h3 class="section-title">Residential Building Employment (Tsd.)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Alle Besch&auml;ftigten im Wohnungsbau (CES2023600001)
+                </p>
+                <div id="resEmpChart"></div>
+            </div>
+
+            <!-- Chart 5: Remodelers % -->
+            <div class="chart-container">
+                <h3 class="section-title">Remodelers als % der Residential Building Employment</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Anteil der Renovierungsbesch&auml;ftigten an der gesamten Wohnungsbau-Besch&auml;ftigung &ndash;
+                    neue Baugenehmigungen haben weniger Einfluss auf die Besch&auml;ftigung als laufende Renovierungen
+                </p>
+                <div id="remodelerChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Building Permits</strong> (PERMIT) und <strong>Units Under Construction</strong> (UNDCONTSA)
+                    sind f&uuml;hrende Indikatoren f&uuml;r die Bauaktivit&auml;t und sp&auml;tere Besch&auml;ftigungstrends.
+                    <strong>Operating Margin</strong> wird als umsatzgewichteter Durchschnitt der TTM-Margen
+                    der gr&ouml;ssten b&ouml;rsennotierten US-Homebuilder berechnet (Quelle: Yahoo Finance).
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (PERMIT, UNDCONTSA, USREC), BLS API (CES2023600001, CES2023611801), Yahoo Finance (Homebuilder Financials).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Bausektor &middot; Daten: FRED, BLS API, Yahoo Finance</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var cData = __CONSTRUCTION_DATA__;
+
+    if (!cData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_construction.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr ? arr.slice(range.start, range.end) : [];
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !cData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        cData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART 1: Building Permits
+    // ============================================================
+    function updatePermitChart() {
+        var dates = cData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(cData.permit, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2.5 },
+                name: 'Building Permits (SAAR)',
+                hovertemplate: 'Permits: %{y:,.0f}k<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Tsd. Einheiten (SAAR)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('permitChart', traces, layout, plotlyConfig);
+        baseShapeCount.permitChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 2: Housing Units Under Construction
+    // ============================================================
+    function updateUndconstChart() {
+        var dates = cData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(cData.undconst, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2.5 },
+                name: 'Units Under Construction (SAAR)',
+                hovertemplate: 'Im Bau: %{y:,.0f}k<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Tsd. Einheiten (SAAR)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('undconstChart', traces, layout, plotlyConfig);
+        baseShapeCount.undconstChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 3: Homebuilder Profit Margin
+    // ============================================================
+    function updateProfitMarginChart() {
+        if (!cData.profit_margin) {
+            document.getElementById('profitMarginChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Profit-Margin-Daten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var dates = cData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(cData.profit_margin, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2.5 },
+                name: 'Operating Margin (TTM)',
+                hovertemplate: 'Op. Margin: %{y:.1f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Profitmarge (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('profitMarginChart', traces, layout, plotlyConfig);
+        baseShapeCount.profitMarginChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 4: Residential Building Employment
+    // ============================================================
+    function updateResEmpChart() {
+        var dates = cData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(cData.res_emp, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2.5 },
+                name: 'Residential Building Employment',
+                hovertemplate: '%{y:,.0f}k Besch.<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Tsd. Besch\u00e4ftigte', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('resEmpChart', traces, layout, plotlyConfig);
+        baseShapeCount.resEmpChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 5: Remodelers %
+    // ============================================================
+    function updateRemodelerChart() {
+        if (!cData.remodeler_pct) {
+            document.getElementById('remodelerChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Remodeler-Daten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var dates = cData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(cData.remodeler_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2.5 },
+                name: 'Remodelers (% of Res. Empl.)',
+                hovertemplate: 'Remodelers: %{y:.1f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: '% der Res. Besch\u00e4ftigung', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('remodelerChart', traces, layout, plotlyConfig);
+        baseShapeCount.remodelerChart = shapes.length;
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        if (!cData) return;
+        var c = cData.current;
+
+        if (c.permit != null) {
+            var el = document.getElementById('statPermit');
+            el.textContent = c.permit.toFixed(0) + 'k';
+            el.style.color = 'var(--color-text-primary)';
+        }
+        if (c.undconst != null) {
+            var el2 = document.getElementById('statUndConst');
+            el2.textContent = c.undconst.toFixed(0) + 'k';
+            el2.style.color = 'var(--color-text-primary)';
+        }
+        if (c.res_emp != null) {
+            var el3 = document.getElementById('statResEmp');
+            el3.textContent = c.res_emp.toFixed(0) + 'k';
+            el3.style.color = 'var(--color-text-primary)';
+        }
+        if (c.remodeler_pct != null) {
+            var el4 = document.getElementById('statRemodeler');
+            el4.textContent = c.remodeler_pct.toFixed(1) + '%';
+            el4.style.color = 'var(--color-text-primary)';
+        }
+
+        document.getElementById('currentInfo').innerHTML =
+            'Permits: <strong>' + (c.permit != null ? c.permit.toFixed(0) + 'k' : '--') + '</strong>' +
+            (c.permit_yoy != null ? ' (' + (c.permit_yoy >= 0 ? '+' : '') + c.permit_yoy.toFixed(1) + '% YoY)' : '') +
+            ' &middot; Res. Empl.: ' + (c.res_emp != null ? c.res_emp.toFixed(0) + 'k' : '--') +
+            ' &middot; Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR
+    // ============================================================
+    var chartIds = ['permitChart', 'undconstChart', 'profitMarginChart', 'resEmpChart', 'remodelerChart'];
+    var baseShapeCount = { permitChart: 0, undconstChart: 0, profitMarginChart: 0, resEmpChart: 0, remodelerChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!cData) return;
+        updateStats();
+        updatePermitChart();
+        updateUndconstChart();
+        updateProfitMarginChart();
+        updateResEmpChart();
+        updateRemodelerChart();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

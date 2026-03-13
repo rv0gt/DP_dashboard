@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inflationsanalyse: Breakeven Inflation, TIPS Yields, Reale Zinss&auml;tze">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M16 6v20M20 9h-6.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H10' stroke='%23F79645' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+    <title>Inflationsanalyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('1Y', this)">1J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('3Y', this)">3J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Laufzeiten</label>
+                <div class="toggle-group" id="maturityToggle">
+                    <button class="toggle-btn active" onclick="toggleMaturity('5Y', this)">5Y</button>
+                    <button class="toggle-btn active" onclick="toggleMaturity('7Y', this)">7Y</button>
+                    <button class="toggle-btn active" onclick="toggleMaturity('10Y', this)">10Y</button>
+                    <button class="toggle-btn active" onclick="toggleMaturity('20Y', this)">20Y</button>
+                    <button class="toggle-btn active" onclick="toggleMaturity('30Y', this)">30Y</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">10Y Breakeven Inflation</div>
+                    <div id="statBE10Y" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Implizierte Inflation</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">10Y Realer Zins (TIPS)</div>
+                    <div id="statTIPS10Y" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Real Interest Rate</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">10Y Nominaler Zins</div>
+                    <div id="statNom10Y" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Treasury Yield</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">10Y-5Y BE Spread</div>
+                    <div id="statSpread" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Inflations-Terminpr&auml;mie</div>
+                </div>
+            </div>
+
+            <!-- Breakeven Inflation Chart -->
+            <div class="chart-container">
+                <h3 class="section-title">Breakeven Inflation (Implizierte Inflation)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Nominale Rendite minus TIPS Rendite = vom Markt implizierte Inflationserwartung
+                </p>
+                <div id="breakevenChart"></div>
+            </div>
+
+            <!-- TIPS / Real Rates Chart -->
+            <div class="chart-container">
+                <h3 class="section-title">Reale Zinss&auml;tze (TIPS Yields)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Inflationsbereinigte Rendite auf US-Staatsanleihen (Treasury Inflation-Protected Securities)
+                </p>
+                <div id="tipsChart"></div>
+            </div>
+
+            <!-- Nominal Yields Chart -->
+            <div class="chart-container">
+                <h3 class="section-title">Nominale Yields (Referenz)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    US Treasury Nominal Yields &uuml;ber verschiedene Laufzeiten
+                </p>
+                <div id="nominalChart"></div>
+            </div>
+
+            <!-- Term Structure Snapshot -->
+            <div class="chart-container">
+                <h3 class="section-title" id="termStructureTitle">Terminstruktur-Vergleich (aktuell)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Aktuelle Zinskurve: Nominal vs. TIPS vs. Breakeven Inflation &uuml;ber alle Laufzeiten
+                </p>
+                <div id="termStructureChart"></div>
+            </div>
+
+            <!-- Breakeven Spread Chart -->
+            <div class="chart-container">
+                <h3 class="section-title">Breakeven Spreads (Inflations-Terminpr&auml;mie)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Differenz zwischen Breakeven-Raten verschiedener Laufzeiten: zeigt ob der Markt l&auml;ngerfristig h&ouml;here oder niedrigere Inflation erwartet
+                </p>
+                <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+                    <label style="font-size:13px;color:var(--color-text-secondary);font-weight:500;">Vergleich:</label>
+                    <select id="spreadLong" onchange="updateSpreadChart()" style="padding:4px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;">
+                        <option value="7Y">7Y</option>
+                        <option value="10Y" selected>10Y</option>
+                        <option value="20Y">20Y</option>
+                        <option value="30Y">30Y</option>
+                    </select>
+                    <span style="font-size:13px;color:var(--color-text-muted);">minus</span>
+                    <select id="spreadShort" onchange="updateSpreadChart()" style="padding:4px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;">
+                        <option value="5Y" selected>5Y</option>
+                        <option value="7Y">7Y</option>
+                        <option value="10Y">10Y</option>
+                        <option value="20Y">20Y</option>
+                    </select>
+                </div>
+                <div id="spreadChart"></div>
+            </div>
+
+            <!-- Backtest: Gold/Silber & Realzins 10MA -->
+            <div class="chart-container" style="border-left:3px solid #F79645;background:var(--color-surface-alt);">
+                <h3 class="section-title">Backtest: Edelmetall-Strategie basierend auf Realzins-Trend</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Strategie:</strong> Berechne den 10-Tages-MA des Realzinses (TIPS Yield).
+                    Wenn die &Auml;nderungsrate des 10-Tages-MA negativ ist (fallender Trend), halte das Asset (GLD/SLV).
+                    Sonst nicht investiert (Cash). Signal wird um einen Tag verschoben (shift), um Data Leakage zu vermeiden.
+                </p>
+            </div>
+
+            <div class="chart-container">
+                <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+                    <h3 class="section-title" style="margin:0;">Equity Curve &ndash; Strategie vs. Buy &amp; Hold</h3>
+                    <label style="font-size:13px;color:var(--color-text-secondary);font-weight:500;margin-left:auto;">Realzins-Laufzeit:</label>
+                    <select id="backtestMaturity" onchange="updateBacktest()" style="padding:4px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;">
+                        <option value="5Y" selected>5Y</option>
+                        <option value="7Y">7Y</option>
+                        <option value="10Y">10Y</option>
+                        <option value="20Y">20Y</option>
+                        <option value="30Y">30Y</option>
+                    </select>
+                </div>
+                <div id="backtestChart"></div>
+            </div>
+
+            <!-- Kelly Criterion Table -->
+            <div class="chart-container">
+                <h3 class="section-title">Kelly-Kriterium &amp; Rendite-Statistiken</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Annualisierte Werte. Kelly f* = argmax &prod;(1 + f&middot;r<sub>i</sub>) (exaktes Kelly-Kriterium)
+                </p>
+                <div style="overflow-x:auto;">
+                    <table id="kellyTable" style="width:100%;border-collapse:collapse;font-size:0.9em;">
+                        <thead>
+                            <tr style="border-bottom:2px solid #e5e7eb;">
+                                <th style="text-align:left;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Regime</th>
+                                <th style="text-align:right;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Rendite p.a.</th>
+                                <th style="text-align:right;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Varianz p.a.</th>
+                                <th style="text-align:right;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Kelly f*</th>
+                                <th style="text-align:right;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Max DD</th>
+                                <th style="text-align:right;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Exposure %</th>
+                                <th style="text-align:right;padding:10px 12px;color:var(--color-text-muted);font-weight:600;">Rendite p.a. (adj.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kellyBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Breakeven Inflation</strong> = Nominale Rendite &minus; TIPS Rendite. Sie zeigt die vom Markt
+                    implizierte Inflationsrate: der Punkt, an dem ein Investor zwischen nominalen und inflationsgesch&uuml;tzten
+                    Anleihen indifferent ist.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Realer Zinssatz</strong> = TIPS Yield. Dies ist die inflationsbereinigte Rendite auf
+                    US-Staatsanleihen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Breakeven Spread</strong> (z.B. 10Y&minus;5Y): Zeigt die Inflations-Terminpr&auml;mie. Ein positiver
+                    Spread bedeutet, der Markt erwartet f&uuml;r den Zeitraum 5&ndash;10 Jahre h&ouml;here Inflation als f&uuml;r
+                    die n&auml;chsten 5 Jahre.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> TIPS Yields (DFII-Serie) und Nominal Yields (DGS-Serie) &ndash;
+                    Federal Reserve Economic Data (FRED). Wochenendwerte (Freitag).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Inflationsanalyse &middot; Daten: FRED (Federal Reserve Economic Data)</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    const inflData = __INFLATION_DATA__;
+
+    if (!inflData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_inflation.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    const plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    const layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 70, t: 30, b: 50 } };
+
+    const SPX_COLOR = 'rgba(26,46,74,0.35)';
+
+    function addSpxTrace(traces, range) {
+        if (!inflData.spx) return;
+        traces.push({
+            x: sliceData(inflData.dates, range),
+            y: sliceData(inflData.spx, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: SPX_COLOR, width: 1 },
+            name: 'S&P 500',
+            yaxis: 'y2',
+            connectgaps: true,
+            hovertemplate: 'S&P 500: %{y:,.0f}<extra></extra>'
+        });
+    }
+
+    var spxAxis = {
+        title: 'S&P 500 (log)',
+        type: 'log',
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        tickformat: ',.0f',
+        titlefont: { color: 'rgba(26,46,74,0.5)', size: 11 },
+        tickfont: { color: 'rgba(26,46,74,0.5)', size: 10 }
+    };
+
+    const MATURITIES = ['5Y', '7Y', '10Y', '20Y', '30Y'];
+    const MATURITY_COLORS = {
+        '5Y': '#16a34a',
+        '7Y': '#8b5cf6',
+        '10Y': '#2598C3',
+        '20Y': '#F79645',
+        '30Y': '#dc2626'
+    };
+
+    let currentTimeRange = 'max';
+    let activeMaturities = new Set(MATURITIES);
+
+    // ============================================================
+    //  TIME RANGE FILTERING
+    // ============================================================
+    function getFilteredRange() {
+        if (!inflData) return { start: 0, end: 0 };
+        var len = inflData.dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var weeksMap = { '1Y': 52, '3Y': 156, '5Y': 260, '10Y': 520 };
+        var weeks = weeksMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - weeks), end: len };
+    }
+
+    function sliceData(arr, range) {
+        return arr.slice(range.start, range.end);
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleMaturity(mat, btn) {
+        if (activeMaturities.has(mat)) {
+            activeMaturities.delete(mat);
+            btn.classList.remove('active');
+        } else {
+            activeMaturities.add(mat);
+            btn.classList.add('active');
+        }
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART BUILDERS
+    // ============================================================
+    function buildTimeSeriesTraces(dataObj, range, suffix) {
+        var traces = [];
+        MATURITIES.forEach(function(mat) {
+            if (!activeMaturities.has(mat)) return;
+            traces.push({
+                x: sliceData(inflData.dates, range),
+                y: sliceData(dataObj[mat], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: MATURITY_COLORS[mat], width: 1.3 },
+                name: mat,
+                connectgaps: false,
+                hovertemplate: mat + ': %{y:.2f}%' + (suffix || '') + '<extra></extra>'
+            });
+        });
+        return traces;
+    }
+
+    function updateBreakevenChart() {
+        var range = getFilteredRange();
+        var traces = buildTimeSeriesTraces(inflData.breakeven, range);
+        addSpxTrace(traces, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', dtick: 'M24', showticklabels: false, hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'Breakeven Inflation (%)', showgrid: true, gridcolor: '#E8E8E8', zeroline: true, zerolinecolor: '#999', zerolinewidth: 1 },
+            yaxis2: spxAxis,
+            height: 350,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 5 }
+        });
+
+        Plotly.newPlot('breakevenChart', traces, layout, plotlyConfig);
+        baseShapeCount.breakevenChart = 0;
+    }
+
+    function updateTipsChart() {
+        var range = getFilteredRange();
+        var traces = buildTimeSeriesTraces(inflData.tips, range);
+        addSpxTrace(traces, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', dtick: 'M24', showticklabels: false, hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'TIPS Yield / Realer Zins (%)', showgrid: true, gridcolor: '#E8E8E8', zeroline: true, zerolinecolor: '#999', zerolinewidth: 1 },
+            yaxis2: spxAxis,
+            height: 350,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 5 }
+        });
+
+        Plotly.newPlot('tipsChart', traces, layout, plotlyConfig);
+        baseShapeCount.tipsChart = 0;
+    }
+
+    function updateNominalChart() {
+        var range = getFilteredRange();
+        var traces = buildTimeSeriesTraces(inflData.nominal, range);
+        addSpxTrace(traces, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', dtick: 'M24', showticklabels: false, hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'Nominaler Yield (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            yaxis2: spxAxis,
+            height: 250,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 5 }
+        });
+
+        Plotly.newPlot('nominalChart', traces, layout, plotlyConfig);
+        baseShapeCount.nominalChart = 0;
+    }
+
+    function updateTermStructureChart() {
+        var ts = inflData.term_structure;
+        var xLabels = ts.maturities;
+
+        var traces = [
+            {
+                x: xLabels, y: ts.latest_nominal,
+                type: 'scatter', mode: 'lines+markers',
+                line: { color: '#1A2E4A', width: 2.5 },
+                marker: { size: 8 },
+                name: 'Nominal',
+                hovertemplate: '%{x}: %{y:.2f}%<extra>Nominal</extra>'
+            },
+            {
+                x: xLabels, y: ts.latest_tips,
+                type: 'scatter', mode: 'lines+markers',
+                line: { color: '#2598C3', width: 2.5 },
+                marker: { size: 8 },
+                name: 'TIPS (Real)',
+                hovertemplate: '%{x}: %{y:.2f}%<extra>TIPS</extra>'
+            },
+            {
+                x: xLabels, y: ts.latest_breakeven,
+                type: 'scatter', mode: 'lines+markers',
+                line: { color: '#F79645', width: 2.5, dash: 'dash' },
+                marker: { size: 8 },
+                name: 'Breakeven',
+                hovertemplate: '%{x}: %{y:.2f}%<extra>Breakeven</extra>'
+            }
+        ];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { title: 'Laufzeit', showgrid: true, gridcolor: '#E8E8E8' },
+            yaxis: { title: 'Zinssatz (%)', showgrid: true, gridcolor: '#E8E8E8', zeroline: true, zerolinecolor: '#999', zerolinewidth: 1 },
+            height: 300,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 40, t: 30, b: 50 }
+        });
+
+        // Titel mit Datum
+        document.getElementById('termStructureTitle').textContent =
+            'Terminstruktur-Vergleich (Stand: ' + inflData.current.date + ')';
+
+        Plotly.newPlot('termStructureChart', traces, layout, plotlyConfig);
+    }
+
+    function updateSpreadChart() {
+        var range = getFilteredRange();
+        var dates = sliceData(inflData.dates, range);
+        var longMat = document.getElementById('spreadLong').value;
+        var shortMat = document.getElementById('spreadShort').value;
+
+        // Compute spread dynamically from breakeven data
+        var longData = inflData.breakeven[longMat];
+        var shortData = inflData.breakeven[shortMat];
+        var spreadData = sliceData(longData, range).map(function(v, i) {
+            var s = sliceData(shortData, range)[i];
+            return (v != null && s != null) ? Math.round((v - s) * 1000) / 1000 : null;
+        });
+
+        var spreadLabel = longMat + '\u2212' + shortMat + ' BE';
+        var traces = [
+            {
+                x: dates, y: spreadData,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 1.5 },
+                name: spreadLabel,
+                hovertemplate: spreadLabel + ': %{y:.2f} Pp<extra></extra>'
+            }
+        ];
+        addSpxTrace(traces, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', dtick: 'M24', hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'Breakeven Spread (Pp)', showgrid: true, gridcolor: '#E8E8E8', zeroline: true, zerolinecolor: '#666', zerolinewidth: 1.5 },
+            yaxis2: spxAxis,
+            height: 350,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 50 }
+        });
+
+        Plotly.newPlot('spreadChart', traces, layout, plotlyConfig);
+        baseShapeCount.spreadChart = 0;
+    }
+
+    // ============================================================
+    //  BACKTEST: Gold & Realzins 10MA
+    // ============================================================
+    function updateBacktest() {
+        if (!inflData || !inflData.backtest) {
+            document.getElementById('backtestChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Backtest-Daten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var mat = document.getElementById('backtestMaturity').value;
+        var matData = inflData.backtest[mat];
+        if (!matData) return;
+
+        var gold = matData.gold;
+        var silver = matData.silver;
+
+        var traces = [
+            {
+                x: gold.dates, y: gold.equity_strategy,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2.5 },
+                name: 'Gold Strategie',
+                hovertemplate: 'Gold Strat: %{y:.2f}x<extra></extra>'
+            },
+            {
+                x: gold.dates, y: gold.equity_buyhold,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 1, dash: 'dot' },
+                name: 'Gold B&H',
+                hovertemplate: 'Gold B&H: %{y:.2f}x<extra></extra>'
+            }
+        ];
+        if (silver) {
+            traces.push({
+                x: silver.dates, y: silver.equity_strategy,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#94a3b8', width: 2.5 },
+                name: 'Silber Strategie',
+                hovertemplate: 'Silber Strat: %{y:.2f}x<extra></extra>'
+            });
+            traces.push({
+                x: silver.dates, y: silver.equity_buyhold,
+                type: 'scatter', mode: 'lines',
+                line: { color: '#94a3b8', width: 1, dash: 'dot' },
+                name: 'Silber B&H',
+                hovertemplate: 'Silber B&H: %{y:.2f}x<extra></extra>'
+            });
+        }
+
+        var annoText = 'Gold: ' + gold.total_return_strat.toFixed(1) + '% p.a. (DD: ' + (gold.max_dd_strat != null ? gold.max_dd_strat.toFixed(1) : '--') + '%)';
+        if (silver) annoText += ' | Silber: ' + silver.total_return_strat.toFixed(1) + '% p.a. (DD: ' + (silver.max_dd_strat != null ? silver.max_dd_strat.toFixed(1) : '--') + '%)';
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'Equity (Start = 1.0)', showgrid: true, gridcolor: '#E8E8E8', type: 'log' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            annotations: [{
+                x: 0.01, y: 0.98, xref: 'paper', yref: 'paper',
+                text: annoText,
+                showarrow: false, font: { size: 11, color: '#333' },
+                bgcolor: 'rgba(255,255,255,0.8)', borderpad: 4
+            }]
+        });
+
+        Plotly.newPlot('backtestChart', traces, layout, plotlyConfig);
+
+        // Kelly Table
+        var body = document.getElementById('kellyBody');
+        function fmtVal(v) { return v != null ? v.toFixed(2) : '--'; }
+        function fmtColor(v) { return v != null && v > 0 ? 'color:#16a34a' : v != null && v < 0 ? 'color:#dc2626' : ''; }
+        function makeRow(label, s, bg) {
+            return '<tr style="border-bottom:1px solid #e5e7eb;' + (bg ? 'background:' + bg : '') + '">' +
+                '<td style="padding:10px 12px;font-weight:500;">' + label + '</td>' +
+                '<td style="text-align:right;padding:10px 12px;font-weight:600;' + fmtColor(s.ret_pa) + '">' + fmtVal(s.ret_pa) + '%</td>' +
+                '<td style="text-align:right;padding:10px 12px;">' + fmtVal(s.var_pa) + '%&sup2;</td>' +
+                '<td style="text-align:right;padding:10px 12px;font-weight:600;">' + fmtVal(s.kelly) + '</td>' +
+                '<td style="text-align:right;padding:10px 12px;color:#dc2626;">' + (s.max_dd != null ? s.max_dd.toFixed(2) + '%' : '--') + '</td>' +
+                '<td style="text-align:right;padding:10px 12px;">' + (s.exposure != null ? s.exposure.toFixed(1) + '%' : '--') + '</td>' +
+                '<td style="text-align:right;padding:10px 12px;font-weight:600;' + fmtColor(s.ret_pa_adj) + '">' + fmtVal(s.ret_pa_adj) + '%</td>' +
+                '</tr>';
+        }
+
+        var html = '';
+        // Gold section header
+        html += '<tr><td colspan="7" style="padding:8px 12px;font-weight:700;color:#F79645;border-bottom:1px solid #e5e7eb;background:rgba(247,150,69,0.05);">Gold (GLD)</td></tr>';
+        html += makeRow('10MA &Auml;nderung &lt; 0 (Long)', gold.stats_long, 'rgba(247,150,69,0.08)');
+        html += makeRow('10MA &Auml;nderung &ge; 0 (Cash)', gold.stats_out, '');
+        html += makeRow('Buy &amp; Hold', gold.stats_buyhold, 'rgba(148,163,184,0.05)');
+
+        if (silver) {
+            html += '<tr><td colspan="7" style="padding:8px 12px;font-weight:700;color:#94a3b8;border-bottom:1px solid #e5e7eb;background:rgba(148,163,184,0.05);">Silber (SLV)</td></tr>';
+            html += makeRow('10MA &Auml;nderung &lt; 0 (Long)', silver.stats_long, 'rgba(148,163,184,0.08)');
+            html += makeRow('10MA &Auml;nderung &ge; 0 (Cash)', silver.stats_out, '');
+            html += makeRow('Buy &amp; Hold', silver.stats_buyhold, 'rgba(148,163,184,0.05)');
+        }
+
+        body.innerHTML = html;
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        var c = inflData.current;
+        var be = c.breakeven_10y;
+        var tips = c.tips_10y;
+        var nom = c.nominal_10y;
+
+        document.getElementById('statBE10Y').textContent = be != null ? be.toFixed(2) + '%' : '--';
+        document.getElementById('statBE10Y').style.color = be != null ? (be >= 2 ? '#dc2626' : '#16a34a') : '';
+
+        document.getElementById('statTIPS10Y').textContent = tips != null ? tips.toFixed(2) + '%' : '--';
+        document.getElementById('statTIPS10Y').style.color = tips != null ? (tips >= 0 ? '#16a34a' : '#dc2626') : '';
+
+        document.getElementById('statNom10Y').textContent = nom != null ? nom.toFixed(2) + '%' : '--';
+
+        // Spread: letzter Wert
+        var spreads = inflData.spreads.be_10y_5y;
+        var lastSpread = spreads[spreads.length - 1];
+        document.getElementById('statSpread').textContent = lastSpread != null ? (lastSpread >= 0 ? '+' : '') + lastSpread.toFixed(2) + ' Pp' : '--';
+        document.getElementById('statSpread').style.color = lastSpread != null ? (lastSpread >= 0 ? '#2598C3' : '#dc2626') : '';
+
+        // Current info bar
+        document.getElementById('currentInfo').innerHTML =
+            '10Y: <strong>' + (be != null ? be.toFixed(2) : '--') + '% BE</strong> &middot; ' +
+            (tips != null ? tips.toFixed(2) : '--') + '% TIPS &middot; ' +
+            (nom != null ? nom.toFixed(2) : '--') + '% Nominal &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!inflData) return;
+        updateStats();
+        updateBreakevenChart();
+        updateTipsChart();
+        updateNominalChart();
+        updateTermStructureChart();
+        updateSpreadChart();
+        updateBacktest();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR ACROSS CHARTS
+    // ============================================================
+    var chartIds = ['breakevenChart', 'tipsChart', 'nominalChart', 'spreadChart'];
+    var baseShapeCount = { breakevenChart: 0, tipsChart: 0, nominalChart: 0, spreadChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var crosshairShape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(crosshairShape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

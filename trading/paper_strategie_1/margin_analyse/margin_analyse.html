@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Margin Analyse</title>
+    <link rel="stylesheet" href="../../../shared/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <div class="spa-tabs">
+                <a href="../overview.html" class="spa-tab">Übersicht</a>
+                <a href="../performance_analyse/performance_analyse.html" class="spa-tab">Performance</a>
+                <a href="margin_analyse.html" class="spa-tab active">Margin</a>
+                <a href="../rollover_analyse/rollover_analyse.html" class="spa-tab">Rollover</a>
+                <a href="../data_table/data_table.html" class="spa-tab">Data Table</a>
+                <a href="../trading_monitor/trading_monitor.html" class="spa-tab">Monitor</a>
+                <a href="../hebel_berechnung/hebel_berechnung.html" class="spa-tab">Hebel</a>
+            </div>
+
+            <!-- Metrics -->
+            <div class="sp-stats-grid" id="metrics" style="grid-template-columns:repeat(5,1fr)">
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Margin Benötigt</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Maintenance Margin</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Margin Verfügbar</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Excess Liquidity</div></div>
+                <div class="sp-stat-card"><div class="sp-stat-number">—</div><div class="sp-stat-label">Margin Auslastung</div></div>
+            </div>
+
+            <!-- Chart -->
+            <div class="sp-section">
+                <h2 class="sp-section-title">Margin Auslastung (30 Tage)</h2>
+                <div class="sp-chart-card">
+                    <div class="sp-chart-controls"><button class="sp-control-btn" onclick="utilizationChart?.resetZoom()">Reset Zoom</button></div>
+                    <div class="sp-chart-wrapper"><canvas id="utilizationChart"></canvas></div>
+                    <div class="sp-chart-hint">Mausrad zum Zoomen | Ziehen zum Verschieben | Doppelklick zum Reset</div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="sp-section">
+                <h2 class="sp-section-title">Margin-Historie</h2>
+                <div class="sp-table-container">
+                    <div class="sp-table-scroll">
+                        <table class="sp-table" id="history-table">
+                            <thead><tr><th>Datum</th><th>Konto-Wert</th><th>Margin Benötigt</th><th>Maintenance</th><th>Verfügbar</th><th>Excess Liquidity</th><th>Auslastung</th><th>Hebel Alt</th></tr></thead>
+                            <tbody><tr><td colspan="8" style="text-align:center">Lade Daten...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="sp-last-update" id="last-update"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../../shared/js/common.js"></script>
+    <script src="../../../shared/js/nav.js" data-active="trading"></script>
+    <script>
+        var crosshairPlugin = {
+            id: 'crosshair',
+            afterDraw: function(chart) {
+                if (chart.tooltip && chart.tooltip._active && chart.tooltip._active.length) {
+                    var ctx = chart.ctx;
+                    var x = chart.tooltip._active[0].element.x;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, chart.scales.y.top);
+                    ctx.lineTo(x, chart.scales.y.bottom);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        };
+        Chart.register(crosshairPlugin);
+
+        var zoomOptions = {
+            pan: { enabled: true, mode: 'x' },
+            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, drag: { enabled: false }, mode: 'x', onZoomComplete: function(o) { o.chart.update('none'); } },
+            limits: { x: { minRange: 86400000 } }
+        };
+
+        var DATA_URL = './margin_analyse.json';
+        var utilizationChart;
+
+        function parseDate(str) { return str ? new Date(str.replace(' ', 'T')) : null; }
+
+        async function loadData() {
+            try {
+                var data = await loadJSONData(DATA_URL);
+                var md = data.margin_data;
+                if (md) { updateMetrics(md.current); updateChart(md.history); updateTable(md.history); }
+                updateLastUpdate(data.timestamp);
+            } catch (e) { console.error('Fehler:', e); }
+        }
+
+        function updateMetrics(current) {
+            if (!current) return;
+            var auslastung = parseFloat(current.margin_auslastung || 0);
+            var cls = auslastung > 80 ? 'val-danger' : auslastung > 50 ? 'val-warning' : 'val-success';
+            document.getElementById('metrics').innerHTML =
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + formatCurrency(current.margin_benoetigt) + '</div><div class="sp-stat-label">Margin Benötigt</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + formatCurrency(current.maintenance_margin) + '</div><div class="sp-stat-label">Maintenance Margin</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number val-success">' + formatCurrency(current.margin_verfuegbar) + '</div><div class="sp-stat-label">Margin Verfügbar</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number">' + formatCurrency(current.excess_liquidity) + '</div><div class="sp-stat-label">Excess Liquidity</div></div>' +
+                '<div class="sp-stat-card"><div class="sp-stat-number ' + cls + '">' + auslastung.toFixed(1) + '%</div><div class="sp-stat-label">Margin Auslastung</div></div>';
+        }
+
+        function updateChart(history) {
+            if (!history || history.length === 0) return;
+            var sorted = history.slice().sort(function(a, b) { return parseDate(a.datum) - parseDate(b.datum); });
+            var auslastungData = sorted.map(function(h) { return { x: parseDate(h.datum), y: h.margin_auslastung }; });
+            var hebelData = sorted.map(function(h) { return { x: parseDate(h.datum), y: h.aktueller_hebel }; });
+            var ctx = document.getElementById('utilizationChart').getContext('2d');
+            if (utilizationChart) utilizationChart.destroy();
+            utilizationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'Margin Auslastung %', data: auslastungData, borderColor: '#2598C3', backgroundColor: 'rgba(37,152,195,0.1)', fill: true, tension: 0, pointRadius: 4, pointHoverRadius: 8, pointBackgroundColor: auslastungData.map(function(p) { return p.y > 80 ? '#ef4444' : p.y > 50 ? '#f59e0b' : '#16a34a'; }), yAxisID: 'y' },
+                        { label: 'Hebel Alt', data: hebelData, borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.1)', fill: false, tension: 0, pointRadius: 3, pointHoverRadius: 7, borderWidth: 2, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: true, position: 'top' }, zoom: zoomOptions },
+                    scales: {
+                        x: { type: 'time', time: { displayFormats: { day: 'dd.MM.yy', hour: 'dd.MM HH:mm' }, tooltipFormat: 'dd.MM.yyyy HH:mm:ss' }, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Datum' } },
+                        y: { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(0,0,0,0.05)' }, max: 100, ticks: { callback: function(v) { return v + '%'; } }, title: { display: true, text: 'Margin Auslastung %' } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: function(v) { return v.toFixed(1) + 'x'; } }, title: { display: true, text: 'Hebel' } }
+                    }
+                }
+            });
+        }
+
+        function updateTable(history) {
+            var tbody = document.querySelector('#history-table tbody');
+            if (!history || history.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Keine Daten</td></tr>'; return; }
+            tbody.innerHTML = history.map(function(h) {
+                var auslastung = parseFloat(h.margin_auslastung || 0);
+                var barColor = auslastung > 80 ? '#ef4444' : auslastung > 50 ? '#f59e0b' : '#16a34a';
+                var hebel = h.aktueller_hebel != null ? parseFloat(h.aktueller_hebel).toFixed(3) + 'x' : '—';
+                return '<tr><td>' + h.datum + '</td><td>' + formatCurrency(h.konto_wert) + '</td><td>' + formatCurrency(h.margin_benoetigt) + '</td><td>' + formatCurrency(h.maintenance_margin) + '</td><td>' + formatCurrency(h.margin_verfuegbar) + '</td><td>' + formatCurrency(h.excess_liquidity) + '</td><td><div style="display:flex;align-items:center;gap:10px"><div class="sp-progress-bar" style="width:80px"><div class="sp-progress-fill" style="width:' + auslastung + '%;background:' + barColor + '"></div></div><span>' + auslastung.toFixed(1) + '%</span></div></td><td style="text-align:right">' + hebel + '</td></tr>';
+            }).join('');
+        }
+
+        loadData();
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-03-13T08:49:13.504890",
+  "products": [
+    "ES",
+    "MES",
+    "GC",
+    "MGC",
+    "SI",
+    "SIL"
+  ],
+  "status": "normal",
+  "active_disruptions": 0,
+  "active": [],
+  "recent": [],
+  "history": [
+    {
+      "source": "CME Press",
+      "title": "CME Group to Launch 100-Ounce Silver Futures to Meet Record Retail Demand",
+      "body": "CME Group, the world's leading derivatives marketplace, today announced it will launch a 100-Ounce Silver futures contract on February 9, 2026, pending regulatory review. \"Silver is increasingly...",
+      "date": "Tue, 13 Jan 2026 08:00:00 -0600",
+      "severity": "info",
+      "url": "https://www.cmegroup.com/media-room/press-releases/2026/1/13/cme_group_to_launch100-ouncesilverfuturestomeetrecordretaildeman.html?source=rss",
+      "date_normalized": "2026-01-13T08:00:00-06:00"
+    }
+  ],
+  "sources": {
+    "advisory_notices": 0,
+    "gcc_alerts": 0,
+    "rss_feed": 1
+  }
+}

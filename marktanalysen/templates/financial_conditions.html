@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Financial Conditions: NFCI, Stress-Indizes, CFNAI, LEI, VIX, Rezessionsmodelle">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Financial Conditions | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">NFCI</div>
+                    <div id="statNFCI" style="font-size:24px;font-weight:700;">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">&gt;0 = tight</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">CFNAI MA3</div>
+                    <div id="statCFNAI" style="font-size:24px;font-weight:700;">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">&lt;-0.7 = Rezession</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">VIX</div>
+                    <div id="statVIX" style="font-size:24px;font-weight:700;">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Volatilit&auml;t</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Rez.-Wahrsch.</div>
+                    <div id="statRecProb" style="font-size:24px;font-weight:700;">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Chauvet-Piger</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="section-title">Financial Conditions Indices</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">NFCI, Adjusted NFCI, St. Louis FSI, Kansas City FSI &ndash; &uuml;ber 0 = straff</p>
+                <div id="fciChart"></div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="section-title">VIX &amp; S&amp;P 500</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">CBOE VIX (links) vs. S&amp;P 500 (rechts, invertiert)</p>
+                <div id="vixSpxChart"></div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="section-title">CFNAI &amp; Leading Economic Index (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">CFNAI MA3 (links) und Conference Board LEI YoY-Ver&auml;nderung (rechts)</p>
+                <div id="cfnaiLeiChart"></div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="section-title">Rezessionswahrscheinlichkeit</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">Chauvet-Piger (dynamisches Faktormodell) und Sahm Rule (Arbeitslosigkeit)</p>
+                <div id="recProbChart"></div>
+            </div>
+
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>NFCI</strong> (Chicago Fed): Gewichteter Durchschnitt aus 105 Finanzmarkt-Variablen. &gt;0 = straffere Bedingungen als Durchschnitt. Starker Pr&auml;diktor f&uuml;r zuk&uuml;nftige Wirtschaftsaktivit&auml;t (3-12 Monate Lead).
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>CFNAI MA3</strong>: 3-Monats-Durchschnitt aus 85 Indikatoren. Werte unter -0.7 signalisieren erh&ouml;hte Rezessionswahrscheinlichkeit.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>LEI</strong> (Conference Board): Composite aus 10 Leading Indicators inkl. Yield Curve, Baubeginne, Erstantr&auml;ge. 6-Monats-YoY-R&uuml;ckgang &gt;4% historisch starkes Rezessionssignal.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Chauvet-Piger</strong>: Dynamisches Faktormodell, Echtzeit-Rezessionswahrscheinlichkeit. <strong>Sahm Rule</strong>: Wenn 3M-MA der Arbeitslosenquote &ge;0.5pp &uuml;ber 12M-Tief steigt.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (NFCI, ANFCI, STLFSI4, KCFSI, CFNAI, CFNAIMA3, USSLIND, VIXCLS, RECPROUSM156N, SAHMREALTIME).
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">Financial Conditions &middot; Daten: FRED, Yahoo Finance</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    var fcData = __FINCOND_DATA__;
+    if (!fcData) { document.querySelector('.page-content').innerHTML = '<div class="info-box"><h3>Keine Daten</h3><p>Bitte <code>python update_financial_conditions.py</code> und <code>python generate.py</code> ausf&uuml;hren.</p></div>'; }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    function getFilteredRange(dates, unit) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var n = parseInt(currentTimeRange);
+        var items = unit === 'weekly' ? n * 52 : n * 12;
+        return { start: Math.max(0, len - items), end: len };
+    }
+    function sl(arr, range) { return arr ? arr.slice(range.start, range.end) : []; }
+    function nberShapes(dates, range) {
+        if (!showNber || !fcData.nber_recessions) return [];
+        var d0 = dates[range.start], d1 = dates[range.end - 1], shapes = [];
+        fcData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({ type:'rect', xref:'x', yref:'paper', x0: r[0]<d0?d0:r[0], x1: r[1]>d1?d1:r[1], y0:0, y1:1, fillcolor:'rgba(200,200,200,0.25)', line:{width:0}, layer:'below' });
+        });
+        return shapes;
+    }
+
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+        updateAll();
+    }
+    function toggleOption(o, btn) { if(o==='nber') showNber=!showNber; btn.classList.toggle('active'); updateAll(); }
+
+    function updateFciChart() {
+        var dates = fcData.weekly_dates;
+        var range = getFilteredRange(dates, 'weekly');
+        var d = sl(dates, range);
+        var traces = [];
+        ['NFCI','ANFCI','STLFSI4','KCFSI'].forEach(function(sid) {
+            if (fcData.weekly[sid]) {
+                traces.push({ x:d, y:sl(fcData.weekly[sid],range), type:'scatter', mode:'lines', line:{color:fcData.colors[sid]||'#333',width:sid==='NFCI'?2.5:1.5}, name:fcData.labels[sid]||sid, hovertemplate:fcData.labels[sid]+': %{y:.2f}<extra></extra>' });
+            }
+        });
+        var shapes = nberShapes(dates, range);
+        shapes.push({type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:0,y1:0,line:{color:'#dc2626',width:1.5,dash:'dash'}});
+        Plotly.newPlot('fciChart', traces, Object.assign({}, layoutBase, { xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false}, yaxis:{title:'Index',showgrid:true,gridcolor:'#E8E8E8'}, height:380, showlegend:true, legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'}, margin:{l:70,r:30,t:30,b:5}, shapes:shapes }), plotlyConfig);
+        baseShapeCount.fciChart = shapes.length;
+    }
+
+    function updateVixSpxChart() {
+        var dates = fcData.weekly_dates;
+        var range = getFilteredRange(dates, 'weekly');
+        var d = sl(dates, range);
+        var traces = [];
+        if (fcData.weekly.VIXCLS) traces.push({ x:d, y:sl(fcData.weekly.VIXCLS,range), type:'scatter', mode:'lines', line:{color:'#dc2626',width:2}, name:'VIX', yaxis:'y', hovertemplate:'VIX: %{y:.1f}<extra></extra>' });
+        if (fcData.weekly.SPX) traces.push({ x:d, y:sl(fcData.weekly.SPX,range), type:'scatter', mode:'lines', line:{color:'rgba(26,46,74,0.4)',width:1.5}, name:'S&P 500', yaxis:'y2', hovertemplate:'S&P: %{y:,.0f}<extra></extra>' });
+        var shapes = nberShapes(dates, range);
+        Plotly.newPlot('vixSpxChart', traces, Object.assign({}, layoutBase, { xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false}, yaxis:{title:'VIX',showgrid:true,gridcolor:'#E8E8E8',titlefont:{color:'#dc2626'},tickfont:{color:'#dc2626'}}, yaxis2:{title:'S&P 500',overlaying:'y',side:'right',showgrid:false,titlefont:{color:'#1A2E4A'},tickfont:{color:'#1A2E4A'}}, height:380, showlegend:true, legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'}, margin:{l:70,r:70,t:30,b:5}, shapes:shapes }), plotlyConfig);
+        baseShapeCount.vixSpxChart = shapes.length;
+    }
+
+    function updateCfnaiLeiChart() {
+        var dates = fcData.monthly_dates;
+        var range = getFilteredRange(dates, 'monthly');
+        var d = sl(dates, range);
+        var traces = [];
+        if (fcData.monthly.CFNAIMA3) traces.push({ x:d, y:sl(fcData.monthly.CFNAIMA3,range), type:'scatter', mode:'lines', line:{color:'#6d28d9',width:2.5}, name:'CFNAI MA3', yaxis:'y', hovertemplate:'CFNAI MA3: %{y:.2f}<extra></extra>' });
+        if (fcData.monthly.CFNAI) traces.push({ x:d, y:sl(fcData.monthly.CFNAI,range), type:'scatter', mode:'lines', line:{color:'rgba(139,92,246,0.3)',width:1}, name:'CFNAI (roh)', yaxis:'y', hovertemplate:'CFNAI: %{y:.2f}<extra></extra>' });
+        if (fcData.lei_yoy && fcData.lei_yoy.length) traces.push({ x:d, y:sl(fcData.lei_yoy,range), type:'scatter', mode:'lines', line:{color:'#16a34a',width:2}, name:'LEI YoY %', yaxis:'y2', hovertemplate:'LEI YoY: %{y:.2f}%<extra></extra>' });
+        var shapes = nberShapes(dates, range);
+        shapes.push({type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:-0.7,y1:-0.7,line:{color:'#dc2626',width:1,dash:'dash'}});
+        Plotly.newPlot('cfnaiLeiChart', traces, Object.assign({}, layoutBase, { xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y',showticklabels:false}, yaxis:{title:'CFNAI',showgrid:true,gridcolor:'#E8E8E8'}, yaxis2:{title:'LEI YoY (%)',overlaying:'y',side:'right',showgrid:false,titlefont:{color:'#16a34a'},tickfont:{color:'#16a34a'}}, height:380, showlegend:true, legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'}, margin:{l:70,r:70,t:30,b:5}, shapes:shapes }), plotlyConfig);
+        baseShapeCount.cfnaiLeiChart = shapes.length;
+    }
+
+    function updateRecProbChart() {
+        var dates = fcData.monthly_dates;
+        var range = getFilteredRange(dates, 'monthly');
+        var d = sl(dates, range);
+        var traces = [];
+        if (fcData.monthly.RECPROUSM156N) traces.push({ x:d, y:sl(fcData.monthly.RECPROUSM156N,range), type:'scatter', mode:'lines', fill:'tozeroy', fillcolor:'rgba(220,38,38,0.15)', line:{color:'#dc2626',width:2}, name:'Chauvet-Piger', hovertemplate:'Chauvet-Piger: %{y:.1f}%<extra></extra>' });
+        if (fcData.monthly.SAHMREALTIME) traces.push({ x:d, y:sl(fcData.monthly.SAHMREALTIME,range), type:'scatter', mode:'lines', line:{color:'#F79645',width:2}, name:'Sahm Rule', yaxis:'y2', hovertemplate:'Sahm: %{y:.2f}pp<extra></extra>' });
+        var shapes = nberShapes(dates, range);
+        shapes.push({type:'line',xref:'paper',yref:'y2',x0:0,x1:1,y0:0.5,y1:0.5,line:{color:'#F79645',width:1,dash:'dash'}});
+        Plotly.newPlot('recProbChart', traces, Object.assign({}, layoutBase, { xaxis:{showgrid:true,gridcolor:'#E8E8E8',tickformat:'%Y'}, yaxis:{title:'Wahrscheinlichkeit (%)',showgrid:true,gridcolor:'#E8E8E8',range:[0,100]}, yaxis2:{title:'Sahm Rule (pp)',overlaying:'y',side:'right',showgrid:false,titlefont:{color:'#F79645'},tickfont:{color:'#F79645'}}, height:380, showlegend:true, legend:{orientation:'h',y:1.12,x:0.5,xanchor:'center'}, margin:{l:70,r:70,t:30,b:50}, shapes:shapes }), plotlyConfig);
+    }
+
+    function updateStats() {
+        var c = fcData.current;
+        function fmtIdx(el,val,thresh,inv) { if(val!=null){ el.textContent=(val>=0?'+':'')+val.toFixed(2); el.style.color=inv?(val>thresh?'#dc2626':'#16a34a'):(val>thresh?'#16a34a':'#dc2626'); } }
+        if(c.NFCI!=null) fmtIdx(document.getElementById('statNFCI'),c.NFCI,0,true);
+        if(c.CFNAIMA3!=null) fmtIdx(document.getElementById('statCFNAI'),c.CFNAIMA3,-0.7,false);
+        if(c.VIXCLS!=null) { var el=document.getElementById('statVIX'); el.textContent=c.VIXCLS.toFixed(1); el.style.color=c.VIXCLS>30?'#dc2626':c.VIXCLS>20?'#F79645':'#16a34a'; }
+        if(c.RECPROUSM156N!=null) { var el=document.getElementById('statRecProb'); el.textContent=c.RECPROUSM156N.toFixed(1)+'%'; el.style.color=c.RECPROUSM156N>30?'#dc2626':c.RECPROUSM156N>10?'#F79645':'#16a34a'; }
+    }
+
+    var chartIds = ['fciChart','vixSpxChart','cfnaiLeiChart','recProbChart'];
+    var baseShapeCount = {};
+    chartIds.forEach(function(id){baseShapeCount[id]=0;});
+    var crosshairActive = false;
+    function syncCrosshair(src,xVal) { crosshairActive=true; var sh={type:'line',xref:'x',yref:'paper',x0:xVal,x1:xVal,y0:0,y1:1,line:{color:'#666',width:1,dash:'dash'}}; chartIds.forEach(function(id){var el=document.getElementById(id);if(!el||!el._fullLayout)return;var s=(el.layout.shapes||[]).slice(0,baseShapeCount[id]);s.push(sh);Plotly.relayout(id,{shapes:s});}); }
+    function clearCrosshair() { if(!crosshairActive)return;crosshairActive=false;chartIds.forEach(function(id){var el=document.getElementById(id);if(!el||!el._fullLayout)return;Plotly.relayout(id,{shapes:(el.layout.shapes||[]).slice(0,baseShapeCount[id])});}); }
+    function attachCrosshair() { chartIds.forEach(function(id){var el=document.getElementById(id);if(!el)return;el.on('plotly_hover',function(d){if(d.points&&d.points.length)syncCrosshair(id,d.points[0].x);});el.on('plotly_unhover',function(){clearCrosshair();});}); }
+
+    function updateAll() {
+        if (!fcData) return;
+        updateStats();
+        updateFciChart();
+        updateVixSpxChart();
+        updateCfnaiLeiChart();
+        updateRecProbChart();
+        attachCrosshair();
+    }
+    window.onload = function() { updateAll(); };
+    </script>
+    <script>
+    (function(){var b=document.getElementById('hamburgerBtn'),o=document.getElementById('navOverlay'),d=document.getElementById('navDrawer'),c=document.getElementById('navClose');function op(){b.classList.add('active');o.classList.add('open');d.classList.add('open');document.body.style.overflow='hidden';}function cl(){b.classList.remove('active');o.classList.remove('open');d.classList.remove('open');document.body.style.overflow='';}b.addEventListener('click',function(){d.classList.contains('open')?cl():op();});o.addEventListener('click',cl);c.addEventListener('click',cl);document.addEventListener('keydown',function(e){if(e.key==='Escape')cl();});})();
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>
+</html>

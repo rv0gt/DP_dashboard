@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Hebel-Berechnung</title>
+    <link rel="stylesheet" href="../../../shared/css/common.css">
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <div class="spa-tabs">
+                <a href="../overview.html" class="spa-tab">Übersicht</a>
+                <a href="../performance_analyse/performance_analyse.html" class="spa-tab">Performance</a>
+                <a href="../margin_analyse/margin_analyse.html" class="spa-tab">Margin</a>
+                <a href="../rollover_analyse/rollover_analyse.html" class="spa-tab">Rollover</a>
+                <a href="../data_table/data_table.html" class="spa-tab">Data Table</a>
+                <a href="../trading_monitor/trading_monitor.html" class="spa-tab">Monitor</a>
+                <a href="hebel_berechnung.html" class="spa-tab active">Hebel</a>
+            </div>
+
+            <div class="sp-clock-container">
+                <div class="sp-control-card">
+                    <span class="sp-control-label">Skalierung</span>
+                    <input type="number" id="skalierung-input" class="sp-control-input" value="0.30" step="0.01" min="0" max="10">
+                </div>
+            </div>
+
+            <div id="main-container" style="max-width:1800px;margin:0 auto;">
+                <div class="sp-table-container">
+                    <div class="sp-table-scroll">
+                        <table class="sp-table" id="hebel-table">
+                            <thead>
+                                <tr>
+                                    <th>Zeitpunkt (CHI)</th>
+                                    <th>Aktion</th>
+                                    <th class="text-right">Delta</th>
+                                    <th class="text-right">Hebel Alt</th>
+                                    <th class="text-right">Hebel Neu</th>
+                                    <th class="text-right sum-header">Hebel (berechnet)</th>
+                                    <th class="text-right diff-header">Differenz</th>
+                                    <th>Reason Code</th>
+                                    <th>Changed Columns</th>
+                                    <th class="text-right ind-header">DD Wert</th>
+                                    <th class="text-right ind-header">DD Beitrag</th>
+                                    <th class="text-right ind-header">MA_MA Wert</th>
+                                    <th class="text-right ind-header">MA_MA Beitrag</th>
+                                    <th class="text-right ind-header">VIX Wert</th>
+                                    <th class="text-right ind-header">VIX Beitrag</th>
+                                    <th class="text-right ind-header">CPC Wert</th>
+                                    <th class="text-right ind-header">CPC Beitrag</th>
+                                    <th class="text-right ind-header">BAML Wert</th>
+                                    <th class="text-right ind-header">BAML Beitrag</th>
+                                    <th class="text-right ind-header">Margin Wert</th>
+                                    <th class="text-right ind-header">Margin Beitrag</th>
+                                    <th class="text-right ind-header">MA5 Wert</th>
+                                    <th class="text-right ind-header">MA5 Beitrag</th>
+                                    <th class="text-right ind-header">MA10 Wert</th>
+                                    <th class="text-right ind-header">MA10 Beitrag</th>
+                                    <th class="text-right ind-header">MA50 Wert</th>
+                                    <th class="text-right ind-header">MA50 Beitrag</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="27" style="text-align:center;padding:30px">Lade Daten...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="sp-last-update" id="last-update"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../../shared/js/common.js"></script>
+    <script src="../../../shared/js/nav.js" data-active="trading"></script>
+    <script>
+        var DATA_URL = './hebel_berechnung.json';
+        var cachedData = null;
+
+        function getAktionBadge(aktion) {
+            if (!aktion) return '—';
+            var upper = aktion.toUpperCase();
+            var cls = upper === 'BUY' ? 'aktion-buy' : upper === 'SELL' ? 'aktion-sell' : 'aktion-other';
+            return '<span class="aktion-badge ' + cls + '">' + upper + '</span>';
+        }
+
+        function formatBeitrag(val) {
+            if (val === null || val === undefined) return '—';
+            var num = parseFloat(val);
+            var cls = num > 0 ? 'val-positive' : num < 0 ? 'val-negative' : '';
+            return '<span class="' + cls + '">' + formatNumber(num, 4) + '</span>';
+        }
+
+        function formatDelta(val) {
+            if (val === null || val === undefined) return '—';
+            var num = parseFloat(val);
+            var cls = num > 0 ? 'val-positive' : num < 0 ? 'val-negative' : '';
+            return '<span class="' + cls + '">' + num + '</span>';
+        }
+
+        function calculateHebelSum(row, skalierung) {
+            var keys = ['dd_beitrag', 'ma_ma_beitrag', 'vix_beitrag', 'cpc_beitrag', 'baml_beitrag', 'margin_beitrag', 'ma5_beitrag', 'ma10_beitrag', 'ma50_beitrag'];
+            var sum = 0;
+            keys.forEach(function(k) { if (row[k] != null) sum += parseFloat(row[k]); });
+            return sum * skalierung;
+        }
+
+        function formatDifferenz(hebelNeu, hebelBerechnet) {
+            if (hebelNeu === null || hebelNeu === undefined) return '—';
+            var diff = parseFloat(hebelNeu) - hebelBerechnet;
+            if (Math.abs(diff) <= 0.001) return '—';
+            var prefix = diff > 0 ? '+' : '';
+            return '<span class="val-danger" style="font-weight:700">' + prefix + formatNumber(diff, 4) + '</span>';
+        }
+
+        async function loadTableData() {
+            try {
+                var data = await loadJSONData(DATA_URL);
+                cachedData = data.hebel_history || [];
+                renderTable(cachedData);
+                if (data.timestamp) updateLastUpdate(data.timestamp);
+            } catch (error) {
+                console.error('Fehler:', error);
+                document.querySelector('#hebel-table tbody').innerHTML = '<tr><td colspan="27" style="color:var(--color-negative);text-align:center;padding:20px">Fehler: ' + error.message + '</td></tr>';
+            }
+        }
+
+        function renderTable(data) {
+            var tbody = document.querySelector('#hebel-table tbody');
+            var skalierung = parseFloat(document.getElementById('skalierung-input').value) || 0.30;
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="27" style="text-align:center;padding:20px">Keine Daten verfügbar</td></tr>'; return; }
+            tbody.innerHTML = data.map(function(row) {
+                var hebelBerechnet = calculateHebelSum(row, skalierung);
+                var hebelCls = hebelBerechnet > 0 ? 'val-positive' : hebelBerechnet < 0 ? 'val-negative' : '';
+                return '<tr>' +
+                    '<td>' + formatDateTime(row.timestamp_chi) + '</td>' +
+                    '<td>' + getAktionBadge(row.aktion) + '</td>' +
+                    '<td class="text-right">' + formatDelta(row.delta) + '</td>' +
+                    '<td class="text-right">' + (row.alter_hebel != null ? formatNumber(row.alter_hebel, 4) + 'x' : '—') + '</td>' +
+                    '<td class="text-right"><strong>' + formatNumber(row.neuer_hebel, 4) + 'x</strong></td>' +
+                    '<td class="text-right sum-cell"><span class="' + hebelCls + '">' + formatNumber(hebelBerechnet, 4) + 'x</span></td>' +
+                    '<td class="text-right diff-cell">' + formatDifferenz(row.neuer_hebel, hebelBerechnet) + '</td>' +
+                    '<td>' + (row.reason_code || '—') + '</td>' +
+                    '<td>' + (row.changed_columns || '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatNumber(row.dd_wert, 4) + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.dd_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.ma_ma_wert != null ? row.ma_ma_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.ma_ma_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.vix_wert != null ? row.vix_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.vix_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.cpc_wert != null ? row.cpc_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.cpc_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.baml_wert != null ? row.baml_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.baml_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.margin_wert != null ? row.margin_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.margin_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.ma5_wert != null ? row.ma5_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.ma5_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.ma10_wert != null ? row.ma10_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.ma10_beitrag) + '</td>' +
+                    '<td class="text-right ind-cell">' + (row.ma50_wert != null ? row.ma50_wert : '—') + '</td>' +
+                    '<td class="text-right ind-cell">' + formatBeitrag(row.ma50_beitrag) + '</td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        document.getElementById('skalierung-input').addEventListener('input', function() { if (cachedData) renderTable(cachedData); });
+
+        loadTableData();
+        setInterval(loadTableData, 60000);
+    </script>
+</body>
+</html>

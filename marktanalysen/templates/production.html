@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Produktionszyklus-Analyse: Frühzyklische Güter, Kupfer, Halbleiter, Trucks, Packaging">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22V12l6 4V12l6 4V8l8 6v8z' stroke='%230d9488' stroke-width='1.8' fill='none'/%3E%3C/svg%3E">
+    <title>Produktionszyklus | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Modus</label>
+                <div class="toggle-group" id="modeToggle">
+                    <button class="toggle-btn active" onclick="switchMode('yoy', this)">YoY %</button>
+                    <button class="toggle-btn" onclick="switchMode('pct1y', this)">% zu 1J Max</button>
+                    <button class="toggle-btn" onclick="switchMode('pct2y', this)">% zu 2J Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;" id="statBoxes"></div>
+
+            <!-- Chart 1: Composite Leading vs INDPRO -->
+            <div class="chart-container">
+                <h3 class="section-title" id="compositeTitle">Leading vs. Credit-Financed Composite vs. INDPRO (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    <strong>Leading</strong>: Kupfer, Trucks, Housing, Boxes, Semiconductor &mdash;
+                    <strong>Credit</strong>: Autos, Bau, M&ouml;bel, Ger&auml;te, CapEx (kreditfinanzierte Sektoren) &mdash;
+                    <strong>INDPRO</strong>: Gesamte Industrieproduktion
+                </p>
+                <div id="compositeChart"></div>
+            </div>
+
+            <!-- Chart 2: Transport & Heavy Trucks -->
+            <div class="chart-container">
+                <h3 class="section-title" id="transportTitle">Transport &amp; Heavy Trucks (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Heavy Truck Sales, Total Vehicle Sales, Heavy Truck Production, Motor Vehicles &amp; Parts (IP)
+                </p>
+                <div id="transportChart"></div>
+            </div>
+
+            <!-- Chart 3: Packaging & Paper -->
+            <div class="chart-container">
+                <h3 class="section-title" id="packagingTitle">Packaging &amp; Paper (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Corrugated Boxes, Paper Products, PPI Paperboard
+                </p>
+                <div id="packagingChart"></div>
+            </div>
+
+            <!-- Chart 4: Wood & Construction -->
+            <div class="chart-container">
+                <h3 class="section-title" id="woodTitle">Holz &amp; Bau (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Wood Products, PPI Lumber, Housing Starts, Building Permits
+                </p>
+                <div id="woodChart"></div>
+            </div>
+
+            <!-- Chart 5: Industrial Metals -->
+            <div class="chart-container">
+                <h3 class="section-title" id="metalsTitle">Industriemetalle (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Copper Price (USD), PPI Refined Copper, PPI Iron &amp; Steel &ndash; &quot;Dr. Copper&quot; als globaler Zyklusindikator
+                </p>
+                <div id="metalsChart"></div>
+            </div>
+
+            <!-- Chart 6: Semiconductor -->
+            <div class="chart-container">
+                <h3 class="section-title" id="semiconductorTitle">Halbleiter (YoY % + Capacity Utilization)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Semiconductor &amp; Electronics Production, Capacity Utilization (rechte Achse)
+                </p>
+                <div id="semiconductorChart"></div>
+            </div>
+
+            <!-- Chart 7: Broad Production -->
+            <div class="chart-container">
+                <h3 class="section-title" id="broadTitle">Breite Produktion (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Industrial Production, Manufacturing Output, Durable Goods Orders
+                </p>
+                <div id="broadChart"></div>
+            </div>
+
+            <!-- Chart 8: Kapazitätsauslastung -->
+            <div class="chart-container">
+                <h3 class="section-title" id="caputilTitle">Kapazit&auml;tsauslastung (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Total Industry &amp; Manufacturing Capacity Utilization
+                </p>
+                <div id="caputilChart"></div>
+            </div>
+
+            <!-- Chart 9: Auftragseingänge -->
+            <div class="chart-container">
+                <h3 class="section-title" id="ordersTitle">Auftragseing&auml;nge (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Core Capital Goods (ex. Aircraft), Total Mfg. New Orders, Durable Goods ex. Transport, Unfilled Orders
+                </p>
+                <div id="ordersChart"></div>
+            </div>
+
+            <!-- Chart 10: Inventar-Zyklen -->
+            <div class="chart-container">
+                <h3 class="section-title" id="inventoryTitle">Inventar-Zyklen (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Inventories-to-Sales Ratios: Total Business, Retail, Manufacturing
+                </p>
+                <div id="inventoryChart"></div>
+            </div>
+
+            <!-- Chart 11: Industrie-Subsektoren -->
+            <div class="chart-container">
+                <h3 class="section-title" id="subsectorsTitle">Industrie-Subsektoren (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Chemicals, Business Equipment, Consumer Goods, Utilities, Furniture, Household Appliances (IP Indizes)
+                </p>
+                <div id="subsectorsChart"></div>
+            </div>
+
+            <!-- Chart 13: Handel -->
+            <div class="chart-container">
+                <h3 class="section-title" id="tradeTitle">Handel (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Trade Balance (Goods &amp; Services), Exports, Real Mfg. &amp; Trade Sales
+                </p>
+                <div id="tradeChart"></div>
+            </div>
+
+            <!-- Chart 14: Energie -->
+            <div class="chart-container">
+                <h3 class="section-title" id="energyTitle">Energie (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    WTI Crude Oil (USD), Mining Production (IP)
+                </p>
+                <div id="energyChart"></div>
+            </div>
+
+            <!-- Chart 15: Composite-Indikatoren (Level) -->
+            <div class="chart-container">
+                <h3 class="section-title" id="compositeIndexTitle">Composite-Indikatoren (Level)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Chicago Fed National Activity Index (CFNAI) &ndash; Mittelwert 0, negativ = unter Trend
+                </p>
+                <div id="compositeIndexChart"></div>
+            </div>
+
+            <!-- Chart 16: Umfragen & PMI (Level) -->
+            <div class="chart-container">
+                <h3 class="section-title" id="surveysTitle">Umfragen &amp; PMI (Level)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    ISM Manufacturing PMI &amp; New Orders (Schwelle 50), Empire State &amp; Philly Fed (Schwelle 0)
+                </p>
+                <div id="surveysChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Leading Composite</strong>: Durchschnitt der YoY-Ver&auml;nderungen von Copper Price (PCOPPUSDM),
+                    Heavy Truck Sales (HTRUCKSSAAR), Housing Starts (HOUST), Corrugated Boxes (IPG32222S) und
+                    Semiconductor Production (IPG3344S). Diese Serien gelten als klassische Fr&uuml;hzyklus-Indikatoren.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Credit-Financed Composite</strong>: Durchschnitt der YoY-Ver&auml;nderungen kreditfinanzierter Sektoren &ndash;
+                    Autos/Trucks (HTRUCKSSAAR, TOTALSA, IPG3361T3S, IPG336S), Bau/Holz (HOUST, PERMIT, IPG321S),
+                    Business Equipment (IPBUSEQ), M&ouml;bel (IPG337S), Haushaltsger&auml;te (IPG3352S).
+                    Reagiert stark auf Zinszyklus und Kreditbedingungen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Zyklusreihenfolge</strong> (fr&uuml;h &rarr; sp&auml;t): Kupfer &rarr; Halbleiter &rarr;
+                    Heavy Trucks &rarr; Corrugated Boxes &rarr; Freight &rarr; Finished Goods.
+                    Nutzen: Global Growth Nowcasting, ISM-Leading Baskets, Equity Sector Rotation.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Cluster</strong>: Transport (HTRUCKSSAAR, TOTALSA, IPG3361T3S, IPG336S), Packaging (IPG32222S, IPG3222S, WPU0915),
+                    Holz/Bau (IPG321S, WPU0811, HOUST, PERMIT), Metalle (PCOPPUSDM, WPU102501, WPU101),
+                    Halbleiter (IPG3344S, IPG334S, CAPUTLG3344S), Breit (INDPRO, IPMAN, DGORDER),
+                    Kapazit&auml;tsauslastung (TCU, MCUMFN), Auftragseing&auml;nge (NEWORDER, AMTMNO, ADXTNO, AMTMUO),
+                    Inventar (ISRATIO, RETAILIRSA, MNFCTRIRSA),
+                    Subsektoren (IPG325S, IPBUSEQ, IPCONGD, IPUTL, IPG337S, IPG3352S), Energie (WTISPLC, IPMINE),
+                    Handel (BOPGSTB, EXPGS, CMRMTSPL).
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Kapazit&auml;tsauslastung</strong>: TCU (Total Industry) und MCUMFN (Manufacturing) zeigen den Auslastungsgrad
+                    der Produktionskapazit&auml;ten. <strong>Inventar-Zyklen</strong>: Steigende Inv./Sales-Ratios
+                    signalisieren Nachfr&uuml;ckgang oder &Uuml;berproduktion. <strong>Auftragseing&auml;nge</strong>: NEWORDER
+                    (Core Capital Goods ex. Aircraft) ist ein Schl&uuml;ssel-Fr&uuml;hindikator f&uuml;r Investitionszyklen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Composite-Indikatoren</strong>: CFNAI (Chicago Fed National Activity Index) fasst 85 Indikatoren zusammen;
+                    Mittelwert 0, negativ = unter Trend. <strong>Umfragen &amp; PMI</strong>: ISM Manufacturing PMI und
+                    New Orders (Schwelle 50 = Expansion/Kontraktion), Empire State (NY Fed) und Philly Fed
+                    Mfg. Index (Schwelle 0). Level-basierte Indikatoren, kein YoY.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED / Federal Reserve, BLS, Census Bureau, BEA, ISM. Monatsdaten ab 1985.
+                    YoY-Cluster als prozentuale Ver&auml;nderung, Surveys/Composite als Rohwerte (Level). Rezessionen: USREC (NBER).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Produktionszyklus &middot; Daten: FRED</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var prodData = __PRODUCTION_DATA__;
+
+    if (!prodData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_production.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var currentMode = 'yoy';
+    var showNber = true;
+
+    var MODE_LABELS = { 'yoy': 'YoY %', 'pct1y': '% zu 1J Max', 'pct2y': '% zu 2J Max' };
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr ? arr.slice(range.start, range.end) : [];
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !prodData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        prodData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    function switchMode(mode, btn) {
+        currentMode = mode;
+        document.getElementById('modeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function getSeriesData(cluster, sid) {
+        // Level-basierte Cluster: immer Rohwerte verwenden
+        if (cluster.is_level && cluster.levels && cluster.levels[sid]) {
+            return cluster.levels[sid];
+        }
+        return cluster[currentMode] ? cluster[currentMode][sid] : cluster.yoy[sid];
+    }
+
+    function getYAxisTitle() { return MODE_LABELS[currentMode] || 'YoY %'; }
+
+    function getHoverFmt(label) {
+        if (currentMode === 'yoy') return label + ': %{y:+.1f}%<extra></extra>';
+        return label + ': %{y:.1f}%<extra></extra>';
+    }
+
+    function getLevelHoverFmt(label) {
+        return label + ': %{y:.2f}<extra></extra>';
+    }
+
+    // ============================================================
+    //  STAT BOXES
+    // ============================================================
+    function lastNonNull(arr) {
+        if (!arr) return null;
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != null) return arr[i];
+        }
+        return null;
+    }
+
+    function updateStatBoxes() {
+        var container = document.getElementById('statBoxes');
+        var html = '';
+
+        // Get composite values for current mode
+        var compArr = prodData.composite[currentMode] || prodData.composite.yoy;
+        var indArr = prodData.indpro[currentMode] || prodData.indpro.yoy;
+
+        var creditArr = prodData.credit_composite ? (prodData.credit_composite[currentMode] || prodData.credit_composite.yoy) : null;
+
+        var keyStats = [
+            { label: 'Leading Composite', value: lastNonNull(compArr), color: '#0d9488' },
+            { label: 'Credit-Financed', value: lastNonNull(creditArr), color: '#dc2626' },
+            { label: 'INDPRO', value: lastNonNull(indArr), color: '#999999' },
+        ];
+
+        // Per-series stats from cluster data
+        var seriesStats = [
+            { label: 'Copper', sid: 'PCOPPUSDM', cluster: 'metals', color: '#1A2E4A' },
+            { label: 'Heavy Trucks', sid: 'HTRUCKSSAAR', cluster: 'transport', color: '#1A2E4A' },
+            { label: 'Semiconductor', sid: 'IPG3344S', cluster: 'semiconductor', color: '#1A2E4A' },
+            { label: 'Housing Starts', sid: 'HOUST', cluster: 'wood', color: '#2598C3' },
+        ];
+        seriesStats.forEach(function(s) {
+            var cl = prodData.clusters[s.cluster];
+            var arr = cl ? (cl[currentMode] || cl.yoy)[s.sid] : null;
+            keyStats.push({ label: s.label, value: lastNonNull(arr), color: s.color });
+        });
+
+        var modeLabel = MODE_LABELS[currentMode];
+        keyStats.forEach(function(stat) {
+            var val = stat.value;
+            html += '<div class="chart-container" style="padding:16px;text-align:center;">';
+            html += '<div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">' + stat.label + '</div>';
+            html += '<div style="font-size:24px;font-weight:700;color:' + stat.color + ';">' +
+                (val != null ? (val > 0 ? '+' : '') + val.toFixed(1) + '%' : '--') + '</div>';
+            html += '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">' + modeLabel + '</div>';
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    //  CHART 1: Composite Leading vs INDPRO
+    // ============================================================
+    function updateCompositeChart() {
+        var dates = prodData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var compData = prodData.composite[currentMode] || prodData.composite.yoy;
+        var creditData = prodData.credit_composite ? (prodData.credit_composite[currentMode] || prodData.credit_composite.yoy) : null;
+        var indData = prodData.indpro[currentMode] || prodData.indpro.yoy;
+
+        var traces = [];
+
+        if (compData && compData.length > 0) {
+            traces.push({
+                x: d, y: sl(compData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#0d9488', width: 2.5 },
+                name: 'Leading Composite',
+                hovertemplate: getHoverFmt('Leading')
+            });
+        }
+
+        if (creditData && creditData.length > 0) {
+            traces.push({
+                x: d, y: sl(creditData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2.2 },
+                name: 'Credit-Financed',
+                hovertemplate: getHoverFmt('Credit')
+            });
+        }
+
+        if (indData && indData.length > 0) {
+            traces.push({
+                x: d, y: sl(indData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#999999', width: 1.8, dash: 'dot' },
+                name: 'INDPRO',
+                hovertemplate: getHoverFmt('INDPRO')
+            });
+        }
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%b %Y' },
+            yaxis: { title: getYAxisTitle(), showgrid: true, gridcolor: '#E8E8E8' },
+            height: 420,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            shapes: shapes
+        });
+
+        document.getElementById('compositeTitle').textContent =
+            'Leading vs. Credit-Financed vs. INDPRO (' + MODE_LABELS[currentMode] + ')';
+        Plotly.newPlot('compositeChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  GENERIC CLUSTER CHART
+    // ============================================================
+    var CLUSTER_TITLES = {
+        'transport': 'Transport &amp; Heavy Trucks',
+        'packaging': 'Packaging &amp; Paper',
+        'wood': 'Holz &amp; Bau',
+        'metals': 'Industriemetalle',
+        'broad': 'Breite Produktion',
+        'caputil': 'Kapazit&auml;tsauslastung',
+        'orders': 'Auftragseing&auml;nge',
+        'inventory': 'Inventar-Zyklen',
+        'subsectors': 'Industrie-Subsektoren',
+        'energy': 'Energie',
+        'trade': 'Handel',
+        'composite': 'Composite-Indikatoren',
+        'surveys': 'Umfragen &amp; PMI'
+    };
+
+    function updateClusterChart(clusterId, divId, titleDivId) {
+        var cluster = prodData.clusters[clusterId];
+        if (!cluster) {
+            document.getElementById(divId).innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Daten verf&uuml;gbar</p>';
+            return;
+        }
+
+        var isLevel = cluster.is_level;
+        var dates = prodData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        cluster.series.forEach(function(sid) {
+            var seriesData = getSeriesData(cluster, sid);
+            if (!seriesData) return;
+            traces.push({
+                x: d, y: sl(seriesData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: prodData.colors[sid] || '#999', width: 1.8 },
+                name: prodData.labels[sid],
+                hovertemplate: isLevel ? getLevelHoverFmt(prodData.labels[sid]) : getHoverFmt(prodData.labels[sid])
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var yTitle = isLevel ? 'Index' : getYAxisTitle();
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%b %Y' },
+            yaxis: { title: yTitle, showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            shapes: shapes
+        });
+
+        // Update title
+        var tid = titleDivId || (clusterId + 'Title');
+        var titleEl = document.getElementById(tid);
+        if (titleEl && CLUSTER_TITLES[clusterId]) {
+            var modeStr = isLevel ? 'Level' : MODE_LABELS[currentMode];
+            titleEl.innerHTML = CLUSTER_TITLES[clusterId] + ' (' + modeStr + ')';
+        }
+
+        Plotly.newPlot(divId, traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 6: Semiconductor (with Capacity Utilization on y2)
+    // ============================================================
+    function updateSemiconductorChart() {
+        var cluster = prodData.clusters['semiconductor'];
+        if (!cluster) {
+            document.getElementById('semiconductorChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Daten verf&uuml;gbar</p>';
+            return;
+        }
+
+        var dates = prodData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        var hasCapUtil = currentMode === 'yoy' && prodData.cap_util && prodData.cap_util['CAPUTLG3344S'];
+
+        cluster.series.forEach(function(sid) {
+            var seriesData = getSeriesData(cluster, sid);
+            if (!seriesData) return;
+            if (sid === 'CAPUTLG3344S' && hasCapUtil) {
+                traces.push({
+                    x: d, y: sl(prodData.cap_util['CAPUTLG3344S'], range),
+                    type: 'scatter', mode: 'lines',
+                    line: { color: prodData.colors[sid] || '#2598C3', width: 1.8, dash: 'dot' },
+                    name: prodData.labels[sid] + ' (Level)',
+                    yaxis: 'y2',
+                    hovertemplate: prodData.labels[sid] + ': %{y:.1f}%<extra></extra>'
+                });
+            } else {
+                traces.push({
+                    x: d, y: sl(seriesData, range),
+                    type: 'scatter', mode: 'lines',
+                    line: { color: prodData.colors[sid] || '#999', width: 1.8 },
+                    name: prodData.labels[sid],
+                    hovertemplate: getHoverFmt(prodData.labels[sid])
+                });
+            }
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var capUtilSuffix = hasCapUtil ? ' + Capacity Utilization' : '';
+        document.getElementById('semiconductorTitle').innerHTML =
+            'Halbleiter (' + MODE_LABELS[currentMode] + capUtilSuffix + ')';
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%b %Y' },
+            yaxis: { title: getYAxisTitle(), showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            shapes: shapes
+        });
+
+        if (hasCapUtil) {
+            layout.yaxis2 = {
+                title: 'Cap. Util. (%)', overlaying: 'y', side: 'right',
+                showgrid: false, range: [40, 100]
+            };
+            layout.margin = { l: 70, r: 70, t: 30, b: 50 };
+        }
+
+        Plotly.newPlot('semiconductorChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CURRENT INFO
+    // ============================================================
+    function updateCurrentInfo() {
+        document.getElementById('currentInfo').innerHTML =
+            'Stand: ' + prodData.fetch_date;
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!prodData) return;
+        updateStatBoxes();
+        updateCurrentInfo();
+        updateCompositeChart();
+        updateClusterChart('transport', 'transportChart');
+        updateClusterChart('packaging', 'packagingChart');
+        updateClusterChart('wood', 'woodChart');
+        updateClusterChart('metals', 'metalsChart');
+        updateSemiconductorChart();
+        updateClusterChart('broad', 'broadChart');
+        updateClusterChart('caputil', 'caputilChart');
+        updateClusterChart('orders', 'ordersChart');
+        updateClusterChart('inventory', 'inventoryChart');
+        updateClusterChart('subsectors', 'subsectorsChart');
+        updateClusterChart('energy', 'energyChart');
+        updateClusterChart('trade', 'tradeChart');
+        updateClusterChart('composite', 'compositeIndexChart', 'compositeIndexTitle');
+        updateClusterChart('surveys', 'surveysChart');
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

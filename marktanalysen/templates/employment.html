@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Employment-Analyse: Leading vs. Broad Beschäftigungsindikatoren, Residential Building, Durable Manufacturing, Nonfarm Payrolls">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Employment-Analyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Total Nonfarm YoY</div>
+                    <div id="statNonfarm" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Jahresver&auml;nderung</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Leading Composite YoY</div>
+                    <div id="statLeading" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Res. Building + Durable Mfg.</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Broad Composite YoY</div>
+                    <div id="statBroad" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Construction + Manufacturing</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Residential Building YoY</div>
+                    <div id="statResidential" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">zyklisch f&uuml;hrend</div>
+                </div>
+            </div>
+
+            <!-- Chart: Leading Composite vs. Broad Composite -->
+            <div class="chart-container">
+                <h3 class="section-title">Leading Composite vs. Broad Composite (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Leading = &empty;(Res. Building, Durable Mfg.) vs. Broad = &empty;(Construction, Manufacturing) &ndash; Jahresver&auml;nderung
+                </p>
+                <div id="leadingVsBroadChart"></div>
+            </div>
+
+            <!-- Chart 3: Alle YoY Einzelserien -->
+            <div class="chart-container">
+                <h3 class="section-title">Alle Sektoren im Vergleich (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Jahresver&auml;nderung aller f&uuml;nf Besch&auml;ftigungsserien
+                </p>
+                <div id="allSeriesChart"></div>
+            </div>
+
+            <!-- Chart 4: Spread Leading - Nonfarm -->
+            <div class="chart-container">
+                <h3 class="section-title">Spread: Leading Composite minus Total Nonfarm (Pp.)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Positiv = Leading w&auml;chst st&auml;rker als Nonfarm; Negativ = Leading schw&auml;cher
+                </p>
+                <div id="spreadNfChart"></div>
+            </div>
+
+            <!-- Chart 5: Spread Leading - Broad -->
+            <div class="chart-container">
+                <h3 class="section-title">Spread: Leading Composite minus Broad Composite (Pp.)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Positiv = Leading Sektoren wachsen schneller als breite Industrie; Negativ = Leading schw&auml;cher
+                </p>
+                <div id="spreadBroadChart"></div>
+            </div>
+
+            <!-- Sahm Rule -->
+            <div class="chart-container">
+                <h3 class="section-title">Sahm Rule Rezessionsindikator</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    3-Monats-Durchschnitt der Arbeitslosenquote minus 12-Monats-Tief. Werte &ge; 0,50 Pp. signalisieren eine Rezession.
+                </p>
+                <div id="sahmChart"></div>
+            </div>
+
+            <!-- Unemployment Rates -->
+            <div class="chart-container">
+                <h3 class="section-title">Arbeitslosenquoten: U-3 vs. U-6</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    U-3 = offizielle Arbeitslosenquote, U-6 = inkl. Unterbesch&auml;ftigung und marginally attached workers
+                </p>
+                <div id="unrateChart"></div>
+            </div>
+
+            <!-- Unemployment Level & Long-term -->
+            <div class="chart-container">
+                <h3 class="section-title">Anzahl Arbeitslose &amp; Langzeitarbeitslose (27+ Wochen)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Absolutes Niveau der Arbeitslosigkeit (Tausend Personen) und Langzeitarbeitslose
+                </p>
+                <div id="unemployChart"></div>
+            </div>
+
+            <!-- Average Duration -->
+            <div class="chart-container">
+                <h3 class="section-title">Durchschnittliche Dauer der Arbeitslosigkeit</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Mittlere Dauer in Wochen. Steigende Werte deuten auf strukturelle Arbeitsmarktprobleme hin.
+                </p>
+                <div id="durationChart"></div>
+            </div>
+
+            <!-- Claims -->
+            <div class="chart-container">
+                <h3 class="section-title">Jobless Claims: Erstantr&auml;ge &amp; Fortlaufende Antr&auml;ge</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    ICSA (Initial Claims) als Fr&uuml;hindikator; CCSA (Continued Claims) zeigt Bestandsarbeitslosigkeit
+                </p>
+                <div id="claimsChart"></div>
+            </div>
+
+            <!-- Participation Rates -->
+            <div class="chart-container">
+                <h3 class="section-title">Erwerbsbeteiligung: Partizipationsraten</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    CIVPART = Gesamt-Partizipation, Prime Age (25-54) = bereinigt um Demografie, EMRATIO = Besch&auml;ftigungs-Bev&ouml;lkerungs-Verh&auml;ltnis
+                </p>
+                <div id="participationChart"></div>
+            </div>
+
+            <!-- Average Weekly Hours Manufacturing -->
+            <div class="chart-container">
+                <h3 class="section-title">Durchschnittliche Wochenarbeitsstunden: Verarbeitendes Gewerbe</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    AWHMAN: Leading Indicator &ndash; Arbeitgeber passen Stunden an, bevor sie Personal einstellen oder entlassen
+                </p>
+                <div id="awhmanChart"></div>
+            </div>
+
+            <!-- JOLTS -->
+            <div class="chart-container">
+                <h3 class="section-title">JOLTS: Offene Stellen, K&uuml;ndigungen, Einstellungen &amp; Entlassungen</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Openings = Arbeitsnachfrage, Quits = Arbeitsmarktvertrauen, Hires = tats&auml;chliche Einstellungen, Layoffs = Entlassungen
+                </p>
+                <div id="joltsChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Leading Composite</strong> = Durchschnitt der YoY-Ver&auml;nderung von Residential Building Construction
+                    und Durable Goods Manufacturing. Diese Sektoren reagieren fr&uuml;hzyklisch auf konjunkturelle Wendepunkte.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Broad Composite</strong> = Durchschnitt der YoY-Ver&auml;nderung von Construction (gesamt)
+                    und Manufacturing (gesamt). Diese breiteren Aggregate reagieren verz&ouml;gert.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Total Nonfarm Payrolls</strong> (PAYEMS) dient als Benchmark f&uuml;r den Gesamtarbeitsmarkt.
+                    Ein Einbruch des Leading Composite vor dem Nonfarm-Aggregat signalisiert eine bevorstehende Abschw&auml;chung.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Sahm Rule</strong> (SAHMREALTIME): 3-Monats-MA der Arbeitslosenquote minus 12-Monats-Tief.
+                    Werte &ge; 0,50 Pp. signalisieren zuverl&auml;ssig eine Rezession.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>JOLTS</strong> (Job Openings and Labor Turnover Survey): Openings Rate = Arbeitsnachfrage,
+                    Quits Rate = freiwillige K&uuml;ndigungen (Arbeitsmarktvertrauen),
+                    Hires Rate = tats&auml;chliche Einstellungen, Layoffs &amp; Discharges = unfreiwillige Trennungen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Partizipation</strong>: CIVPART = Anteil der Bev&ouml;lkerung im Erwerbsleben,
+                    Prime Age (25-54) = bereinigt um demografische Effekte (Rente, Ausbildung),
+                    EMRATIO = Anteil der Bev&ouml;lkerung mit Besch&auml;ftigung.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>AWHMAN</strong> (Average Weekly Hours, Manufacturing): Klassischer Leading Indicator &ndash;
+                    Arbeitgeber passen zuerst die Arbeitszeit an, bevor sie Personal einstellen oder entlassen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Temp Help Services</strong> (TEMPHELPS): Zeitarbeit reagiert fr&uuml;hzyklisch &ndash;
+                    Unternehmen reduzieren zuerst Zeitarbeit vor festen Stellen.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (CES2023610001, DMANEMP, TEMPHELPS, PAYEMS, USCONS, MANEMP, USREC,
+                    SAHMREALTIME, UNRATE, U6RATE, UNEMPLOY, UEMPMEAN, UEMP27OV, ICSA, CCSA,
+                    CIVPART, LNS11300060, EMRATIO, AWHMAN, JTSQUR, JTSJOR, JTSHIR, JTSLDL).
+                    Monatliche Frequenz (Claims: w&ouml;chentlich &rarr; Monatsendwert), saisonbereinigt.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Employment-Analyse &middot; Daten: FRED (BLS)</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var empData = __EMPLOYMENT_DATA__;
+
+    if (!empData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_employment.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr.slice(range.start, range.end);
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !empData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        empData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART: Leading Composite vs. Broad Composite
+    // ============================================================
+    function updateLeadingVsBroadChart() {
+        var dates = empData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(empData.leading_composite, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2.5 },
+                name: 'Leading Composite',
+                hovertemplate: 'Leading: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.broad_composite, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2 },
+                name: 'Broad Composite',
+                hovertemplate: 'Broad: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.yoy['PAYEMS'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 1.5 },
+                name: 'Total Nonfarm',
+                hovertemplate: 'Nonfarm: %{y:+.2f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('leadingVsBroadChart', traces, layout, plotlyConfig);
+        baseShapeCount.leadingVsBroadChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 3: Alle Einzelserien YoY
+    // ============================================================
+    function updateAllSeriesChart() {
+        var dates = empData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var seriesOrder = ['CES2023610001', 'DMANEMP', 'TEMPHELPS', 'PAYEMS', 'USCONS', 'MANEMP'];
+        var traces = [];
+
+        seriesOrder.forEach(function(sid) {
+            traces.push({
+                x: d, y: sl(empData.yoy[sid], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: empData.colors[sid], width: sid === 'PAYEMS' ? 2.5 : 1.5 },
+                name: empData.labels[sid],
+                hovertemplate: empData.labels[sid] + ': %{y:+.2f}%<extra></extra>'
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('allSeriesChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 4: Spread Leading - Nonfarm
+    // ============================================================
+    function updateSpreadNfChart() {
+        var dates = empData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+        var spread = sl(empData.spread_leading_nf, range);
+
+        var colors = spread.map(function(v) {
+            return v != null ? (v >= 0 ? 'rgba(139,92,246,0.6)' : 'rgba(220,38,38,0.6)') : 'rgba(128,128,128,0.3)';
+        });
+
+        var traces = [{
+            x: d, y: spread,
+            type: 'bar',
+            marker: { color: colors },
+            name: 'Spread',
+            hovertemplate: '%{y:+.2f} Pp.<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Spread (Prozentpunkte)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 280,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 5 },
+            shapes: shapes,
+            bargap: 0
+        });
+
+        Plotly.newPlot('spreadNfChart', traces, layout, plotlyConfig);
+        baseShapeCount.spreadNfChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 5: Spread Leading - Broad
+    // ============================================================
+    function updateSpreadBroadChart() {
+        var dates = empData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+        var spread = sl(empData.spread_leading_broad, range);
+
+        var colors = spread.map(function(v) {
+            return v != null ? (v >= 0 ? 'rgba(139,92,246,0.6)' : 'rgba(220,38,38,0.6)') : 'rgba(128,128,128,0.3)';
+        });
+
+        var traces = [{
+            x: d, y: spread,
+            type: 'bar',
+            marker: { color: colors },
+            name: 'Spread',
+            hovertemplate: '%{y:+.2f} Pp.<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Spread (Prozentpunkte)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 280,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 50 },
+            shapes: shapes,
+            bargap: 0
+        });
+
+        Plotly.newPlot('spreadBroadChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        var c = empData.current;
+
+        function fmtStat(el, val) {
+            if (val != null) {
+                el.textContent = (val >= 0 ? '+' : '') + val.toFixed(2) + '%';
+                el.style.color = val >= 0 ? '#16a34a' : '#dc2626';
+            }
+        }
+
+        fmtStat(document.getElementById('statNonfarm'), c.nonfarm_yoy);
+        fmtStat(document.getElementById('statLeading'), c.leading_yoy);
+        fmtStat(document.getElementById('statBroad'), c.broad_yoy);
+        fmtStat(document.getElementById('statResidential'), c.residential_yoy);
+
+        document.getElementById('currentInfo').innerHTML =
+            'Nonfarm: <strong>' + (c.nonfarm_yoy != null ? (c.nonfarm_yoy >= 0 ? '+' : '') + c.nonfarm_yoy.toFixed(2) + '%' : '--') + '</strong> &middot; ' +
+            'Leading: ' + (c.leading_yoy != null ? (c.leading_yoy >= 0 ? '+' : '') + c.leading_yoy.toFixed(2) + '%' : '--') + ' &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  SAHM RULE
+    // ============================================================
+    function updateSahmChart() {
+        if (!empData.sahm) return;
+        var dates = empData.sahm.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [{
+            x: d, y: sl(empData.sahm.values, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: '#1A2E4A', width: 2 },
+            name: 'Sahm Rule',
+            hovertemplate: 'Sahm: %{y:.2f} Pp.<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push({
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0.5, y1: 0.5,
+            line: { color: '#dc2626', width: 1.5, dash: 'dash' }
+        });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Prozentpunkte', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 350,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 50 },
+            shapes: shapes,
+            annotations: [{
+                x: 1, xref: 'paper', y: 0.5, yref: 'y',
+                text: 'Rezessions-Schwelle (0.50)',
+                showarrow: false,
+                font: { size: 11, color: '#dc2626' },
+                xanchor: 'right', yanchor: 'bottom'
+            }]
+        });
+
+        Plotly.newPlot('sahmChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  UNEMPLOYMENT RATES: U-3 vs. U-6
+    // ============================================================
+    function updateUnrateChart() {
+        if (!empData.unemployment_rates) return;
+        var dates = empData.unemployment_rates.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(empData.unemployment_rates.unrate, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2 },
+                name: 'U-3 (UNRATE)',
+                hovertemplate: 'U-3: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.unemployment_rates.u6rate, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2 },
+                name: 'U-6 (U6RATE)',
+                hovertemplate: 'U-6: %{y:.1f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Arbeitslosenquote (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('unrateChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  UNEMPLOYMENT LEVEL & LONG-TERM
+    // ============================================================
+    function updateUnemployChart() {
+        if (!empData.unemployment_detail) return;
+        var dates = empData.unemployment_detail.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(empData.unemployment_detail.unemploy, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2 },
+                name: 'Total Arbeitslose',
+                hovertemplate: 'Total: %{y:,.0f} Tsd.<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.unemployment_detail.uemp27ov, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2 },
+                name: 'Langzeit (27+ Wochen)',
+                hovertemplate: '27+ W.: %{y:,.0f} Tsd.<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Tausend Personen', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('unemployChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  AVERAGE DURATION OF UNEMPLOYMENT
+    // ============================================================
+    function updateDurationChart() {
+        if (!empData.unemployment_detail) return;
+        var dates = empData.unemployment_detail.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [{
+            x: d, y: sl(empData.unemployment_detail.uempmean, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: '#2598C3', width: 2 },
+            name: '\u00d8 Dauer',
+            hovertemplate: '%{y:.1f} Wochen<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Wochen', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 350,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('durationChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  JOBLESS CLAIMS: ICSA & CCSA
+    // ============================================================
+    function updateClaimsChart() {
+        if (!empData.claims) return;
+        var dates = empData.claims.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(empData.claims.icsa, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2 },
+                name: 'Initial Claims (ICSA)',
+                yaxis: 'y',
+                hovertemplate: 'ICSA: %{y:,.0f}<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.claims.ccsa, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2 },
+                name: 'Continued Claims (CCSA)',
+                yaxis: 'y2',
+                hovertemplate: 'CCSA: %{y:,.0f}<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Initial Claims', showgrid: true, gridcolor: '#E8E8E8', side: 'left' },
+            yaxis2: { title: 'Continued Claims', showgrid: false, overlaying: 'y', side: 'right' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('claimsChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  PARTICIPATION RATES
+    // ============================================================
+    function updateParticipationChart() {
+        if (!empData.participation) return;
+        var dates = empData.participation.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(empData.participation.civpart, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2 },
+                name: 'CIVPART (Gesamt)',
+                hovertemplate: 'Gesamt: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.participation.primepart, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2 },
+                name: 'Prime Age (25-54)',
+                hovertemplate: 'Prime Age: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.participation.emratio, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2 },
+                name: 'EMRATIO',
+                hovertemplate: 'Emp/Pop: %{y:.1f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Rate (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('participationChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  AVERAGE WEEKLY HOURS MANUFACTURING
+    // ============================================================
+    function updateAwhmanChart() {
+        if (!empData.awhman) return;
+        var dates = empData.awhman.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [{
+            x: d, y: sl(empData.awhman.values, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: '#1A2E4A', width: 2 },
+            name: 'Avg Weekly Hours',
+            hovertemplate: '%{y:.1f} Std.<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Stunden', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 350,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('awhmanChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  JOLTS: QUITS RATE & JOB OPENINGS RATE
+    // ============================================================
+    function updateJoltsChart() {
+        if (!empData.jolts) return;
+        var dates = empData.jolts.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(empData.jolts.jtsjor, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2 },
+                name: 'Job Openings Rate',
+                hovertemplate: 'Openings: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.jolts.jtsqur, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#16a34a', width: 2 },
+                name: 'Quits Rate',
+                hovertemplate: 'Quits: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.jolts.jtshir, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2 },
+                name: 'Hires Rate',
+                hovertemplate: 'Hires: %{y:.1f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(empData.jolts.jtsldl, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2 },
+                name: 'Layoffs & Discharges',
+                yaxis: 'y2',
+                hovertemplate: 'Layoffs: %{y:,.0f} Tsd.<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Rate (%)', showgrid: true, gridcolor: '#E8E8E8', side: 'left' },
+            yaxis2: { title: 'Layoffs (Tsd.)', showgrid: false, overlaying: 'y', side: 'right' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            margin: { l: 70, r: 70, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('joltsChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR
+    // ============================================================
+    var chartIds = ['leadingVsBroadChart', 'spreadNfChart'];
+    var baseShapeCount = { leadingVsBroadChart: 0, spreadNfChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!empData) return;
+        updateStats();
+        updateLeadingVsBroadChart();
+        updateAllSeriesChart();
+        updateSpreadNfChart();
+        updateSpreadBroadChart();
+        updateSahmChart();
+        updateUnrateChart();
+        updateUnemployChart();
+        updateDurationChart();
+        updateClaimsChart();
+        updateParticipationChart();
+        updateAwhmanChart();
+        updateJoltsChart();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

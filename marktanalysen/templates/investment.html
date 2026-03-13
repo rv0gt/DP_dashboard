@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Investitionsanalyse: Einkommen, Nettoinvestition, Produktivitaet, Sparidentitaet">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%2316a34a' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Investitionsanalyse | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('50Y', this)">50J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Real Income p.c.</div>
+                    <div id="statIncome" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">USD (real, 2017)</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Net Investment</div>
+                    <div id="statNetInvest" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">% des GDP</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Gross Investment</div>
+                    <div id="statGrossInvest" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">% des GDP</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Produktivit&auml;t YoY</div>
+                    <div id="statProductivity" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Output/Stunde</div>
+                </div>
+            </div>
+
+            <!-- Erklaerungstext -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Investitionszyklus &amp; Kapitalvertiefung</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Real Income Growth &rarr; Productivity Growth &rarr; Savings &amp; Kapitalvertiefung (Capital Deepening).</strong>
+                    Steigende Realeinkommen erh&ouml;hen die Sparquote, die zu mehr Investitionen und h&ouml;herer Produktivit&auml;t f&uuml;hrt.
+                    Dieser Kreislauf ist der Motor langfristigen Wirtschaftswachstums.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;">
+                    <strong>Nettoinvestition = Bruttoinvestition minus Kapitalverzehr (Abschreibungen).</strong>
+                    Nur die Nettoinvestition erh&ouml;ht den effektiven Kapitalstock. Ein sinkender Nettoinvestitionsanteil
+                    signalisiert nachlassende Kapitalvertiefung und zuk&uuml;nftig langsameres Produktivit&auml;tswachstum.
+                </p>
+            </div>
+
+            <!-- Chart 1: Real Personal Income per Capita -->
+            <div class="chart-container">
+                <h3 class="section-title">Real Personal Income ex Transfers (pro Kopf, 2017-USD)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Reales verf&uuml;gbares Einkommen ohne staatliche Transfers, pro Kopf &ndash; zeigt die echte Einkommensentwicklung
+                </p>
+                <div id="incomeChart"></div>
+            </div>
+
+            <!-- Chart 2: Net vs Gross Investment -->
+            <div class="chart-container">
+                <h3 class="section-title">Net &amp; Gross Private Domestic Investment (% GDP)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Nettoinvestition = Bruttoinvestition minus Kapitalverzehr (Abschreibungen)
+                </p>
+                <div id="investChart"></div>
+            </div>
+
+            <!-- Chart 3: Investment Components -->
+            <div class="chart-container">
+                <h3 class="section-title">Investitionskomponenten (% GDP)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Strukturen (Infrastruktur), Equipment &amp; Intellectual Property Products
+                </p>
+                <div id="componentsChart"></div>
+            </div>
+
+            <!-- Chart 4: Productivity -->
+            <div class="chart-container">
+                <h3 class="section-title">Produktivit&auml;tswachstum (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Nonfarm Business Sector: Output pro Stunde &ndash; Jahresver&auml;nderung
+                </p>
+                <div id="productivityChart"></div>
+            </div>
+
+            <!-- Chart 5: National Savings & Investment Identity -->
+            <div class="chart-container">
+                <h3 class="section-title">National Savings &amp; Investment Identity (% GDP)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    S = I + (G &minus; T) + (X &minus; M) &ndash; Privates Sparen, Staatliches Sparen, Auslandssparen
+                </p>
+                <div id="savingsChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik &amp; National Savings Identity</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    Die <strong>National Savings &amp; Investment Identity</strong> zeigt: <code>S = I + (G &minus; T) + (X &minus; M)</code>.
+                    In einer geschlossenen Volkswirtschaft muss privates Sparen gleich der Investition sein.
+                    In einer offenen Wirtschaft k&ouml;nnen Staats&shy;defizite und Leistungs&shy;bilanz&shy;defizite durch ausl&auml;ndisches Kapital finanziert werden.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED / BEA NIPA (W875RX1A020NBEA, B230RC0A052NBEA, W790RC1Q027SBEA, GPDI, GDP, B009RC1Q027SBEA, Y033RC1Q027SBEA, Y001RC1Q027SBEA, OPHNFB, A071RC1Q027SBEA, FGRECPT, FGEXPND, NETFI, USREC).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Investitionsanalyse &middot; Daten: FRED / BEA NIPA, BLS</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var invData = __INVESTMENT_DATA__;
+
+    if (!invData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_investment.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '10Y': 120, '20Y': 240, '50Y': 600 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr ? arr.slice(range.start, range.end) : [];
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !invData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        invData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART 1: Real Income per Capita
+    // ============================================================
+    function updateIncomeChart() {
+        if (!invData.real_income_pc_dates || !invData.real_income_pc_values) {
+            document.getElementById('incomeChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Daten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var dates = invData.real_income_pc_dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [{
+            x: d, y: sl(invData.real_income_pc_values, range),
+            type: 'scatter', mode: 'lines',
+            line: { color: '#2598C3', width: 2.5 },
+            name: 'Real Income p.c.',
+            hovertemplate: '$%{y:,.0f}<extra></extra>'
+        }];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'USD (real, 2017)', showgrid: true, gridcolor: '#E8E8E8', tickformat: '$,.0f' },
+            height: 400,
+            showlegend: false,
+            margin: { l: 80, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('incomeChart', traces, layout, plotlyConfig);
+        baseShapeCount.incomeChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 2: Net vs Gross Investment
+    // ============================================================
+    function updateInvestChart() {
+        var dates = invData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(invData.gross_investment_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#94a3b8', width: 1.5 },
+                name: 'Gross Investment',
+                hovertemplate: 'Gross: %{y:.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(invData.net_investment_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2.5 },
+                name: 'Net Investment',
+                hovertemplate: 'Net: %{y:.2f}%<extra></extra>'
+            }
+        ];
+
+        // Zero line
+        traces.push({
+            x: [d[0], d[d.length-1]], y: [0, 0],
+            type: 'scatter', mode: 'lines',
+            line: { color: '#dc2626', width: 1, dash: 'dot' },
+            name: 'Zero', showlegend: false,
+            hoverinfo: 'skip'
+        });
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: '% des GDP', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('investChart', traces, layout, plotlyConfig);
+        baseShapeCount.investChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 3: Investment Components
+    // ============================================================
+    function updateComponentsChart() {
+        if (!invData.structures_pct && !invData.equipment_pct && !invData.ip_pct) {
+            document.getElementById('componentsChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Komponentendaten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var dates = invData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        if (invData.structures_pct) {
+            traces.push({
+                x: d, y: sl(invData.structures_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2 },
+                name: 'Strukturen / Infrastruktur',
+                hovertemplate: 'Strukturen: %{y:.2f}%<extra></extra>'
+            });
+        }
+        if (invData.equipment_pct) {
+            traces.push({
+                x: d, y: sl(invData.equipment_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2 },
+                name: 'Equipment',
+                hovertemplate: 'Equipment: %{y:.2f}%<extra></extra>'
+            });
+        }
+        if (invData.ip_pct) {
+            traces.push({
+                x: d, y: sl(invData.ip_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#16a34a', width: 2 },
+                name: 'Intellectual Property',
+                hovertemplate: 'IP: %{y:.2f}%<extra></extra>'
+            });
+        }
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: '% des GDP', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('componentsChart', traces, layout, plotlyConfig);
+        baseShapeCount.componentsChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 4: Productivity YoY
+    // ============================================================
+    function updateProductivityChart() {
+        if (!invData.productivity_yoy) {
+            document.getElementById('productivityChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Produktivit&auml;tsdaten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var dates = invData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(invData.productivity_yoy, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2.5 },
+                name: 'Productivity YoY',
+                hovertemplate: 'Produktivit&auml;t: %{y:.2f}%<extra></extra>'
+            }
+        ];
+
+        // Zero line
+        traces.push({
+            x: [d[0], d[d.length-1]], y: [0, 0],
+            type: 'scatter', mode: 'lines',
+            line: { color: '#94a3b8', width: 1, dash: 'dot' },
+            name: 'Zero', showlegend: false,
+            hoverinfo: 'skip'
+        });
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'YoY %', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: false,
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('productivityChart', traces, layout, plotlyConfig);
+        baseShapeCount.productivityChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 5: Savings Identity
+    // ============================================================
+    function updateSavingsChart() {
+        if (!invData.private_saving_pct && !invData.govt_saving_pct) {
+            document.getElementById('savingsChart').innerHTML = '<p style="color:var(--color-text-muted);padding:40px;text-align:center;">Spardaten nicht verf&uuml;gbar</p>';
+            return;
+        }
+        var dates = invData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        if (invData.private_saving_pct) {
+            traces.push({
+                x: d, y: sl(invData.private_saving_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2.5 },
+                name: 'Privates Sparen',
+                hovertemplate: 'Privat: %{y:.2f}%<extra></extra>'
+            });
+        }
+        if (invData.govt_saving_pct) {
+            traces.push({
+                x: d, y: sl(invData.govt_saving_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2.5 },
+                name: 'Staatl. Sparen (T-G)',
+                hovertemplate: 'Staat: %{y:.2f}%<extra></extra>'
+            });
+        }
+        if (invData.foreign_saving_pct) {
+            traces.push({
+                x: d, y: sl(invData.foreign_saving_pct, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2.5 },
+                name: 'Ausl. Kapitalzufluss',
+                hovertemplate: 'Ausland: %{y:.2f}%<extra></extra>'
+            });
+        }
+
+        // Zero line
+        if (d.length > 0) {
+            traces.push({
+                x: [d[0], d[d.length-1]], y: [0, 0],
+                type: 'scatter', mode: 'lines',
+                line: { color: '#94a3b8', width: 1, dash: 'dot' },
+                name: 'Zero', showlegend: false,
+                hoverinfo: 'skip'
+            });
+        }
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: '% des GDP', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 400,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('savingsChart', traces, layout, plotlyConfig);
+        baseShapeCount.savingsChart = shapes.length;
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        if (!invData) return;
+        var c = invData.current;
+
+        if (c.real_income_pc != null) {
+            document.getElementById('statIncome').textContent = '$' + c.real_income_pc.toLocaleString('en-US', {maximumFractionDigits: 0});
+        }
+        if (c.net_investment_pct != null) {
+            document.getElementById('statNetInvest').textContent = c.net_investment_pct.toFixed(2) + '%';
+        }
+        if (c.gross_investment_pct != null) {
+            document.getElementById('statGrossInvest').textContent = c.gross_investment_pct.toFixed(2) + '%';
+        }
+        if (c.productivity_yoy != null) {
+            document.getElementById('statProductivity').textContent = c.productivity_yoy.toFixed(2) + '%';
+        }
+
+        document.getElementById('currentInfo').innerHTML =
+            'Net Invest: <strong>' + (c.net_investment_pct != null ? c.net_investment_pct.toFixed(2) + '%' : '--') + '</strong>' +
+            ' &middot; Income p.c.: <strong>' + (c.real_income_pc != null ? '$' + c.real_income_pc.toLocaleString('en-US', {maximumFractionDigits: 0}) : '--') + '</strong>' +
+            ' &middot; Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR
+    // ============================================================
+    var chartIds = ['incomeChart', 'investChart', 'componentsChart', 'productivityChart', 'savingsChart'];
+    var baseShapeCount = { incomeChart: 0, investChart: 0, componentsChart: 0, productivityChart: 0, savingsChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!invData) return;
+        updateStats();
+        updateIncomeChart();
+        updateInvestChart();
+        updateComponentsChart();
+        updateProductivityChart();
+        updateSavingsChart();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

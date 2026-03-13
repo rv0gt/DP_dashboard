@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Elektrizitätsverbrauch-Analyse: Stromerzeugung, Quellen, Preise, Kapazitätsauslastung">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M18 6L10 18h7l-1 8 8-12h-7l1-8z' stroke='%23eab308' stroke-width='1.8' fill='none'/%3E%3C/svg%3E">
+    <title>Elektrizit&auml;tsverbrauch | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Modus</label>
+                <div class="toggle-group" id="modeToggle">
+                    <button class="toggle-btn active" onclick="switchMode('yoy', this)">YoY %</button>
+                    <button class="toggle-btn" onclick="switchMode('pct1y', this)">% zu 1J Max</button>
+                    <button class="toggle-btn" onclick="switchMode('pct2y', this)">% zu 2J Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;" id="statBoxes"></div>
+
+            <!-- Chart 1: Composite Leading vs INDPRO -->
+            <div class="chart-container">
+                <h3 class="section-title" id="compositeTitle">Electricity Composite vs. Industrial Production (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Elektrizit&auml;ts-Composite (IPUTIL, Stromerzeugung) vs. INDPRO
+                </p>
+                <div id="compositeChart"></div>
+            </div>
+
+            <!-- Chart 2: Stromerzeugung & Verteilung -->
+            <div class="chart-container">
+                <h3 class="section-title" id="generationTitle">Stromerzeugung &amp; Verteilung (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Electric &amp; Gas Utilities, Stromerzeugung, Transmission &amp; Distribution + Kapazit&auml;tsauslastung
+                </p>
+                <div id="generationChart"></div>
+            </div>
+
+            <!-- Chart 3: Erzeugungsquellen -->
+            <div class="chart-container">
+                <h3 class="section-title" id="sourcesTitle">Erzeugungsquellen (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Hydroelektrisch, Nuklear, Erneuerbare &amp; Sonstige Energiequellen
+                </p>
+                <div id="sourcesChart"></div>
+            </div>
+
+            <!-- Chart 4: Strompreise -->
+            <div class="chart-container">
+                <h3 class="section-title" id="pricesTitle">Strompreise (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    CPI Elektrizit&auml;t, Durchschnittlicher Preis pro kWh, CPI Energie (gesamt)
+                </p>
+                <div id="pricesChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid #eab308;background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Electricity Composite</strong>: Durchschnitt der YoY-Ver&auml;nderungen von Electric &amp; Gas Utilities (IPUTIL)
+                    und Stromerzeugung (IPG22111S). Vergleich mit Industrial Production (INDPRO) zeigt
+                    zyklische Divergenz zwischen Stromsektor und breiter Industrie.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Erzeugungsquellen</strong>: Hydroelektrisch (IPN221111S), Nuklear (IPN221113N),
+                    Erneuerbare &amp; Sonstige (IPN221114T8N). Zeigt den Strukturwandel im Energiemix &ndash;
+                    steigende Erneuerbare vs. stabile/sinkende konventionelle Quellen.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Cluster</strong>: Erzeugung (IPUTIL, IPG2211S, IPG22111S, IPG22112S),
+                    Quellen (IPN221111S, IPN221113N, IPN221114T8N),
+                    Preise (CUSR0000SEHF01, APU000072610, CPIENGSL).
+                    Kapazit&auml;tsauslastung (CAPUTLG2211S) als Level auf rechter Achse.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED / Federal Reserve, BLS. Monatsdaten ab 1985.
+                    Alle Serien als YoY % Ver&auml;nderung. Rezessionen: USREC (NBER).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Elektrizit&auml;tsverbrauch &middot; Daten: FRED</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var elecData = __ELECTRICITY_DATA__;
+
+    if (!elecData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_electricity.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var currentMode = 'yoy';
+    var showNber = true;
+
+    var MODE_LABELS = { 'yoy': 'YoY %', 'pct1y': '% zu 1J Max', 'pct2y': '% zu 2J Max' };
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr ? arr.slice(range.start, range.end) : [];
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !elecData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        elecData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    function switchMode(mode, btn) {
+        currentMode = mode;
+        document.getElementById('modeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function getSeriesData(cluster, sid) {
+        return cluster[currentMode] ? cluster[currentMode][sid] : cluster.yoy[sid];
+    }
+
+    function getYAxisTitle() { return MODE_LABELS[currentMode] || 'YoY %'; }
+
+    function getHoverFmt(label) {
+        if (currentMode === 'yoy') return label + ': %{y:+.1f}%<extra></extra>';
+        return label + ': %{y:.1f}%<extra></extra>';
+    }
+
+    // ============================================================
+    //  STAT BOXES
+    // ============================================================
+    function lastNonNull(arr) {
+        if (!arr) return null;
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != null) return arr[i];
+        }
+        return null;
+    }
+
+    function updateStatBoxes() {
+        var container = document.getElementById('statBoxes');
+        var html = '';
+
+        var compArr = elecData.composite[currentMode] || elecData.composite.yoy;
+        var indArr = elecData.indpro[currentMode] || elecData.indpro.yoy;
+
+        var keyStats = [
+            { label: 'Electricity Composite', value: lastNonNull(compArr), color: '#eab308' },
+            { label: 'INDPRO', value: lastNonNull(indArr), color: '#999999' },
+        ];
+
+        var seriesStats = [
+            { label: 'IPUTIL', sid: 'IPUTIL', cluster: 'generation', color: '#1A2E4A' },
+            { label: 'Stromerzeugung', sid: 'IPG22111S', cluster: 'generation', color: '#2598C3' },
+            { label: 'CPI Elektrizität', sid: 'CUSR0000SEHF01', cluster: 'prices', color: '#1A2E4A' },
+        ];
+
+        // Cap Util als Level (nicht mode-abhängig)
+        if (elecData.cap_util && elecData.cap_util['CAPUTLG2211S']) {
+            var capVal = lastNonNull(elecData.cap_util['CAPUTLG2211S']);
+            keyStats.push({ label: 'Cap. Util. (Level)', value: capVal, color: '#8b5cf6', isLevel: true });
+        }
+
+        seriesStats.forEach(function(s) {
+            var cl = elecData.clusters[s.cluster];
+            var arr = cl ? (cl[currentMode] || cl.yoy)[s.sid] : null;
+            keyStats.push({ label: s.label, value: lastNonNull(arr), color: s.color });
+        });
+
+        var modeLabel = MODE_LABELS[currentMode];
+        keyStats.forEach(function(stat) {
+            var val = stat.value;
+            var displayLabel = stat.isLevel ? 'Level' : modeLabel;
+            html += '<div class="chart-container" style="padding:16px;text-align:center;">';
+            html += '<div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">' + stat.label + '</div>';
+            if (stat.isLevel) {
+                html += '<div style="font-size:24px;font-weight:700;color:' + stat.color + ';">' +
+                    (val != null ? val.toFixed(1) + '%' : '--') + '</div>';
+            } else {
+                html += '<div style="font-size:24px;font-weight:700;color:' + stat.color + ';">' +
+                    (val != null ? (val > 0 ? '+' : '') + val.toFixed(1) + '%' : '--') + '</div>';
+            }
+            html += '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">' + displayLabel + '</div>';
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    //  CHART 1: Composite vs INDPRO
+    // ============================================================
+    function updateCompositeChart() {
+        var dates = elecData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var compData = elecData.composite[currentMode] || elecData.composite.yoy;
+        var indData = elecData.indpro[currentMode] || elecData.indpro.yoy;
+
+        var traces = [];
+
+        if (compData && compData.length > 0) {
+            traces.push({
+                x: d, y: sl(compData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#eab308', width: 2.5 },
+                name: 'Electricity Composite',
+                hovertemplate: getHoverFmt('Electricity')
+            });
+        }
+
+        if (indData && indData.length > 0) {
+            traces.push({
+                x: d, y: sl(indData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#999999', width: 1.8, dash: 'dot' },
+                name: 'INDPRO',
+                hovertemplate: getHoverFmt('INDPRO')
+            });
+        }
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%b %Y' },
+            yaxis: { title: getYAxisTitle(), showgrid: true, gridcolor: '#E8E8E8' },
+            height: 420,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            shapes: shapes
+        });
+
+        document.getElementById('compositeTitle').textContent =
+            'Electricity Composite vs. Industrial Production (' + MODE_LABELS[currentMode] + ')';
+        Plotly.newPlot('compositeChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 2: Stromerzeugung (with Cap Util on y2 in YoY mode)
+    // ============================================================
+    function updateGenerationChart() {
+        var cluster = elecData.clusters['generation'];
+        if (!cluster) {
+            document.getElementById('generationChart').innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Daten verf&uuml;gbar</p>';
+            return;
+        }
+
+        var dates = elecData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        var hasCapUtil = currentMode === 'yoy' && elecData.cap_util && elecData.cap_util['CAPUTLG2211S'];
+
+        cluster.series.forEach(function(sid) {
+            var seriesData = getSeriesData(cluster, sid);
+            if (!seriesData) return;
+            traces.push({
+                x: d, y: sl(seriesData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: elecData.colors[sid] || '#999', width: 1.8 },
+                name: elecData.labels[sid],
+                hovertemplate: getHoverFmt(elecData.labels[sid])
+            });
+        });
+
+        // Capacity Utilization auf rechter Achse (nur im YoY-Modus)
+        if (hasCapUtil) {
+            traces.push({
+                x: d, y: sl(elecData.cap_util['CAPUTLG2211S'], range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 1.8, dash: 'dot' },
+                name: 'Cap. Util. Electric (Level)',
+                yaxis: 'y2',
+                hovertemplate: 'Cap. Util.: %{y:.1f}%<extra></extra>'
+            });
+        }
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var capUtilSuffix = hasCapUtil ? ' + Kapazit&auml;tsauslastung' : '';
+        document.getElementById('generationTitle').innerHTML =
+            'Stromerzeugung &amp; Verteilung (' + MODE_LABELS[currentMode] + capUtilSuffix + ')';
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%b %Y' },
+            yaxis: { title: getYAxisTitle(), showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            shapes: shapes
+        });
+
+        if (hasCapUtil) {
+            layout.yaxis2 = {
+                title: 'Cap. Util. (%)', overlaying: 'y', side: 'right',
+                showgrid: false, range: [40, 100]
+            };
+            layout.margin = { l: 70, r: 70, t: 30, b: 50 };
+        }
+
+        Plotly.newPlot('generationChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  GENERIC CLUSTER CHART
+    // ============================================================
+    var CLUSTER_TITLES = {
+        'sources': 'Erzeugungsquellen',
+        'prices': 'Strompreise'
+    };
+
+    function updateClusterChart(clusterId, divId) {
+        var cluster = elecData.clusters[clusterId];
+        if (!cluster) {
+            document.getElementById(divId).innerHTML =
+                '<p style="color:var(--color-text-muted);padding:20px;">Keine Daten verf&uuml;gbar</p>';
+            return;
+        }
+
+        var dates = elecData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        cluster.series.forEach(function(sid) {
+            var seriesData = getSeriesData(cluster, sid);
+            if (!seriesData) return;
+            traces.push({
+                x: d, y: sl(seriesData, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: elecData.colors[sid] || '#999', width: 1.8 },
+                name: elecData.labels[sid],
+                hovertemplate: getHoverFmt(elecData.labels[sid])
+            });
+        });
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%b %Y' },
+            yaxis: { title: getYAxisTitle(), showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center', font: { size: 11 } },
+            shapes: shapes
+        });
+
+        var titleEl = document.getElementById(clusterId + 'Title');
+        if (titleEl && CLUSTER_TITLES[clusterId]) {
+            titleEl.innerHTML = CLUSTER_TITLES[clusterId] + ' (' + MODE_LABELS[currentMode] + ')';
+        }
+
+        Plotly.newPlot(divId, traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CURRENT INFO
+    // ============================================================
+    function updateCurrentInfo() {
+        document.getElementById('currentInfo').innerHTML =
+            'Stand: ' + elecData.fetch_date;
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!elecData) return;
+        updateStatBoxes();
+        updateCurrentInfo();
+        updateCompositeChart();
+        updateGenerationChart();
+        updateClusterChart('sources', 'sourcesChart');
+        updateClusterChart('prices', 'pricesChart');
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Trading Portal</title>
+    <link rel="stylesheet" href="./shared/css/common.css">
+</head>
+<body>
+    <div class="layout">
+
+        <main class="main-content">
+
+            <!-- Hero Banner -->
+            <div class="site-hero">
+                <h1>Trading Portal</h1>
+                <p>Willkommen - Übersicht aller Bereiche</p>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+
+                <!-- Server Status -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <div class="pulse-dot" id="pulse-indicator"></div>
+                        <h3>Server Status</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="status-tiles" id="home-server-status">
+                            <div class="status-tile"><div class="label">Gateway</div><div class="value" style="opacity:0.4">Laden...</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Verbindungsstatus -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-blue)"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                        <h3>API Verbindungsstatus</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="status-tiles" id="home-api-status"></div>
+                    </div>
+                </div>
+
+                <!-- Börse Öffnungsstatus & Störungen -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-blue)"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg>
+                        <h3>Börsen</h3>
+                        <a href="boerseninformationen/index.html" style="margin-left:auto;font-size:12px;color:var(--color-blue);text-decoration:none">Alle anzeigen →</a>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="status-tiles">
+                            <div class="status-tile">
+                                <div class="label">CME/GLOBEX</div>
+                                <div class="value" id="home-cme-status">-</div>
+                                <div class="label" id="home-cme-time" style="margin-top:4px"></div>
+                                <div id="home-boerse-probleme" style="margin-top:8px"></div>
+                            </div>
+                            <div class="status-tile">
+                                <div class="label">NYSE</div>
+                                <div class="value" id="home-nyse-status">-</div>
+                                <div class="label" id="home-nyse-time" style="margin-top:4px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategien -->
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-blue)"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                        <h3>Strategien</h3>
+                        <a href="trading/index.html" style="margin-left:auto;font-size:12px;color:var(--color-blue);text-decoration:none">Alle anzeigen →</a>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div id="home-strategien" class="status-tiles">
+                            <div class="status-tile" style="opacity:0.5"><div class="label">Lade...</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interne Nachrichten -->
+                <div class="dashboard-card dashboard-card-wide">
+                    <div class="dashboard-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-navy)"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <h3>Interne Nachrichten</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="news-list" id="home-news-intern"></div>
+                    </div>
+                </div>
+
+                <!-- Neueste Research-Beiträge -->
+                <div class="dashboard-card dashboard-card-wide">
+                    <div class="dashboard-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-blue)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+                        <h3>Neueste Research-Beiträge</h3>
+                        <a href="research/index.html" style="margin-left:auto;font-size:12px;color:var(--color-blue);text-decoration:none">Alle anzeigen →</a>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div id="home-research-articles" style="display:flex;flex-direction:column;gap:2px"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+<script src="shared/js/nav.js" data-active="home"></script>
+<script>
+    let cmeData = null, nyseData = null;
+
+    function buildHolidaySet(holidays) {
+        const set = {};
+        if (!holidays) return set;
+        for (const key of Object.keys(holidays)) {
+            const arr = holidays[key];
+            if (!Array.isArray(arr)) continue;
+            for (const h of arr) { if (h.date && h.status === 'Closed') set[h.date] = true; }
+        }
+        return set;
+    }
+
+    function getCMENextOpenTime(nowCT, holidays) {
+        const closedDays = buildHolidaySet(holidays);
+        const dow = nowCT.getDay(), ct = nowCT.getHours() * 60 + nowCT.getMinutes();
+        let target = new Date(nowCT);
+        if (dow === 6) { target.setDate(target.getDate() + 1); target.setHours(17, 0, 0, 0); }
+        else if (dow === 0 && ct < 1020) { target.setHours(17, 0, 0, 0); }
+        else if (dow === 5 && ct >= 960) { target.setDate(target.getDate() + 2); target.setHours(17, 0, 0, 0); }
+        else if (ct >= 960 && ct < 1020) { target.setHours(17, 0, 0, 0); }
+        else { target.setHours(17, 0, 0, 0); if (ct >= 1020) { target.setDate(target.getDate() + 1); target.setHours(17, 0, 0, 0); } }
+        for (let i = 0; i < 30; i++) {
+            const ntd = new Date(target);
+            if (ntd.getDay() === 0) ntd.setDate(ntd.getDate() + 1);
+            else if (ntd.getDay() === 6) { ntd.setDate(ntd.getDate() + 2); target.setDate(target.getDate() + 1); target.setHours(17, 0, 0, 0); continue; }
+            if (closedDays[ntd.toISOString().split('T')[0]]) {
+                if (ntd.getDay() === 5) target.setDate(ntd.getDate() + 2); else target.setDate(ntd.getDate());
+                target.setHours(17, 0, 0, 0); continue;
+            }
+            break;
+        }
+        return target;
+    }
+
+    function getNYSENextOpenTime(nowET, holidays) {
+        const closedDays = buildHolidaySet(holidays);
+        let target = new Date(nowET);
+        const et = nowET.getHours() * 60 + nowET.getMinutes();
+        if (et < 570) target.setHours(9, 30, 0, 0);
+        else { target.setDate(target.getDate() + 1); target.setHours(9, 30, 0, 0); }
+        for (let i = 0; i < 30; i++) {
+            const dow = target.getDay();
+            if (dow === 0) { target.setDate(target.getDate() + 1); continue; }
+            if (dow === 6) { target.setDate(target.getDate() + 2); continue; }
+            if (closedDays[target.toISOString().split('T')[0]]) { target.setDate(target.getDate() + 1); target.setHours(9, 30, 0, 0); continue; }
+            break;
+        }
+        return target;
+    }
+
+    function formatCd(ms) {
+        if (!ms || ms <= 0) return '0h 00m';
+        const d = Math.floor(ms / 864e5), h = Math.floor((ms % 864e5) / 36e5), m = Math.floor((ms % 36e5) / 6e4);
+        return d > 0 ? d + 'd ' + h + 'h ' + String(m).padStart(2, '0') + 'm' : h + 'h ' + String(m).padStart(2, '0') + 'm';
+    }
+
+    function updateHomeStatus() {
+        // CME
+        const cmeHolidays = cmeData?.trading_holidays;
+        const upcoming_cme = cmeHolidays?.upcoming || [];
+        const nowCT = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+        const dow = nowCT.getDay(), ct = nowCT.getHours() * 60 + nowCT.getMinutes();
+        const todayCME = nowCT.toISOString().split('T')[0];
+        const todayHcme = upcoming_cme.find(x => x.date === todayCME);
+
+        let cmeOpen = true, cmeReason = '';
+        if (dow === 6 || (dow === 0 && ct < 1020) || (dow === 5 && ct >= 960)) { cmeOpen = false; cmeReason = 'Wochenende'; }
+        else if (todayHcme?.status === 'Closed') { cmeOpen = false; cmeReason = todayHcme.name; }
+        else if (todayHcme?.close_time) {
+            const ect = parseInt(todayHcme.close_time) * 60 + (parseInt(todayHcme.close_time.split(':')[1]) || 0);
+            if (ct >= ect && ct < 1020) { cmeOpen = false; cmeReason = 'Early Close'; }
+        }
+        else if (ct >= 960 && ct < 1020) { cmeOpen = false; cmeReason = 'Tägliche Pause'; }
+
+        const cmeStatusEl = document.getElementById('home-cme-status');
+        const cmeTimeEl = document.getElementById('home-cme-time');
+        if (cmeOpen) {
+            cmeStatusEl.textContent = 'Offen'; cmeStatusEl.className = 'value status-ok';
+            const closeMs = ct >= 1020 ? ((1440 - ct) + 960) * 60000 : (960 - ct) * 60000;
+            cmeTimeEl.textContent = 'Schliesst in ' + formatCd(closeMs);
+        } else {
+            cmeStatusEl.textContent = 'Geschlossen'; cmeStatusEl.className = 'value status-closed';
+            const openTime = getCMENextOpenTime(nowCT, cmeHolidays);
+            cmeTimeEl.textContent = 'Öffnet in ' + formatCd(Math.max(0, openTime - nowCT));
+        }
+
+        // NYSE
+        const nyseHolidays = nyseData?.trading_holidays;
+        const upcoming_nyse = nyseHolidays?.upcoming || [];
+        const nowET = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        const dowN = nowET.getDay(), et = nowET.getHours() * 60 + nowET.getMinutes();
+        const todayNYSE = nowET.toISOString().split('T')[0];
+        const todayHnyse = upcoming_nyse.find(x => x.date === todayNYSE);
+
+        let nyseOpen = true, nyseReason = '';
+        if (dowN === 0 || dowN === 6) { nyseOpen = false; nyseReason = 'Wochenende'; }
+        else if (todayHnyse?.status === 'Closed') { nyseOpen = false; nyseReason = todayHnyse.name; }
+        else if (todayHnyse?.close_time) {
+            const ect = parseInt(todayHnyse.close_time) * 60 + (parseInt(todayHnyse.close_time.split(':')[1]) || 0);
+            if (et >= ect) { nyseOpen = false; nyseReason = 'Early Close'; }
+            else if (et < 570) { nyseOpen = false; nyseReason = 'Vorbörslich'; }
+        }
+        else if (et < 570) { nyseOpen = false; nyseReason = 'Vorbörslich'; }
+        else if (et >= 960) { nyseOpen = false; nyseReason = 'Nachbörslich'; }
+
+        const nyseStatusEl = document.getElementById('home-nyse-status');
+        const nyseTimeEl = document.getElementById('home-nyse-time');
+        if (nyseOpen) {
+            nyseStatusEl.textContent = 'Offen'; nyseStatusEl.className = 'value status-ok';
+            let closeMs = (960 - et) * 60000;
+            if (todayHnyse?.close_time) { const ect = parseInt(todayHnyse.close_time) * 60 + (parseInt(todayHnyse.close_time.split(':')[1]) || 0); closeMs = (ect - et) * 60000; }
+            nyseTimeEl.textContent = 'Schliesst in ' + formatCd(closeMs);
+        } else {
+            nyseStatusEl.textContent = 'Geschlossen'; nyseStatusEl.className = 'value status-closed';
+            const openTime = getNYSENextOpenTime(nowET, nyseHolidays);
+            nyseTimeEl.textContent = 'Öffnet in ' + formatCd(Math.max(0, openTime - nowET));
+        }
+
+    }
+
+    async function loadHomeData() {
+        try {
+            const [cme, nyse] = await Promise.all([
+                fetch('./boerseninformationen/cme.json').then(r => r.ok ? r.json() : null).catch(() => null),
+                fetch('./boerseninformationen/nyse.json').then(r => r.ok ? r.json() : null).catch(() => null)
+            ]);
+            cmeData = cme; nyseData = nyse;
+            updateHomeStatus();
+        } catch (e) { console.error(e); }
+    }
+
+    // === Störungen / Disruptions auf Home ===
+    let disruptionData = null;
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function formatRelativeDate(d) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+        const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const time = d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
+        if (target.getTime() === today.getTime()) return 'Heute, ' + time;
+        if (target.getTime() === yesterday.getTime()) return 'Gestern, ' + time;
+        return d.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function renderHomeDisruptions() {
+        const problemeEl = document.getElementById('home-boerse-probleme');
+        if (!disruptionData) {
+            if (problemeEl) problemeEl.innerHTML = '<div style="color:var(--color-text-muted);font-size:13px;padding:8px 0">Lade Störungsdaten...</div>';
+            return;
+        }
+
+        const active = disruptionData.active || [];
+        const ts = disruptionData.timestamp;
+        const tsFormatted = ts ? formatRelativeDate(new Date(ts)) : '';
+
+        if (problemeEl) {
+            let html = '';
+            if (active.length === 0) {
+                html += '<div style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-positive);flex-shrink:0"></span><span style="font-size:11px;color:var(--color-text-muted)">Keine Störungen</span></div>';
+            } else {
+                for (const item of active) {
+                    const color = item.severity === 'critical' ? 'var(--color-negative)' : 'var(--color-orange)';
+                    const label = item.severity === 'critical' ? 'STÖRUNG' : 'WARNUNG';
+                    html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">';
+                    html += '<span style="width:6px;height:6px;border-radius:50%;background:' + color + ';flex-shrink:0"></span>';
+                    html += '<span style="font-size:11px"><strong>[' + label + ']</strong> ' + escapeHtml(item.title) + '</span>';
+                    html += '</div>';
+                }
+            }
+            if (tsFormatted) html += '<div style="font-size:10px;color:var(--color-text-muted);margin-top:4px">Geprüft: ' + tsFormatted + '</div>';
+            problemeEl.innerHTML = html;
+
+            // CME-Tile rot färben bei Störung
+            const cmeTile = problemeEl.closest('.status-tile');
+            if (cmeTile) {
+                if (active.length > 0) {
+                    cmeTile.style.borderColor = 'var(--color-negative)';
+                    cmeTile.style.background = 'var(--color-negative-bg)';
+                } else {
+                    cmeTile.style.borderColor = '';
+                    cmeTile.style.background = '';
+                }
+            }
+        }
+    }
+
+    async function loadDisruptions() {
+        try {
+            const r = await fetch('./boerseninformationen/disruptions.json');
+            if (r.ok) disruptionData = await r.json();
+        } catch (e) { /* disruptions.json noch nicht vorhanden */ }
+        renderHomeDisruptions();
+    }
+
+    // ── Strategien laden ──
+    const strategien = [
+        { name: 'Paper Strategie 1', path: 'trading/paper_strategie_1/', url: 'trading/paper_strategie_1/overview.html' }
+    ];
+
+    async function loadStrategien() {
+        const container = document.getElementById('home-strategien');
+        if (!container) return;
+        let html = '';
+        for (const s of strategien) {
+            try {
+                const data = await fetch(s.path + 'overview.json').then(r => r.ok ? r.json() : null).catch(() => null);
+                const ov = data?.overview;
+                const hebel = ov?.neuer_hebel != null ? parseFloat(ov.neuer_hebel).toFixed(3) + 'x' : '—';
+                const orders = ov?.offene_orders_anzahl ?? '0';
+                html += '<a href="' + s.url + '" class="status-tile" style="text-decoration:none;color:inherit;cursor:pointer;transition:background .15s" onmouseover="this.style.background=\'var(--color-surface-alt)\'" onmouseout="this.style.background=\'\'">';
+                html += '<div class="label" style="font-weight:600;margin-bottom:8px">' + s.name + '</div>';
+                html += '<div style="display:flex;gap:16px">';
+                html += '<div><div class="value" style="font-size:1.1em">' + hebel + '</div><div class="label">Hebel</div></div>';
+                html += '<div><div class="value" style="font-size:1.1em">' + orders + '</div><div class="label">Offene Orders</div></div>';
+                html += '</div></a>';
+            } catch (e) {
+                html += '<div class="status-tile"><div class="label" style="font-weight:600">' + s.name + '</div><div style="color:var(--color-text-muted);font-size:12px;margin-top:4px">Daten nicht verfügbar</div></div>';
+            }
+        }
+        container.innerHTML = html;
+    }
+
+    // ── Server Status laden (dashboard_analyse.json) ──
+    const SERVER_STATUS_URL = './dashboard_analyse.json';
+
+    function createStatusTile(label, value, ok) {
+        const cls = ok ? 'status-ok' : 'status-error';
+        return '<div class="status-tile"><div class="label">' + label + '</div><div class="value ' + cls + '">' + value + '</div></div>';
+    }
+
+    async function loadServerStatus() {
+        try {
+            const data = await fetch(SERVER_STATUS_URL).then(r => r.ok ? r.json() : null).catch(() => null);
+            if (!data) return;
+            const container = document.getElementById('home-server-status');
+            const pulse = document.getElementById('pulse-indicator');
+            if (!container) return;
+
+            const s = data.server_status || {};
+            const sys = data.system_status || {};
+            let html = '';
+
+            // Gateway
+            html += createStatusTile('Gateway', s.gateway_running ? 'Online' : 'Offline', s.gateway_running);
+            // Port
+            html += createStatusTile('Port 4002', s.port_4002_listening ? 'Aktiv' : 'Inaktiv', s.port_4002_listening);
+            // RAM
+            if (sys.ram_usage_percent != null) html += createStatusTile('RAM', sys.ram_usage_percent + '%', sys.ram_usage_percent <= 85);
+            // Disk
+            if (sys.disk_usage_percent != null) html += createStatusTile('Disk', sys.disk_usage_percent + '%', sys.disk_usage_percent <= 85);
+            // Uptime
+            if (sys.uptime_days != null) {
+                const ut = sys.uptime_days >= 1 ? sys.uptime_days.toFixed(1) + 'd' : (sys.uptime_days * 24).toFixed(1) + 'h';
+                html += createStatusTile('Uptime', ut, sys.uptime_days >= 5);
+            }
+            // Aktualisiert
+            if (data.timestamp) {
+                const last = new Date(data.timestamp);
+                const diffMin = (new Date() - last) / 60000;
+                const timeStr = last.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                html += createStatusTile('Aktualisiert', timeStr, diffMin < 65);
+            }
+
+            container.innerHTML = html;
+            // Karte rot färben sobald irgendein Wert im Fehlerbereich
+            const diffMin = data.timestamp ? (new Date() - new Date(data.timestamp)) / 60000 : 0;
+            const allOk = s.gateway_running && s.port_4002_listening
+                && (sys.ram_usage_percent == null || sys.ram_usage_percent <= 85)
+                && (sys.disk_usage_percent == null || sys.disk_usage_percent <= 85)
+                && (sys.uptime_days == null || sys.uptime_days >= 5)
+                && diffMin < 65;
+            const card = container.closest('.dashboard-card');
+            if (card) {
+                card.style.borderColor = allOk ? '' : 'var(--color-negative)';
+                card.style.background = allOk ? '' : 'var(--color-negative-bg)';
+            }
+            // Pulse dot
+            if (pulse) {
+                pulse.style.background = allOk ? 'var(--color-positive)' : 'var(--color-negative)';
+            }
+        } catch (e) { console.error('Server-Status Fehler:', e); }
+    }
+
+    loadServerStatus();
+    loadStrategien();
+    loadHomeData(); loadDisruptions();
+    setInterval(loadServerStatus, 60000);
+    setInterval(loadHomeData, 300000);
+    setInterval(loadDisruptions, 60000);
+    setInterval(updateHomeStatus, 1000);
+
+    // ── Neueste Research-Beiträge ──
+    const researchArticles = [
+        { name: 'API', date: '2026-03-13', author: 'Stéphane Willemin', folder: 'DBs und APIs',
+          excerpt: 'Alle APIs', image: 'research/DBs und APIs/API-Beitrag.png' },
+        { name: 'DP Workstation – Einrichtung & Konfiguration', date: '2026-03-13', author: 'Raphael Vogt', folder: 'Informatik',
+          excerpt: 'Anleitung zur Einrichtung und Konfiguration der DP Workstation – Software, Netzwerk, Datenquellen und Monitoring.', image: 'research/Informatik/Server-Beitrag.png' },
+        { name: 'Building Skills for Claude – Komplettanleitung', date: '2026-03-13', author: 'Raphael Vogt', folder: 'KI',
+          excerpt: 'Anthropic-Guide zum Erstellen eigener Claude Skills – Prompt Engineering, Toolchain-Integration und Best Practices.', image: 'research/KI/Claud-Skill-Beitrag.jpg' }
+    ];
+    researchArticles.sort((a, b) => b.date.localeCompare(a.date));
+
+    const researchEl = document.getElementById('home-research-articles');
+    if (researchEl) {
+        researchEl.innerHTML = researchArticles.slice(0, 5).map(a => {
+            const [y, m, d] = a.date.split('-');
+            return `<a href="research/index.html" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:6px;text-decoration:none;color:inherit;transition:background .15s;border-bottom:1px solid var(--color-border-light)" onmouseover="this.style.background='var(--color-surface-alt)'" onmouseout="this.style.background=''">
+                <img src="${a.image}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0" alt="">
+                <div style="flex:1;min-width:0">
+                    <div style="font-size:13px;font-weight:600;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.name}</div>
+                    <div style="font-size:12px;color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.excerpt}</div>
+                </div>
+                <div style="flex-shrink:0;text-align:right">
+                    <div style="font-size:11px;color:var(--color-text-muted)">${d}.${m}.${y}</div>
+                    <div style="font-size:11px;color:var(--color-text-muted)">${a.folder}</div>
+                </div>
+            </a>`;
+        }).join('');
+    }
+</script>
+</body>
+</html>

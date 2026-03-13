@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research - Trading Portal</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <style>
+        /* ── Toolbar ── */
+        .news-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .tb-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            background: var(--color-surface);
+            color: var(--color-text-secondary);
+            font-size: 13px;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: border-color .15s, color .15s, background .15s;
+            white-space: nowrap;
+        }
+        .tb-btn:hover { border-color: var(--color-blue); color: var(--color-blue); }
+        .tb-btn.primary { background: var(--color-blue); color: #fff; border-color: var(--color-blue); }
+        .tb-btn.primary:hover { background: var(--color-blue-dark); }
+        .tb-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+        .tb-spacer { flex: 1; }
+        .tb-search {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 0 10px;
+            height: 34px;
+            background: var(--color-surface);
+            transition: border-color .15s;
+        }
+        .tb-search:focus-within { border-color: var(--color-blue); }
+        .tb-search input {
+            border: none; background: transparent; outline: none;
+            font-size: 13px; font-family: var(--font-family);
+            color: var(--color-text); width: 200px;
+        }
+        .tb-search input::placeholder { color: var(--color-text-muted); }
+        .tb-search svg { width: 14px; height: 14px; color: var(--color-text-muted); flex-shrink: 0; }
+
+        /* ── Dropdown ── */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+            min-width: 200px;
+            z-index: 500;
+            padding: 6px 0;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            font-size: 13px;
+            color: var(--color-text);
+            cursor: pointer;
+            transition: background .1s;
+            border: none; background: none; width: 100%;
+            text-align: left; font-family: var(--font-family);
+        }
+        .dropdown-item:hover { background: var(--color-surface-alt); }
+        .dropdown-item svg { width: 16px; height: 16px; color: var(--color-text-muted); flex-shrink: 0; }
+        .dropdown-sep { height: 1px; background: var(--color-border); margin: 4px 0; }
+
+        /* ── News Layout: Top Story ── */
+        .news-top-story {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .news-top-story .news-card:first-child {
+            grid-row: 1 / 3;
+        }
+        .news-top-story .news-card:first-child .news-thumb {
+            height: 280px;
+        }
+
+        /* ── News Card ── */
+        .news-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: box-shadow .2s, border-color .2s, transform .15s;
+        }
+        .news-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+            border-color: var(--color-blue-light);
+            transform: translateY(-2px);
+        }
+        .news-thumb {
+            width: 100%;
+            height: 140px;
+            background: var(--color-surface-alt);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .news-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .news-thumb .thumb-placeholder {
+            color: var(--color-border);
+        }
+        .news-thumb .thumb-placeholder svg {
+            width: 40px;
+            height: 40px;
+        }
+        .news-card-body {
+            padding: 16px 18px 18px;
+        }
+        .news-card-body .news-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        /* Tag-Farben werden dynamisch per Inline-Style gesetzt */
+        .news-card-body h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 6px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .news-top-story .news-card:first-child .news-card-body h3 {
+            font-size: 18px;
+        }
+        .news-card-body .news-excerpt {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .news-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+        .news-card-meta .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--color-blue-dark);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .news-card-meta .author-name {
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        /* ── News Grid (all posts) ── */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* ── Folder sidebar ── */
+        .news-layout {
+            display: flex;
+            gap: 24px;
+        }
+        .news-main { flex: 1; min-width: 0; }
+        .news-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+        }
+        .sidebar-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .sidebar-section h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+        .folder-list { list-style: none; }
+        .folder-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 8px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background .1s, color .1s;
+        }
+        .folder-list li:hover { background: var(--color-surface-alt); color: var(--color-blue); }
+        .folder-list li.active { background: var(--color-surface-alt); color: var(--color-blue); font-weight: 600; }
+        .folder-list li svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .folder-count {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--color-text-muted);
+            font-weight: 400;
+            background: var(--color-surface-alt);
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--color-text-muted);
+        }
+        .empty-state svg { width: 56px; height: 56px; margin-bottom: 16px; opacity: .3; }
+        .empty-state h3 { font-size: 17px; margin-bottom: 8px; color: var(--color-text-secondary); font-weight: 600; }
+        .empty-state p { font-size: 13px; margin-bottom: 20px; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--color-surface);
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.2);
+            max-width: 95vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .modal-header h2 { font-size: 18px; font-weight: 600; }
+        .modal-close {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border: none; background: none; cursor: pointer;
+            color: var(--color-text-muted); border-radius: 4px;
+            transition: background .15s;
+        }
+        .modal-close:hover { background: var(--color-surface-alt); }
+        .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* ── Form ── */
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--color-text); margin-bottom: 6px;
+        }
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: var(--font-family);
+            color: var(--color-text);
+            background: var(--color-surface);
+            transition: border-color .15s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { outline: none; border-color: var(--color-blue); }
+        .form-hint { font-size: 11px; color: var(--color-text-muted); margin-top: 4px; }
+
+        /* ── Editor ── */
+        .editor-toolbar {
+            display: flex;
+            gap: 2px;
+            padding: 6px 8px;
+            background: var(--color-surface-alt);
+            border: 1px solid var(--color-border);
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            flex-wrap: wrap;
+        }
+        .editor-toolbar button {
+            width: 30px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            border: none; background: none; border-radius: 3px;
+            cursor: pointer; color: var(--color-text-secondary);
+            transition: background .1s, color .1s;
+        }
+        .editor-toolbar button:hover { background: var(--color-border); color: var(--color-text); }
+        .editor-toolbar button svg { width: 14px; height: 14px; }
+        .editor-toolbar .sep { width: 1px; height: 20px; background: var(--color-border); margin: 4px 4px; }
+        .editor-area {
+            border: 1px solid var(--color-border);
+            border-radius: 0 0 4px 4px;
+            min-height: 200px;
+            padding: 14px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text);
+            outline: none;
+        }
+        .editor-area:focus { border-color: var(--color-blue); }
+        .editor-area:empty::before {
+            content: attr(data-placeholder);
+            color: var(--color-text-muted);
+        }
+
+        /* ── Thumbnail Upload ── */
+        .thumb-upload {
+            width: 100%;
+            height: 160px;
+            border: 2px dashed var(--color-border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--color-text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+            background: var(--color-surface-alt);
+        }
+        .thumb-upload:hover { border-color: var(--color-blue); background: rgba(37,152,195,.03); }
+        .thumb-upload svg { width: 28px; height: 28px; }
+
+        /* ── Attachments ── */
+        .att-zone {
+            border: 2px dashed var(--color-border);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+        }
+        .att-zone:hover { border-color: var(--color-blue); background: rgba(37,152,195,.03); }
+        .att-zone svg { width: 20px; height: 20px; margin-bottom: 4px; display: block; margin-inline: auto; }
+        .att-list { margin-top: 8px; }
+        .att-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--color-surface-alt);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .att-item svg { width: 14px; height: 14px; color: var(--color-text-muted); flex-shrink: 0; }
+        .att-item .att-name { flex: 1; }
+        .att-item .att-remove { cursor: pointer; color: var(--color-text-muted); }
+        .att-item .att-remove:hover { color: var(--color-negative); }
+
+        /* ── Links ── */
+        .link-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .link-row input { flex: 1; }
+        .link-row .link-remove {
+            width: 30px; height: 30px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--color-border); border-radius: 4px;
+            background: none; cursor: pointer; color: var(--color-text-muted);
+        }
+        .link-row .link-remove:hover { color: var(--color-negative); border-color: var(--color-negative); }
+        .add-link-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 12px; color: var(--color-blue);
+            cursor: pointer; border: none; background: none;
+            font-family: var(--font-family); padding: 4px 0;
+        }
+        .add-link-btn:hover { text-decoration: underline; }
+
+        /* ── Article View ── */
+        .article-view { display: none; }
+        .article-view.active { display: block; }
+        .library-view.hidden { display: none; }
+        .article-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; color: var(--color-blue);
+            cursor: pointer; margin-bottom: 24px;
+            border: none; background: none; font-family: var(--font-family);
+        }
+        .article-back:hover { text-decoration: underline; }
+        .article-banner {
+            width: 100%;
+            height: 240px;
+            background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-blue-dark) 100%);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .article-banner img { width: 100%; height: 100%; object-fit: cover; }
+        .article-header { margin-bottom: 20px; }
+        .article-header h2 { font-size: 24px; font-weight: 600; margin-bottom: 10px; line-height: 1.3; }
+        .article-meta {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 13px; color: var(--color-text-muted);
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+        .article-meta .author-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--color-blue-dark); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600;
+        }
+        .article-meta .meta-text .author-name { font-weight: 600; color: var(--color-text); font-size: 14px; }
+        .article-meta .meta-text .meta-date { font-size: 12px; color: var(--color-text-muted); }
+        .article-excerpt {
+            background: var(--color-surface-alt);
+            border-left: 4px solid var(--color-blue);
+            border-radius: 0 8px 8px 0;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            max-width: 720px;
+        }
+        .article-excerpt-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--color-blue);
+            margin-bottom: 6px;
+        }
+        .article-excerpt p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+            margin: 0;
+            font-style: italic;
+        }
+        .article-body {
+            font-size: 14px; line-height: 1.8; color: var(--color-text);
+            margin-bottom: 32px; max-width: 720px;
+        }
+        .article-body p { margin-bottom: 14px; }
+        .article-body h3 { font-size: 16px; font-weight: 600; margin: 20px 0 10px; }
+        .article-body ul, .article-body ol { margin: 10px 0; padding-left: 24px; }
+        .article-body li { margin-bottom: 4px; }
+        .article-section {
+            background: var(--color-surface-alt);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            max-width: 720px;
+        }
+        .article-section h4 {
+            font-size: 13px; font-weight: 600; margin-bottom: 10px;
+            color: var(--color-text-secondary);
+        }
+        .article-att {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: 4px; font-size: 13px; color: var(--color-text);
+            text-decoration: none; margin-right: 8px; margin-bottom: 8px;
+            cursor: pointer; transition: border-color .15s;
+        }
+        .article-att:hover { border-color: var(--color-blue); color: var(--color-blue); }
+        .article-att svg { width: 14px; height: 14px; }
+        .article-link {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; color: var(--color-blue);
+            padding: 4px 0; text-decoration: none;
+        }
+        .article-link:hover { text-decoration: underline; }
+        .article-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            background: var(--color-navy); color: #fff;
+            padding: 12px 20px; border-radius: 6px;
+            font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.2);
+            z-index: 2000;
+            transform: translateY(80px); opacity: 0;
+            transition: transform .3s, opacity .3s;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* ── Context Menu ── */
+        .ctx-menu {
+            display: none; position: fixed;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.15);
+            min-width: 180px; z-index: 600; padding: 6px 0;
+        }
+        .ctx-menu.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <div class="site-hero">
+                <h1>Research</h1>
+                <p>Analysen, Berichte & Marktforschung</p>
+            </div>
+
+            <!-- ═══ Library View ═══ -->
+            <div class="library-view" id="libraryView">
+
+                <!-- Toolbar -->
+                <div class="news-toolbar" id="newsToolbar">
+                    <div class="dropdown">
+                        <button class="tb-btn primary" onclick="toggleDropdown('newMenu')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Neu
+                        </button>
+                        <div class="dropdown-menu" id="newMenu">
+                            <button class="dropdown-item" onclick="openArticleEditor()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                News-Beitrag
+                            </button>
+                            <button class="dropdown-item" onclick="openFolderDialog()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                Ordner
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tb-spacer"></div>
+
+                    <div class="tb-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" placeholder="Beiträge durchsuchen..." id="searchInput" oninput="searchItems(this.value)">
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="news-layout">
+                    <!-- Main area -->
+                    <div class="news-main">
+                        <div id="newsContent"></div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="news-sidebar">
+                        <div class="sidebar-section">
+                            <h4>Ordner</h4>
+                            <ul class="folder-list" id="folderList">
+                                <li class="active" onclick="navigateTo(null)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                                    Alle Beiträge
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sidebar-section">
+                            <h4>Tags</h4>
+                            <ul class="folder-list" id="tagFilter"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ Article View ═══ -->
+            <div class="article-view" id="articleView">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                    <button class="article-back" onclick="closeArticle()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="15 18 9 12 15 6"/></svg>
+                        Zurück
+                    </button>
+                    <button class="tb-btn" id="articleEditBtn" onclick="editCurrentArticle()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        Bearbeiten
+                    </button>
+                </div>
+                <div class="article-banner" id="articleBanner"></div>
+                <div class="article-header">
+                    <h2 id="articleTitle"></h2>
+                    <div class="article-meta">
+                        <div class="author-avatar" id="articleAvatar"></div>
+                        <div class="meta-text">
+                            <div class="author-name" id="articleAuthor"></div>
+                            <div class="meta-date" id="articleDate"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="article-excerpt" id="articleExcerpt" style="display:none">
+                    <div class="article-excerpt-label">Zusammenfassung</div>
+                    <p id="articleExcerptText"></p>
+                </div>
+                <div class="article-body" id="articleBody"></div>
+                <div class="article-section" id="articleAttachments" style="display:none">
+                    <h4>Anhänge</h4>
+                    <div id="articleAttList"></div>
+                </div>
+                <div class="article-section" id="articleLinks" style="display:none">
+                    <h4>Links</h4>
+                    <div id="articleLinkList"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ═══ Article Editor Modal ═══ -->
+    <div class="modal-overlay" id="articleModal">
+        <div class="modal" style="width:720px">
+            <div class="modal-header">
+                <h2>Neuer News-Beitrag</h2>
+                <button class="modal-close" onclick="closeModal('articleModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Titelbild <span style="color:var(--color-negative)">*</span></label>
+                    <input type="text" id="artImage" placeholder="z.B. KI/Beitrag.png (Pfad relativ zum research-Ordner)">
+                    <div class="form-hint">Pfad zum Bild im research-Ordner</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Titel <span style="color:var(--color-negative)">*</span></label>
+                    <input type="text" id="artTitle" placeholder="Beitragstitel eingeben...">
+                </div>
+
+                <div class="form-group">
+                    <label>Zusammenfassung <span style="color:var(--color-negative)">*</span></label>
+                    <input type="text" id="artExcerpt" placeholder="Kurzbeschreibung für die Kachel-Ansicht...">
+                    <div class="form-hint">Wird auf der Kachel als Vorschautext angezeigt</div>
+                </div>
+
+                <div style="display:flex;gap:12px">
+                    <div class="form-group" style="flex:1">
+                        <label>Ordner</label>
+                        <select id="artFolder" onchange="handleFolderSelect(this)">
+                            <option value="">— Ordner wählen —</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>Tag</label>
+                        <select id="artTag" onchange="handleTagSelect(this)">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Inhalt</label>
+                    <div class="editor-toolbar">
+                        <button title="Fett" onclick="execCmd('bold')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
+                        <button title="Kursiv" onclick="execCmd('italic')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+                        <button title="Unterstrichen" onclick="execCmd('underline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg></button>
+                        <div class="sep"></div>
+                        <button title="Überschrift" onclick="execCmd('formatBlock','H3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/></svg></button>
+                        <button title="Liste" onclick="execCmd('insertUnorderedList')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+                        <button title="Nummerierte Liste" onclick="execCmd('insertOrderedList')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/></svg></button>
+                        <div class="sep"></div>
+                        <button title="Bild" onclick="insertImage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+                        <button title="Link" onclick="insertLink()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                    </div>
+                    <div class="editor-area" contenteditable="true" id="artContent" data-placeholder="Beitragsinhalt schreiben..."></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Anhänge</label>
+                    <div class="att-zone" onclick="document.getElementById('attInput').click()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Dateien hierher ziehen oder klicken
+                        <div class="form-hint">Excel, PDF, Bilder und andere Dateien</div>
+                    </div>
+                    <div class="att-list" id="attList"></div>
+                    <input type="file" id="attInput" multiple style="display:none" onchange="handleAttachment(this)">
+                </div>
+
+                <div class="form-group">
+                    <label>Links</label>
+                    <div id="linkContainer">
+                        <div class="link-row">
+                            <input type="text" placeholder="Titel" class="link-title">
+                            <input type="text" placeholder="https://..." class="link-url">
+                            <button class="link-remove" onclick="this.closest('.link-row').remove()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="add-link-btn" onclick="addLinkRow()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Link hinzufügen
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="tb-btn" onclick="closeModal('articleModal')">Abbrechen</button>
+                <button class="tb-btn primary" onclick="saveArticle()">Veröffentlichen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Folder Modal ═══ -->
+    <div class="modal-overlay" id="folderModal">
+        <div class="modal" style="width:420px">
+            <div class="modal-header">
+                <h2>Neuer Ordner</h2>
+                <button class="modal-close" onclick="closeModal('folderModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Ordnerbild <span style="color:var(--color-negative)">*</span></label>
+                    <input type="text" id="folderImage" placeholder="z.B. MeinOrdner/Ordner-Bild.png (Pfad relativ zum research-Ordner)">
+                    <div class="form-hint">Pfad zum Bild im research-Ordner</div>
+                </div>
+                <div class="form-group">
+                    <label>Ordnername <span style="color:var(--color-negative)">*</span></label>
+                    <input type="text" id="folderName" placeholder="z.B. Quartalsberichte 2026" style="padding:10px 14px;font-size:14px">
+                </div>
+                <div class="form-group">
+                    <label>Beschreibung <span style="color:var(--color-negative)">*</span></label>
+                    <input type="text" id="folderDesc" placeholder="Kurzbeschreibung für die Ordner-Kachel...">
+                    <div class="form-hint">Wird auf der Ordner-Kachel als Vorschautext angezeigt</div>
+                </div>
+                <div class="form-group">
+                    <label>Übergeordneter Ordner</label>
+                    <select id="folderParent">
+                        <option value="">— Root (oberste Ebene) —</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="tb-btn" onclick="closeModal('folderModal')">Abbrechen</button>
+                <button class="tb-btn primary" onclick="createFolder()">Erstellen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="ctx-menu" id="ctxMenu">
+        <button class="dropdown-item" onclick="ctxOpen()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Öffnen
+        </button>
+        <button class="dropdown-item" id="ctxEditBtn" onclick="ctxEdit()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            Bearbeiten
+        </button>
+        <button class="dropdown-item" onclick="ctxRename()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            Umbenennen
+        </button>
+        <div class="dropdown-sep"></div>
+        <button class="dropdown-item" onclick="ctxDelete()" style="color:var(--color-negative)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--color-negative)"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Löschen
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+<script src="../shared/js/nav.js" data-active="research"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// Data Store
+// ═══════════════════════════════════════════════════════════
+let items = [
+    // ── Ordner (mit Beschreibung für Kachel-Ansicht) ──
+    { id: 1, type: 'folder', name: 'DBs und APIs', date: '2026-03-13', parent: null,
+      description: 'Datenbanken, REST-APIs und Zugangsdaten für externe Datenquellen',
+      image: 'DBs und APIs/DP-Ordner.png' },
+    { id: 2, type: 'folder', name: 'Informatik',   date: '2026-03-13', parent: null,
+      description: 'Anleitungen, Konfigurationen und technische Dokumentation',
+      image: 'Informatik/Informatik-Ordner.jpg' },
+    { id: 3, type: 'folder', name: 'KI',           date: '2026-03-13', parent: null,
+      description: 'Künstliche Intelligenz, Prompt Engineering und Automatisierung',
+      image: 'KI/KI-Ordner.jpg' },
+
+    // ── Beiträge ──
+    {
+        id: 10, type: 'article', folder: 'DBs und APIs',
+        name: 'API',
+        date: '2026-03-13', author: 'Stéphane Willemin', tag: '',
+        image: 'DBs und APIs/API-Beitrag.png',
+        content: '',
+        excerpt: 'Alle APIs',
+        links: [{ title: 'FRED API Key beantragen', url: 'https://fred.stlouisfed.org/docs/api/api_key.html' }],
+        attachments: []
+    },
+    {
+        id: 11, type: 'article', folder: 'Informatik',
+        name: 'DP Workstation – Einrichtung & Konfiguration',
+        date: '2026-03-13', author: 'Raphael Vogt', tag: '',
+        image: 'Informatik/Server-Beitrag.png',
+        content: '',
+        excerpt: 'Anleitung zur Einrichtung und Konfiguration der DP Workstation – Software, Netzwerk, Datenquellen und Monitoring.',
+        links: [],
+        attachments: [{ name: 'DP_Workstation_Anleitung_Kollege (1).docx' }]
+    },
+    {
+        id: 12, type: 'article', folder: 'KI',
+        name: 'Building Skills for Claude – Komplettanleitung',
+        date: '2026-03-13', author: 'Raphael Vogt', tag: '',
+        image: 'KI/Claud-Skill-Beitrag.jpg',
+        content: '',
+        excerpt: 'Anthropic-Guide zum Erstellen eigener Claude Skills – Prompt Engineering, Toolchain-Integration und Best Practices.',
+        links: [],
+        attachments: [{ name: 'The-Complete-Guide-to-Building-Skill-for-Claude.pdf' }]
+    }
+];
+let currentFolderId = null;  // null = root view
+let currentTag = '';
+let searchQuery = '';
+let ctxTarget = null;
+let editingId = null;
+let nextId = 20;
+
+function getCurrentFolder() {
+    return currentFolderId ? items.find(i => i.id === currentFolderId) : null;
+}
+
+function getFolderName(id) {
+    const f = items.find(i => i.id === id);
+    return f ? f.name : '';
+}
+
+function getBreadcrumbs(folderId) {
+    const crumbs = [];
+    let id = folderId;
+    while (id) {
+        const f = items.find(i => i.id === id);
+        if (!f) break;
+        crumbs.unshift(f);
+        id = f.parent;
+    }
+    return crumbs;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Rendering
+// ═══════════════════════════════════════════════════════════
+function render() {
+    const container = document.getElementById('newsContent');
+    const sidebarEl = document.querySelector('.news-sidebar');
+    const toolbarEl = document.getElementById('newsToolbar');
+    const folder = getCurrentFolder();
+
+    if (!currentFolderId) {
+        // ── Hauptansicht: Root-Ordner-Kacheln ──
+        sidebarEl.style.display = 'none';
+        toolbarEl.style.display = '';
+        const folders = items.filter(i => i.type === 'folder' && !i.parent);
+        folders.sort((a, b) => newestDateInFolder(b).localeCompare(newestDateInFolder(a)));
+        if (!folders.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <h3>Noch keine Ordner</h3>
+                    <p>Erstellen Sie einen Ordner mit dem "Neu"-Button.</p>
+                </div>`;
+            return;
+        }
+        container.innerHTML = '<div class="news-grid">' + folders.map(f => folderCardHTML(f)).join('') + '</div>';
+    } else {
+        // ── Ordner-Ansicht: Unterordner + Beiträge ──
+        sidebarEl.style.display = '';
+        toolbarEl.style.display = '';
+        renderFolderSidebar();
+        renderTagFilter();
+
+        // Breadcrumb-Navigation
+        const crumbs = getBreadcrumbs(currentFolderId);
+        let html = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;font-size:13px;flex-wrap:wrap">';
+        html += `<button class="article-back" onclick="navigateTo(null)" style="margin-bottom:0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="15 18 9 12 15 6"/></svg>
+            Alle Ordner
+        </button>`;
+        crumbs.forEach((c, idx) => {
+            html += '<span style="color:var(--color-text-muted)">/</span>';
+            if (idx < crumbs.length - 1) {
+                html += `<a href="#" onclick="event.preventDefault();navigateTo(${c.id})" style="color:var(--color-blue);text-decoration:none;font-weight:500">${c.name}</a>`;
+            } else {
+                html += `<span style="font-weight:600;color:var(--color-text)">${c.name}</span>`;
+            }
+        });
+        html += '</div>';
+
+        // Unterordner in diesem Ordner
+        const subfolders = items.filter(i => i.type === 'folder' && i.parent === currentFolderId);
+        subfolders.sort((a, b) => newestDateInFolder(b).localeCompare(newestDateInFolder(a)));
+        if (subfolders.length) {
+            html += '<div class="news-grid" style="margin-bottom:24px">' + subfolders.map(f => folderCardHTML(f)).join('') + '</div>';
+        }
+
+        // Beiträge in diesem Ordner
+        const folderName = folder ? folder.name : '';
+        let articles = items.filter(i => i.type === 'article' && i.folder === folderName);
+        if (currentTag) articles = articles.filter(a => a.tag === currentTag);
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            articles = articles.filter(a => a.name.toLowerCase().includes(q) || (a.excerpt || '').toLowerCase().includes(q));
+        }
+        articles.sort((a, b) => b.date.localeCompare(a.date));
+
+        if (!articles.length && !subfolders.length) {
+            html += `<div class="empty-state" style="padding:40px 20px">
+                <h3>Keine Beiträge</h3>
+                <p>Dieser Ordner enthält noch keine Beiträge.</p>
+                <button class="tb-btn primary" onclick="openArticleEditor()" style="margin-top:4px">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Beitrag erstellen
+                </button>
+            </div>`;
+        } else if (articles.length) {
+            html += '<div class="news-grid">' + articles.map(a => articleCardHTML(a)).join('') + '</div>';
+        }
+        container.innerHTML = html;
+    }
+}
+
+function countArticlesInFolder(folderName) {
+    return items.filter(i => i.type === 'article' && i.folder === folderName).length;
+}
+
+function newestDateInFolder(folder) {
+    const articles = items.filter(i => i.type === 'article' && i.folder === folder.name);
+    const subfolders = items.filter(i => i.type === 'folder' && i.parent === folder.id);
+    let dates = articles.map(a => a.date);
+    subfolders.forEach(sf => {
+        const sfDate = newestDateInFolder(sf);
+        if (sfDate) dates.push(sfDate);
+    });
+    if (!dates.length) return folder.date;
+    return dates.sort().pop();
+}
+
+function folderCardHTML(folder) {
+    const count = countArticlesInFolder(folder.name);
+    const subCount = items.filter(i => i.type === 'folder' && i.parent === folder.id).length;
+    const latestDate = newestDateInFolder(folder);
+    const thumbContent = folder.image
+        ? `<img src="${folder.image}" alt="${folder.name}">`
+        : `<div class="thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="width:48px;height:48px"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>`;
+    return `<div class="news-card" onclick="navigateTo(${folder.id})" oncontextmenu="showCtx(event, ${folder.id})">
+        <div class="news-thumb">
+            ${thumbContent}
+        </div>
+        <div class="news-card-body">
+            <h3>${folder.name}</h3>
+            <p class="news-excerpt">${folder.description || ''}</p>
+            <div class="news-card-meta">
+                <span>${count} ${count === 1 ? 'Beitrag' : 'Beiträge'}${subCount ? ' · ' + subCount + ' Unterordner' : ''}</span>
+                <span style="margin-left:auto">${formatDate(latestDate)}</span>
+            </div>
+        </div>
+    </div>`;
+}
+
+function articleCardHTML(article) {
+    const tagLabel = article.tag ? article.tag.charAt(0).toUpperCase() + article.tag.slice(1) : '';
+    const tagStyle = article.tag ? tagColor(article.tag) : '';
+    const excerpt = article.excerpt || stripHTML(article.content || '').substring(0, 120) + '...';
+
+    const thumbContent = article.image
+        ? `<img src="${article.image}" alt="${article.name}">`
+        : `<div class="thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+
+    return `<div class="news-card" onclick="openArticle(${article.id})" oncontextmenu="showCtx(event, ${article.id})">
+        <div class="news-thumb">
+            ${thumbContent}
+        </div>
+        <div class="news-card-body">
+            ${tagLabel ? `<span class="news-tag" style="${tagStyle}">${tagLabel}</span>` : ''}
+            <h3>${article.name}</h3>
+            <p class="news-excerpt">${excerpt}</p>
+            <div class="news-card-meta">
+                <span>${formatDate(article.date)}</span>
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderFolderSidebar() {
+    const list = document.getElementById('folderList');
+    // Show sibling folders (same parent) and parent folder for navigation
+    const currentFolder = getCurrentFolder();
+    const parentId = currentFolder ? currentFolder.parent : null;
+    const siblingFolders = items.filter(i => i.type === 'folder' && i.parent === parentId);
+    siblingFolders.sort((a, b) => newestDateInFolder(b).localeCompare(newestDateInFolder(a)));
+
+    let html = '';
+    siblingFolders.forEach(f => {
+        const count = countArticlesInFolder(f.name);
+        html += `<li class="${currentFolderId === f.id ? 'active' : ''}" onclick="navigateTo(${f.id})" oncontextmenu="showCtx(event, ${f.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            ${f.name}
+            <span class="folder-count">${count}</span>
+        </li>`;
+    });
+
+    list.innerHTML = html;
+    updateFolderSelect();
+}
+
+function tagColor(tag) {
+    // Generiert konsistente Farben aus Tag-Name
+    let hash = 0;
+    for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+    const hue = Math.abs(hash) % 360;
+    return `background: hsl(${hue}, 70%, 95%); color: hsl(${hue}, 60%, 35%)`;
+}
+
+function getAllTags() {
+    const tags = new Set();
+    items.filter(i => i.type === 'article' && i.tag).forEach(i => tags.add(i.tag));
+    return [...tags].sort();
+}
+
+function updateTagSelect() {
+    const select = document.getElementById('artTag');
+    const tags = getAllTags();
+    select.innerHTML = '<option value="">— Kein Tag —</option>' +
+        tags.map(t => `<option value="${t}">${t.charAt(0).toUpperCase() + t.slice(1)}</option>`).join('') +
+        '<option value="__new__">+ Neuen Tag erstellen...</option>';
+}
+
+function handleTagSelect(select) {
+    if (select.value === '__new__') {
+        const name = prompt('Neuer Tag-Name:');
+        if (name && name.trim()) {
+            const tag = name.trim().toLowerCase();
+            updateTagSelect();
+            // Add the new option if not already present
+            if (![...select.options].some(o => o.value === tag)) {
+                const opt = document.createElement('option');
+                opt.value = tag;
+                opt.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+                select.insertBefore(opt, select.querySelector('option[value="__new__"]'));
+            }
+            select.value = tag;
+        } else {
+            select.value = '';
+        }
+    }
+}
+
+function renderTagFilter() {
+    const list = document.getElementById('tagFilter');
+    const tags = getAllTags();
+    let html = `<li class="${!currentTag ? 'active' : ''}" onclick="filterByTag('')">Alle</li>`;
+    tags.forEach(t => {
+        const style = tagColor(t);
+        html += `<li class="${currentTag === t ? 'active' : ''}" onclick="filterByTag('${t}')"><span class="news-tag" style="font-size:11px;padding:1px 6px;${style}">${t.charAt(0).toUpperCase() + t.slice(1)}</span></li>`;
+    });
+    list.innerHTML = html;
+}
+
+function stripHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+function getInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+}
+
+function formatDate(d) {
+    const [y, m, day] = d.split('-');
+    return `${day}.${m}.${y}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Navigation & Filter
+// ═══════════════════════════════════════════════════════════
+function navigateTo(folderId) {
+    currentFolderId = folderId;
+    currentTag = '';
+    searchQuery = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    // Hide article view if open
+    document.getElementById('libraryView').classList.remove('hidden');
+    document.getElementById('articleView').classList.remove('active');
+    render();
+}
+
+function filterByTag(tag) {
+    currentTag = tag;
+    render();
+}
+
+function searchItems(query) {
+    searchQuery = query;
+    render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Article View
+// ═══════════════════════════════════════════════════════════
+function openArticle(id) {
+    const item = items.find(i => i.id === id);
+    if (!item || item.type !== 'article') return;
+
+    document.getElementById('libraryView').classList.add('hidden');
+    document.getElementById('articleView').classList.add('active');
+    document.getElementById('articleTitle').textContent = item.name;
+    document.getElementById('articleAuthor').textContent = item.author || 'Unbekannt';
+    document.getElementById('articleAvatar').textContent = getInitials(item.author || '');
+    document.getElementById('articleDate').textContent = formatDate(item.date);
+    // Excerpt
+    const excerptEl = document.getElementById('articleExcerpt');
+    if (item.excerpt && item.excerpt.trim()) {
+        document.getElementById('articleExcerptText').textContent = item.excerpt;
+        excerptEl.style.display = '';
+    } else {
+        excerptEl.style.display = 'none';
+    }
+
+    const hasContent = item.content && item.content.trim();
+    const hasLinks = item.links && item.links.length;
+    const hasAttachments = item.attachments && item.attachments.length;
+    document.getElementById('articleBody').innerHTML = hasContent ? item.content : (!hasLinks && !hasAttachments ? '<p style="color:var(--color-text-muted)">Kein Inhalt.</p>' : '');
+
+    // Banner
+    const banner = document.getElementById('articleBanner');
+    if (item.image) {
+        banner.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
+        banner.style.background = '';
+    } else {
+        banner.innerHTML = '';
+        banner.style.background = 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-blue-dark) 100%)';
+    }
+
+    // Attachments
+    const attSection = document.getElementById('articleAttachments');
+    const attList = document.getElementById('articleAttList');
+    if (item.attachments && item.attachments.length) {
+        attSection.style.display = '';
+        attList.innerHTML = item.attachments.map(a =>
+            `<span class="article-att" onclick="showToast('Download: ${a.name} — API nicht verbunden')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                ${a.name}
+            </span>`
+        ).join('');
+    } else {
+        attSection.style.display = 'none';
+    }
+
+    // Links
+    const linkSection = document.getElementById('articleLinks');
+    const linkList = document.getElementById('articleLinkList');
+    if (item.links && item.links.length) {
+        linkSection.style.display = '';
+        linkList.innerHTML = item.links.map(l =>
+            `<a class="article-link" href="${l.url}" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                ${l.title || l.url}
+            </a>`
+        ).join('');
+    } else {
+        linkSection.style.display = 'none';
+    }
+}
+
+function closeArticle() {
+    document.getElementById('libraryView').classList.remove('hidden');
+    document.getElementById('articleView').classList.remove('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+// Article Editor
+// ═══════════════════════════════════════════════════════════
+function openArticleEditor(articleId) {
+    closeAllDropdowns();
+    editingId = articleId || null;
+    const item = editingId ? items.find(i => i.id === editingId) : null;
+
+    document.querySelector('#articleModal .modal-header h2').textContent = item ? 'Beitrag bearbeiten' : 'Neuer Beitrag';
+    document.querySelector('#articleModal .modal-footer .primary').textContent = item ? 'Speichern' : 'Veröffentlichen';
+
+    document.getElementById('artImage').value = item ? (item.image || '') : '';
+    document.getElementById('artTitle').value = item ? item.name : '';
+    document.getElementById('artExcerpt').value = item ? (item.excerpt || '') : '';
+    document.getElementById('artContent').innerHTML = item ? (item.content || '') : '';
+    updateTagSelect();
+    document.getElementById('artTag').value = item ? (item.tag || '') : '';
+
+    // Attachments
+    const attList = document.getElementById('attList');
+    attList.innerHTML = '';
+    if (item && item.attachments) {
+        item.attachments.forEach(a => {
+            const div = document.createElement('div');
+            div.className = 'att-item';
+            div.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="att-name">${a.name}</span>
+                <span class="att-remove" onclick="this.closest('.att-item').remove()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </span>`;
+            attList.appendChild(div);
+        });
+    }
+
+    // Links
+    const linkContainer = document.getElementById('linkContainer');
+    linkContainer.innerHTML = '';
+    if (item && item.links && item.links.length) {
+        item.links.forEach(l => {
+            const row = document.createElement('div');
+            row.className = 'link-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Titel" class="link-title" value="${l.title || ''}">
+                <input type="text" placeholder="https://..." class="link-url" value="${l.url || ''}">
+                <button class="link-remove" onclick="this.closest('.link-row').remove()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>`;
+            linkContainer.appendChild(row);
+        });
+    } else {
+        linkContainer.innerHTML = `
+            <div class="link-row">
+                <input type="text" placeholder="Titel" class="link-title">
+                <input type="text" placeholder="https://..." class="link-url">
+                <button class="link-remove" onclick="this.closest('.link-row').remove()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>`;
+    }
+
+    updateFolderSelect();
+    const curFolder = getCurrentFolder();
+    document.getElementById('artFolder').value = item ? item.folder : (curFolder ? curFolder.name : '');
+    showModal('articleModal');
+}
+
+function editArticle(id) {
+    openArticleEditor(id);
+}
+
+function editCurrentArticle() {
+    const titleEl = document.getElementById('articleTitle');
+    const name = titleEl.textContent;
+    const item = items.find(i => i.type === 'article' && i.name === name);
+    if (item) {
+        closeArticle();
+        openArticleEditor(item.id);
+    }
+}
+
+function ctxEdit() {
+    closeAllDropdowns();
+    if (!ctxTarget) return;
+    const item = items.find(i => i.id === ctxTarget);
+    if (item && item.type === 'article') openArticleEditor(ctxTarget);
+}
+
+function saveArticle() {
+    const image = document.getElementById('artImage').value.trim();
+    if (!image) { showToast('Bitte Titelbild-Pfad eingeben'); return; }
+
+    const title = document.getElementById('artTitle').value.trim();
+    if (!title) { showToast('Bitte Titel eingeben'); return; }
+
+    const excerpt = document.getElementById('artExcerpt').value.trim();
+    if (!excerpt) { showToast('Bitte Zusammenfassung eingeben'); return; }
+
+    const folder = document.getElementById('artFolder').value;
+    if (!folder || folder === '__new__') { showToast('Bitte einen Ordner wählen'); return; }
+
+    const content = document.getElementById('artContent').innerHTML;
+    const tag = document.getElementById('artTag').value === '__new__' ? '' : document.getElementById('artTag').value;
+
+    const links = [];
+    document.querySelectorAll('#linkContainer .link-row').forEach(row => {
+        const t = row.querySelector('.link-title').value.trim();
+        const u = row.querySelector('.link-url').value.trim();
+        if (u) links.push({ title: t || u, url: u });
+    });
+
+    const attachments = [];
+    document.querySelectorAll('#attList .att-item').forEach(el => {
+        attachments.push({ name: el.querySelector('.att-name').textContent });
+    });
+
+    if (editingId) {
+        const item = items.find(i => i.id === editingId);
+        if (item) {
+            item.image = image;
+            item.name = title;
+            item.folder = folder;
+            item.tag = tag;
+            item.content = content;
+            item.excerpt = excerpt;
+            item.attachments = attachments;
+            item.links = links;
+        }
+        editingId = null;
+        closeModal('articleModal');
+        render();
+        showToast(`"${title}" aktualisiert (lokal — API nicht verbunden)`);
+    } else {
+        items.push({
+            id: nextId++,
+            type: 'article',
+            name: title,
+            image: image,
+            folder: folder,
+            date: new Date().toISOString().split('T')[0],
+            author: 'Autor',
+            tag: tag,
+            content: content,
+            excerpt: excerpt,
+            attachments: attachments,
+            links: links
+        });
+        closeModal('articleModal');
+        render();
+        showToast(`"${title}" veröffentlicht (lokal — API nicht verbunden)`);
+    }
+}
+
+function execCmd(cmd, val) {
+    document.execCommand(cmd, false, val || null);
+    document.getElementById('artContent').focus();
+}
+
+function insertImage() {
+    showToast('Bild-Upload: API nicht verbunden');
+}
+
+function insertLink() {
+    const url = prompt('Link-URL:');
+    if (url) {
+        const text = prompt('Link-Text:', url);
+        document.execCommand('insertHTML', false, `<a href="${url}" target="_blank">${text || url}</a>`);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Attachments
+// ═══════════════════════════════════════════════════════════
+function handleAttachment(input) {
+    const list = document.getElementById('attList');
+    Array.from(input.files).forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'att-item';
+        div.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="att-name">${f.name}</span>
+            <span style="color:var(--color-text-muted);font-size:11px">${(f.size / 1024).toFixed(0)} KB</span>
+            <span class="att-remove" onclick="this.closest('.att-item').remove()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </span>`;
+        list.appendChild(div);
+    });
+    input.value = '';
+}
+
+function addLinkRow() {
+    const container = document.getElementById('linkContainer');
+    const row = document.createElement('div');
+    row.className = 'link-row';
+    row.innerHTML = `
+        <input type="text" placeholder="Titel" class="link-title">
+        <input type="text" placeholder="https://..." class="link-url">
+        <button class="link-remove" onclick="this.closest('.link-row').remove()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+    container.appendChild(row);
+}
+
+// ═══════════════════════════════════════════════════════════
+// Folders
+// ═══════════════════════════════════════════════════════════
+function openFolderDialog() {
+    closeAllDropdowns();
+    document.getElementById('folderImage').value = '';
+    document.getElementById('folderName').value = '';
+    document.getElementById('folderDesc').value = '';
+    updateFolderParentSelect();
+    showModal('folderModal');
+    setTimeout(() => document.getElementById('folderName').focus(), 100);
+}
+
+function updateFolderParentSelect() {
+    const select = document.getElementById('folderParent');
+    const folders = items.filter(i => i.type === 'folder');
+    select.innerHTML = '<option value="">— Root (oberste Ebene) —</option>' +
+        folders.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+    // Vorauswahl: aktueller Ordner
+    if (currentFolderId) select.value = currentFolderId;
+}
+
+function createFolder() {
+    const image = document.getElementById('folderImage').value.trim();
+    if (!image) { showToast('Bitte Ordnerbild-Pfad eingeben'); return; }
+    const name = document.getElementById('folderName').value.trim();
+    if (!name) { showToast('Bitte Ordnernamen eingeben'); return; }
+    const desc = document.getElementById('folderDesc').value.trim();
+    if (!desc) { showToast('Bitte Beschreibung eingeben'); return; }
+    const parentVal = document.getElementById('folderParent').value;
+    const parent = parentVal ? parseInt(parentVal) : null;
+    items.push({
+        id: nextId++,
+        type: 'folder',
+        name: name,
+        description: desc,
+        image: image,
+        parent: parent,
+        date: new Date().toISOString().split('T')[0]
+    });
+    closeModal('folderModal');
+    render();
+    showToast(`Ordner "${name}" erstellt (lokal — API nicht verbunden)`);
+}
+
+function updateFolderSelect() {
+    const select = document.getElementById('artFolder');
+    const folders = items.filter(i => i.type === 'folder');
+    select.innerHTML = '<option value="">— Ordner wählen —</option>' +
+        folders.map(f => `<option value="${f.name}">${f.name}</option>`).join('') +
+        '<option value="__new__">+ Neuen Ordner erstellen...</option>';
+}
+
+function handleFolderSelect(select) {
+    if (select.value === '__new__') {
+        const name = prompt('Neuer Ordnername:');
+        if (name && name.trim()) {
+            items.push({ id: nextId++, type: 'folder', name: name.trim(), date: new Date().toISOString().split('T')[0], description: '' });
+            updateFolderSelect();
+            select.value = name.trim();
+        } else {
+            select.value = '';
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Context Menu
+// ═══════════════════════════════════════════════════════════
+function showCtx(e, id) {
+    e.preventDefault();
+    e.stopPropagation();
+    ctxTarget = id;
+    const menu = document.getElementById('ctxMenu');
+    const item = items.find(i => i.id === id);
+    document.getElementById('ctxEditBtn').style.display = (item && item.type === 'article') ? '' : 'none';
+    menu.style.left = e.clientX + 'px';
+    menu.style.top = e.clientY + 'px';
+    closeAllDropdowns();
+    menu.classList.add('show');
+}
+
+function ctxOpen() {
+    closeAllDropdowns();
+    if (!ctxTarget) return;
+    const item = items.find(i => i.id === ctxTarget);
+    if (item && item.type === 'article') openArticle(ctxTarget);
+    if (item && item.type === 'folder') navigateTo(item.id);
+}
+
+function ctxRename() {
+    closeAllDropdowns();
+    const item = items.find(i => i.id === ctxTarget);
+    if (item) {
+        const newName = prompt('Neuer Name:', item.name);
+        if (newName && newName.trim()) {
+            item.name = newName.trim();
+            render();
+            showToast(`Umbenannt (lokal)`);
+        }
+    }
+}
+
+function ctxDelete() {
+    closeAllDropdowns();
+    const item = items.find(i => i.id === ctxTarget);
+    if (item && confirm(`"${item.name}" löschen?`)) {
+        items = items.filter(i => i.id !== ctxTarget);
+        render();
+        showToast(`Gelöscht (lokal)`);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Utilities
+// ═══════════════════════════════════════════════════════════
+function toggleDropdown(id) {
+    const menu = document.getElementById(id);
+    const wasOpen = menu.classList.contains('show');
+    closeAllDropdowns();
+    if (!wasOpen) menu.classList.add('show');
+}
+
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+    document.getElementById('ctxMenu').classList.remove('show');
+}
+
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown') && !e.target.closest('.ctx-menu')) {
+        closeAllDropdowns();
+    }
+});
+
+// Init
+render();
+</script>
+</body>
+</html>

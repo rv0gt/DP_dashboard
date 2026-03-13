@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Immobilienmarkt-Analyse: Case-Shiller HPI, Housing Starts, Building Permits, Mortgage Rate, Median Sales Price, Monthly Supply">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M6 22l5-10 5 4 5-8 5 6' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M6 26h20' stroke='%232598C3' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E">
+    <title>Immobilienmarkt | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('20Y', this)">20J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnNber" onclick="toggleOption('nber', this)">Rezessionen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Case-Shiller YoY</div>
+                    <div id="statCaseShiller" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Home Price Index</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Mortgage Rate</div>
+                    <div id="statMortgage" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">30-Year Fixed</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Housing Starts YoY</div>
+                    <div id="statStarts" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Jahresver&auml;nderung</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Monthly Supply</div>
+                    <div id="statSupply" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Monate Angebot</div>
+                </div>
+            </div>
+
+            <!-- Chart 1: Case-Shiller YoY + Mortgage Rate (dual axis) -->
+            <div class="chart-container">
+                <h3 class="section-title">Case-Shiller Home Price Index (YoY %) &amp; Mortgage Rate</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    S&amp;P/Case-Shiller National HPI Jahresver&auml;nderung (links) vs. 30-Year Fixed Mortgage Rate (rechts)
+                </p>
+                <div id="caseShillerMortgageChart"></div>
+            </div>
+
+            <!-- Chart 2: Housing Starts + Building Permits (YoY %) -->
+            <div class="chart-container">
+                <h3 class="section-title">Housing Starts &amp; Building Permits (YoY %)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Jahresver&auml;nderung der Baubeginne und Baugenehmigungen (SAAR)
+                </p>
+                <div id="startsPermitsChart"></div>
+            </div>
+
+            <!-- Chart 3: Median Sales Price (Level $) -->
+            <div class="chart-container">
+                <h3 class="section-title">Median Sales Price of Houses Sold ($)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Median-Verkaufspreis neuer H&auml;user in den USA (quartalsweise, forward-filled)
+                </p>
+                <div id="medianPriceChart"></div>
+            </div>
+
+            <!-- Chart 4: Monthly Supply of New Houses -->
+            <div class="chart-container">
+                <h3 class="section-title">Monthly Supply of New Houses (Monate)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Angebotsreichweite in Monaten &ndash; Referenzlinie bei 6 Monaten (Gleichgewicht)
+                </p>
+                <div id="monthlySupplyChart"></div>
+            </div>
+
+            <!-- Chart 5: Housing Affordability Index -->
+            <div class="chart-container">
+                <h3 class="section-title">Housing Affordability Index</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    FIXHAI &ndash; &uuml;ber 100 = erschwinglich, unter 100 = unerschwinglich
+                </p>
+                <div id="affordabilityChart"></div>
+            </div>
+
+            <!-- Chart 6: Home Sales YoY -->
+            <div class="chart-container">
+                <h3 class="section-title">Home Sales YoY (%)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    New Home Sales (SAAR) und Existing Home Sales (SAAR) &ndash; Jahresver&auml;nderung
+                </p>
+                <div id="homeSalesChart"></div>
+            </div>
+
+            <!-- Chart 7: Construction Spending YoY -->
+            <div class="chart-container">
+                <h3 class="section-title">Construction Spending YoY (%)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Total Construction Spending (TTLCONS) &ndash; Jahresver&auml;nderung
+                </p>
+                <div id="constructionChart"></div>
+            </div>
+
+            <!-- Chart 8: Vacancy Rates -->
+            <div class="chart-container">
+                <h3 class="section-title">Vacancy Rates (%)</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Rental Vacancy Rate und Homeowner Vacancy Rate (quartalsweise)
+                </p>
+                <div id="vacancyChart"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Case-Shiller HPI</strong> (CSUSHPISA) misst die Preisentwicklung bestehender Einfamilienh&auml;user.
+                    <strong>Housing Affordability</strong> (FIXHAI) zeigt, ob sich der Mediank&auml;ufer ein Medianhaus leisten kann.
+                </p>
+                <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                    <strong>Housing Starts</strong> (HOUST), <strong>Building Permits</strong> (PERMIT) und <strong>Construction Spending</strong> (TTLCONS)
+                    sind f&uuml;hrende Indikatoren f&uuml;r die Bauaktivit&auml;t.
+                </p>
+                <p style="font-size:0.85em;color:var(--color-text-muted);">
+                    <strong>Datenquellen:</strong> FRED (CSUSHPISA, HOUST, PERMIT, MORTGAGE30US, MSPUS, MSACSR, FIXHAI, HNFSEPUSSA, EXHOSLUSM495S, TTLCONS, EVACANTUSQ176N, RRVRUSQ156N, USREC).
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">Immobilienmarkt &middot; Daten: FRED (Census, BLS, Freddie Mac)</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    // ============================================================
+    //  DATA
+    // ============================================================
+    var housData = __HOUSING_DATA__;
+
+    if (!housData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_housing.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 30, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showNber = true;
+
+    // ============================================================
+    //  HELPERS
+    // ============================================================
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var monthsMap = { '5Y': 60, '10Y': 120, '20Y': 240 };
+        var months = monthsMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - months), end: len };
+    }
+
+    function sl(arr, range) {
+        return arr.slice(range.start, range.end);
+    }
+
+    function nberShapes(dates, range) {
+        if (!showNber || !housData.nber_recessions) return [];
+        var d0 = dates[range.start];
+        var d1 = dates[range.end - 1];
+        var shapes = [];
+        housData.nber_recessions.forEach(function(r) {
+            if (r[1] < d0 || r[0] > d1) return;
+            shapes.push({
+                type: 'rect', xref: 'x', yref: 'paper',
+                x0: r[0] < d0 ? d0 : r[0], x1: r[1] > d1 ? d1 : r[1],
+                y0: 0, y1: 1,
+                fillcolor: 'rgba(200,200,200,0.25)', line: { width: 0 },
+                layer: 'below'
+            });
+        });
+        return shapes;
+    }
+
+    function zeroLine() {
+        return {
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 0, y1: 0,
+            line: { color: '#333', width: 1.5 }
+        };
+    }
+
+    // ============================================================
+    //  CONTROLS
+    // ============================================================
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'nber') { showNber = !showNber; }
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    // ============================================================
+    //  CHART 1: Case-Shiller YoY + Mortgage Rate (dual axis)
+    // ============================================================
+    function updateCaseShillerMortgageChart() {
+        var dates = housData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(housData.case_shiller_yoy, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#dc2626', width: 2.5 },
+                name: 'Case-Shiller YoY %',
+                yaxis: 'y',
+                hovertemplate: 'Case-Shiller: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(housData.mortgage_rate, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#F79645', width: 2 },
+                name: 'Mortgage Rate (%)',
+                yaxis: 'y2',
+                hovertemplate: 'Mortgage: %{y:.2f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Case-Shiller YoY (%)', showgrid: true, gridcolor: '#E8E8E8', titlefont: { color: '#dc2626' }, tickfont: { color: '#dc2626' } },
+            yaxis2: { title: 'Mortgage Rate (%)', overlaying: 'y', side: 'right', showgrid: false, titlefont: { color: '#F79645' }, tickfont: { color: '#F79645' } },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('caseShillerMortgageChart', traces, layout, plotlyConfig);
+        baseShapeCount.caseShillerMortgageChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 2: Housing Starts + Building Permits (YoY %)
+    // ============================================================
+    function updateStartsPermitsChart() {
+        var dates = housData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(housData.starts_yoy, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#8b5cf6', width: 2.5 },
+                name: 'Housing Starts YoY %',
+                hovertemplate: 'Starts: %{y:+.2f}%<extra></extra>'
+            },
+            {
+                x: d, y: sl(housData.permits_yoy, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#2598C3', width: 2 },
+                name: 'Building Permits YoY %',
+                hovertemplate: 'Permits: %{y:+.2f}%<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        shapes.push(zeroLine());
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'YoY Ver\u00e4nderung (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('startsPermitsChart', traces, layout, plotlyConfig);
+        baseShapeCount.startsPermitsChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 3: Median Sales Price (Level $)
+    // ============================================================
+    function updateMedianPriceChart() {
+        var dates = housData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(housData.median_price, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#1A2E4A', width: 2.5 },
+                name: 'Median Sales Price ($)',
+                hovertemplate: '$%{y:,.0f}<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y', showticklabels: false },
+            yaxis: { title: 'Median Price ($)', showgrid: true, gridcolor: '#E8E8E8', tickprefix: '$', tickformat: ',.0f' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 80, r: 30, t: 30, b: 5 },
+            shapes: shapes
+        });
+
+        Plotly.newPlot('medianPriceChart', traces, layout, plotlyConfig);
+        baseShapeCount.medianPriceChart = shapes.length;
+    }
+
+    // ============================================================
+    //  CHART 4: Monthly Supply of New Houses (Months)
+    // ============================================================
+    function updateMonthlySupplyChart() {
+        var dates = housData.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [
+            {
+                x: d, y: sl(housData.monthly_supply, range),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#16a34a', width: 2.5 },
+                name: 'Monthly Supply (Monate)',
+                hovertemplate: '%{y:.1f} Monate<extra></extra>'
+            }
+        ];
+
+        var shapes = nberShapes(dates, range);
+        // Reference line at 6 months (equilibrium)
+        shapes.push({
+            type: 'line', xref: 'paper', yref: 'y',
+            x0: 0, x1: 1, y0: 6, y1: 6,
+            line: { color: '#dc2626', width: 1.5, dash: 'dash' }
+        });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%m/%Y' },
+            yaxis: { title: 'Monate', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 380,
+            showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 },
+            shapes: shapes,
+            annotations: [{
+                x: 1.0, xref: 'paper', y: 6, yref: 'y',
+                text: '6 Mon. Gleichgewicht',
+                showarrow: false, font: { size: 10, color: '#dc2626' },
+                xanchor: 'right', yanchor: 'bottom'
+            }]
+        });
+
+        Plotly.newPlot('monthlySupplyChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 5: AFFORDABILITY INDEX
+    // ============================================================
+    function updateAffordabilityChart() {
+        var ext = housData.extended;
+        if (!ext || !ext.FIXHAI) return;
+        var dates = housData.dates;
+        var fixhai = ext.FIXHAI;
+        var traces = [{
+            x: dates, y: fixhai, type: 'scatter', mode: 'lines',
+            name: 'Affordability Index', line: { color: '#8b5cf6', width: 2 }
+        }];
+        var shapes = housData.nber_recessions.filter(function(r) { return showRecessions; }).map(function(r) {
+            return { type:'rect',xref:'x',yref:'paper',x0:r[0],x1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.3)',line:{width:0} };
+        });
+        shapes.push({ type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:100,y1:100,line:{color:'#dc2626',width:1,dash:'dash'} });
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { range: getXRange(dates), gridcolor: '#f0f0f0' },
+            yaxis: { title: 'Index', gridcolor: '#f0f0f0' },
+            shapes: shapes,
+            annotations: [{ xref:'paper',yref:'y',x:1,y:100,text:'100 = Schwelle',showarrow:false,font:{size:10,color:'#dc2626'},xanchor:'right',yanchor:'bottom' }]
+        });
+        Plotly.newPlot('affordabilityChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 6: HOME SALES YoY
+    // ============================================================
+    function updateHomeSalesChart() {
+        var eyoy = housData.extended_yoy;
+        if (!eyoy) return;
+        var dates = housData.dates;
+        var traces = [];
+        if (eyoy.HNFSEPUSSA) traces.push({ x: dates, y: eyoy.HNFSEPUSSA, type:'scatter', mode:'lines', name:'New Home Sales YoY', line:{color:'#2598C3',width:2} });
+        if (eyoy.EXHOSLUSM495S) traces.push({ x: dates, y: eyoy.EXHOSLUSM495S, type:'scatter', mode:'lines', name:'Existing Home Sales YoY', line:{color:'#F79645',width:2} });
+        if (traces.length === 0) return;
+        var shapes = housData.nber_recessions.filter(function(r) { return showRecessions; }).map(function(r) {
+            return { type:'rect',xref:'x',yref:'paper',x0:r[0],x1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.3)',line:{width:0} };
+        });
+        shapes.push({ type:'line',xref:'paper',yref:'y',x0:0,x1:1,y0:0,y1:0,line:{color:'#999',width:1,dash:'dot'} });
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { range: getXRange(dates), gridcolor: '#f0f0f0' },
+            yaxis: { title: 'YoY %', gridcolor: '#f0f0f0' },
+            shapes: shapes
+        });
+        Plotly.newPlot('homeSalesChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 7: CONSTRUCTION SPENDING YoY
+    // ============================================================
+    function updateConstructionChart() {
+        var eyoy = housData.extended_yoy;
+        if (!eyoy || !eyoy.TTLCONS) return;
+        var dates = housData.dates;
+        var colors = eyoy.TTLCONS.map(function(v) { return v != null && v >= 0 ? '#16a34a' : '#dc2626'; });
+        var traces = [{
+            x: dates, y: eyoy.TTLCONS, type: 'bar', name: 'Construction Spending YoY',
+            marker: { color: colors }
+        }];
+        var shapes = housData.nber_recessions.filter(function(r) { return showRecessions; }).map(function(r) {
+            return { type:'rect',xref:'x',yref:'paper',x0:r[0],x1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.3)',line:{width:0} };
+        });
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { range: getXRange(dates), gridcolor: '#f0f0f0' },
+            yaxis: { title: 'YoY %', gridcolor: '#f0f0f0' },
+            shapes: shapes
+        });
+        Plotly.newPlot('constructionChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  CHART 8: VACANCY RATES
+    // ============================================================
+    function updateVacancyChart() {
+        var ext = housData.extended;
+        if (!ext) return;
+        var dates = housData.dates;
+        var traces = [];
+        if (ext.EVACANTUSQ176N) traces.push({ x: dates, y: ext.EVACANTUSQ176N, type:'scatter', mode:'lines', name:'Rental Vacancy Rate', line:{color:'#dc2626',width:2} });
+        if (ext.RRVRUSQ156N) traces.push({ x: dates, y: ext.RRVRUSQ156N, type:'scatter', mode:'lines', name:'Homeowner Vacancy Rate', line:{color:'#1A2E4A',width:2} });
+        if (traces.length === 0) return;
+        var shapes = housData.nber_recessions.filter(function(r) { return showRecessions; }).map(function(r) {
+            return { type:'rect',xref:'x',yref:'paper',x0:r[0],x1:r[1],y0:0,y1:1,fillcolor:'rgba(200,200,200,0.3)',line:{width:0} };
+        });
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { range: getXRange(dates), gridcolor: '#f0f0f0' },
+            yaxis: { title: '%', gridcolor: '#f0f0f0' },
+            shapes: shapes
+        });
+        Plotly.newPlot('vacancyChart', traces, layout, plotlyConfig);
+    }
+
+    // ============================================================
+    //  STATS UPDATE
+    // ============================================================
+    function updateStats() {
+        var c = housData.current;
+
+        function fmtStatYoY(el, val) {
+            if (val != null) {
+                el.textContent = (val >= 0 ? '+' : '') + val.toFixed(2) + '%';
+                el.style.color = val >= 0 ? '#16a34a' : '#dc2626';
+            }
+        }
+
+        function fmtStatLevel(el, val, suffix) {
+            if (val != null) {
+                el.textContent = val.toFixed(2) + (suffix || '');
+                el.style.color = 'var(--color-text-primary)';
+            }
+        }
+
+        fmtStatYoY(document.getElementById('statCaseShiller'), c.case_shiller_yoy);
+        fmtStatLevel(document.getElementById('statMortgage'), c.mortgage_rate, '%');
+        fmtStatYoY(document.getElementById('statStarts'), c.starts_yoy);
+
+        if (c.monthly_supply != null) {
+            var supEl = document.getElementById('statSupply');
+            supEl.textContent = c.monthly_supply.toFixed(1);
+            supEl.style.color = c.monthly_supply > 6 ? '#dc2626' : '#16a34a';
+        }
+
+        document.getElementById('currentInfo').innerHTML =
+            'Case-Shiller: <strong>' + (c.case_shiller_yoy != null ? (c.case_shiller_yoy >= 0 ? '+' : '') + c.case_shiller_yoy.toFixed(2) + '%' : '--') + '</strong> &middot; ' +
+            'Mortgage: ' + (c.mortgage_rate != null ? c.mortgage_rate.toFixed(2) + '%' : '--') + ' &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    // ============================================================
+    //  SYNCED CROSSHAIR
+    // ============================================================
+    var chartIds = ['caseShillerMortgageChart', 'startsPermitsChart', 'medianPriceChart', 'monthlySupplyChart', 'affordabilityChart', 'homeSalesChart', 'constructionChart', 'vacancyChart'];
+    var baseShapeCount = { caseShillerMortgageChart: 0, startsPermitsChart: 0, medianPriceChart: 0, monthlySupplyChart: 0, affordabilityChart: 0, homeSalesChart: 0, constructionChart: 0, vacancyChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = {
+            type: 'line', xref: 'x', yref: 'paper',
+            x0: xVal, x1: xVal, y0: 0, y1: 1,
+            line: { color: '#666', width: 1, dash: 'dash' }
+        };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id]);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) {
+                if (data.points && data.points.length > 0) {
+                    syncCrosshair(id, data.points[0].x);
+                }
+            });
+            el.on('plotly_unhover', function() {
+                clearCrosshair();
+            });
+        });
+    }
+
+    // ============================================================
+    //  MAIN UPDATE
+    // ============================================================
+    function updateAll() {
+        if (!housData) return;
+        updateStats();
+        updateCaseShillerMortgageChart();
+        updateStartsPermitsChart();
+        updateMedianPriceChart();
+        updateMonthlySupplyChart();
+        updateAffordabilityChart();
+        updateHomeSalesChart();
+        updateConstructionChart();
+        updateVacancyChart();
+        attachCrosshairListeners();
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() { updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

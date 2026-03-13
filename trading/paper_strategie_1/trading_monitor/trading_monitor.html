@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Strategie 1 - Trading Monitor</title>
+    <link rel="stylesheet" href="../../../shared/css/common.css">
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <div class="spa-tabs">
+                <a href="../overview.html" class="spa-tab">Übersicht</a>
+                <a href="../performance_analyse/performance_analyse.html" class="spa-tab">Performance</a>
+                <a href="../margin_analyse/margin_analyse.html" class="spa-tab">Margin</a>
+                <a href="../rollover_analyse/rollover_analyse.html" class="spa-tab">Rollover</a>
+                <a href="../data_table/data_table.html" class="spa-tab">Data Table</a>
+                <a href="trading_monitor.html" class="spa-tab active">Monitor</a>
+                <a href="../hebel_berechnung/hebel_berechnung.html" class="spa-tab">Hebel</a>
+            </div>
+
+            <div class="sp-clock-container">
+                <div class="sp-clock-card">
+                    <span class="sp-clock-label">
+                        <svg width="21" height="15" viewBox="0 0 32 32" style="vertical-align:middle;border-radius:2px"><rect width="32" height="32" fill="#D52B1E"/><rect x="13" y="6" width="6" height="20" fill="#fff"/><rect x="6" y="13" width="20" height="6" fill="#fff"/></svg>
+                        Zürich
+                    </span>
+                    <span class="sp-clock-time" id="clock-ch">--:--:--</span>
+                </div>
+                <div class="sp-clock-card">
+                    <span class="sp-clock-label">
+                        <svg width="21" height="15" viewBox="0 0 7410 3900" style="vertical-align:middle;border-radius:2px"><rect width="7410" height="3900" fill="#b22234"/><path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><g fill="#fff"><g id="s18"><g id="s9"><g id="s5"><g id="s4"><path id="s" d="M247,90 317.534230,307.082039 132.873218,172.917961H361.126782L176.465770,307.082039z"/><use href="#s" y="420"/><use href="#s" y="840"/><use href="#s" y="1260"/></g><use href="#s" y="1680"/></g><use href="#s4" x="247" y="210"/></g><use href="#s9" x="494"/></g><use href="#s18" x="988"/><use href="#s9" x="1976"/><use href="#s5" x="2470"/></g></svg>
+                        Chicago
+                    </span>
+                    <span class="sp-clock-time" id="clock-chi">--:--:--</span>
+                </div>
+                <div class="sp-filter-card">
+                    <span class="sp-control-label">Filter TRANSACTION CALLED</span>
+                    <select class="sp-filter-select" id="transactionFilter" onchange="setFilter(this.value)">
+                        <option value="all">Alle</option>
+                        <option value="called" selected>✓ CALLED</option>
+                        <option value="skipped">✗ SKIPPED</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="main-container" style="max-width:1400px;margin:0 auto;">
+                <div class="sp-table-container">
+                    <div class="sp-table-scroll">
+                        <table class="sp-table" id="raw-data-table">
+                            <thead></thead>
+                            <tbody><tr><td style="text-align:center;padding:30px">Lade Daten...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="sp-last-update" id="last-update"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../../../shared/js/common.js"></script>
+    <script src="../../../shared/js/nav.js" data-active="trading"></script>
+    <script>
+        var DATA_URL = './trading_monitor.json';
+        var currentFilter = 'called';
+        var allData = [];
+
+        startClocks();
+
+        function setFilter(filter) { currentFilter = filter; applyFilter(); }
+
+        function applyFilter() {
+            var filtered = allData;
+            if (currentFilter === 'called') filtered = allData.filter(function(r) { return r.transaction_called === 1 || r.transaction_called === true; });
+            else if (currentFilter === 'skipped') filtered = allData.filter(function(r) { return r.transaction_called === 0 || r.transaction_called === false || r.transaction_called === null; });
+            renderTable(filtered);
+        }
+
+        async function loadTableData() {
+            try {
+                var data = await loadJSONData(DATA_URL);
+                allData = data.paper_strategie_1 ? data.paper_strategie_1.trading_monitor || [] : [];
+                applyFilter();
+                updateLastUpdate(data.timestamp);
+            } catch (error) {
+                console.error('Fehler:', error);
+                var tbody = document.querySelector('#raw-data-table tbody');
+                if (tbody) tbody.innerHTML = '<tr><td style="color:var(--color-negative);text-align:center;padding:20px">Fehler: ' + error.message + '</td></tr>';
+            }
+        }
+
+        function renderTable(data) {
+            var table = document.getElementById('raw-data-table');
+            var thead = table.querySelector('thead');
+            var tbody = table.querySelector('tbody');
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td style="text-align:center;padding:20px">Keine Daten verfügbar</td></tr>'; return; }
+            var columns = Object.keys(data[0]);
+            thead.innerHTML = '<tr>' + columns.map(function(col) { return '<th>' + col.replace(/_/g, ' ').toUpperCase() + '</th>'; }).join('') + '</tr>';
+            tbody.innerHTML = data.map(function(row) {
+                return '<tr>' + columns.map(function(col) {
+                    var val = row[col];
+                    var cellStyle = '';
+                    if (col === 'changed_columns' || col === 'reason_detail') cellStyle = ' style="white-space:normal;word-wrap:break-word"';
+                    if (val === null || val === undefined) return '<td' + cellStyle + '><span style="opacity:0.3">—</span></td>';
+                    if (col === 'transaction_called') {
+                        return '<td>' + (val === 1 || val === true ? '<span class="sp-status-success-badge">✓ CALLED</span>' : '<span class="sp-status-skipped-badge">✗ SKIPPED</span>') + '</td>';
+                    }
+                    if (col === 'reason_code') {
+                        var reason = String(val);
+                        var cls = reason.includes('FEHLER') || reason.includes('ERROR') ? 'sp-status-error-badge' : reason.includes('GESCHLOSSEN') || reason.includes('KEINE') ? 'sp-status-skipped-badge' : 'sp-status-success-badge';
+                        return '<td><span class="' + cls + '">' + reason + '</span></td>';
+                    }
+                    if (typeof val === 'number') {
+                        var fmt = (col.includes('leverage') || col.includes('change')) ? val.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 6 }) : val.toLocaleString('de-DE', { maximumFractionDigits: 4 });
+                        return '<td' + cellStyle + '>' + fmt + '</td>';
+                    }
+                    if (typeof val === 'string' && val.includes('T') && val.length > 10 && !isNaN(Date.parse(val))) return '<td' + cellStyle + '>' + formatDateTime(val) + '</td>';
+                    if (typeof val === 'string' && col !== 'changed_columns' && col !== 'reason_detail' && val.length > 50) val = val.substring(0, 50) + '...';
+                    return '<td' + cellStyle + '>' + val + '</td>';
+                }).join('') + '</tr>';
+            }).join('');
+        }
+
+        loadTableData();
+        setInterval(loadTableData, 60000);
+    </script>
+</body>
+</html>

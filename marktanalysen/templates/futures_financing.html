@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Futures Implizite Finanzierungskosten: ES &amp; Gold, Basis, Dividendenrendite, Vergleich mit SOFR und Fed Funds">
+    <meta name="theme-color" content="#1A2E4A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231A2E4A'/%3E%3Cstop offset='1' stop-color='%23243d62'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpolyline points='6 22 13.5 14.5 18.5 19.5 26 12' stroke='%232598C3' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='22 12 26 12 26 16' stroke='%232598C3' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <title>Futures Finanzierung | Finanzanalyse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="../../shared/css/common.css">
+    <style>
+        /* SharePoint Integration: main-content ohne eigenes padding, controls/page-content übernehmen es */
+        .main-content { padding: 0 !important; overflow-y: auto; }
+        h1 { color: var(--color-text); text-shadow: none; font-size: 1.3em; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <main class="main-content">
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Instrument</label>
+                <div class="toggle-group" id="instrumentToggle">
+                    <button class="toggle-btn active" onclick="switchInstrument('es', this)">ES Futures</button>
+                    <button class="toggle-btn" onclick="switchInstrument('gold', this)">Gold Futures</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Zeitraum</label>
+                <div class="toggle-group" id="timeRangeToggle">
+                    <button class="toggle-btn" onclick="switchTimeRange('1Y', this)">1J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('3Y', this)">3J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('5Y', this)">5J</button>
+                    <button class="toggle-btn" onclick="switchTimeRange('10Y', this)">10J</button>
+                    <button class="toggle-btn active" onclick="switchTimeRange('max', this)">Max</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div class="control-group">
+                <label>Optionen</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="btnRef" onclick="toggleOption('ref', this)">Referenzzinsen</button>
+                </div>
+            </div>
+            <div class="control-separator"></div>
+            <div id="currentInfo" style="font-size:13px;color:var(--color-text-secondary);"></div>
+        </div>
+
+        <div class="page-content">
+
+            <!-- Stat Boxes -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div id="statImplLabel" style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Impl. Rate (mit Div.)</div>
+                    <div id="statImplRate" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Finanzierungsrate</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">SOFR</div>
+                    <div id="statSOFR" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Referenzzins</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Spread vs. SOFR</div>
+                    <div id="statSpread" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Prozentpunkte</div>
+                </div>
+                <div class="chart-container" style="padding:16px;text-align:center;">
+                    <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:4px;">Basis / DTE</div>
+                    <div id="statBasisDTE" style="font-size:24px;font-weight:700;color:var(--color-text-primary);">--</div>
+                    <div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Basispunkte / Tage</div>
+                </div>
+            </div>
+
+            <!-- Chart 1: Implizite Rate vs. Referenzzinsen -->
+            <div class="chart-container">
+                <h3 class="section-title" id="rateChartTitle">Implizite Finanzierungsrate vs. Referenzzinsen</h3>
+                <p id="rateChartDesc" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Annualisierte implizite Finanzierungskosten des ES-Futures mit und ohne Dividendenber&uuml;cksichtigung, verglichen mit SOFR und Fed Funds Rate
+                </p>
+                <div id="rateChart"></div>
+            </div>
+
+            <!-- Chart 2: Spread vs. SOFR -->
+            <div class="chart-container">
+                <h3 class="section-title">Spread: Implizite Rate vs. SOFR</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Positiv = Futures-Financing teurer als SOFR; Negativ = g&uuml;nstiger als SOFR
+                </p>
+                <div id="spreadChart"></div>
+            </div>
+
+            <!-- Chart 3: Basis ohne Dividenden -->
+            <div class="chart-container">
+                <h3 class="section-title" id="basisChartTitle">Annualisierte Basis (ohne Dividenden)</h3>
+                <p id="basisChartDesc" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Net Cost of Carry = Finanzierungsrate minus Dividendenrendite. Entspricht (ES/SPX &minus; 1) &times; 365/DTE
+                </p>
+                <div id="basisChart"></div>
+            </div>
+
+            <!-- Chart 4: Dividendenrendite (nur ES) -->
+            <div class="chart-container" id="divYieldSection">
+                <h3 class="section-title">S&amp;P 500 Dividendenrendite</h3>
+                <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Trailing 12M Dividendenrendite (SPY) &ndash; wird zur Basis addiert um die implizite Finanzierungsrate zu erhalten
+                </p>
+                <div id="divYieldChart"></div>
+            </div>
+
+            <!-- Chart 5: Preise + DTE -->
+            <div class="chart-container">
+                <h3 class="section-title" id="priceChartTitle">ES-Futures vs. S&amp;P 500 Spot &amp; DTE</h3>
+                <p id="priceChartDesc" style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                    Rohdaten: ES=F und ^GSPC Preise (linke Achse) sowie Days-to-Expiration (rechte Achse)
+                </p>
+                <div id="priceChart"></div>
+            </div>
+
+            <!-- Chart 6: Dividendenrendite-Strategie (nur ES) -->
+            <div id="strategySection">
+                <div class="chart-container">
+                    <h3 class="section-title">Dividendenrendite-Strategie: Backtest</h3>
+                    <p style="color:var(--color-text-muted);font-size:0.85em;margin-bottom:12px;">
+                        Long S&amp;P 500 wenn der MA der Dividendenrendite f&auml;llt (5/10/20/30/40 Tage). Fallende Div.Yield = steigende Kurse relativ zu Dividenden.
+                        Signal mit <code>shift(1)</code> verz&ouml;gert (kein Data Leakage). Start bei 100.
+                    </p>
+                    <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:13px;">
+                        <thead>
+                            <tr style="border-bottom:2px solid var(--color-border);">
+                                <th style="text-align:left;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Strategie</th>
+                                <th style="text-align:right;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Rendite p.a.</th>
+                                <th style="text-align:right;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Varianz p.a.</th>
+                                <th style="text-align:right;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Kelly f*</th>
+                                <th style="text-align:right;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Max DD</th>
+                                <th style="text-align:right;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Exposure %</th>
+                                <th style="text-align:right;padding:8px 10px;color:var(--color-text-muted);font-weight:600;">Rendite p.a. (adj.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="strategyTableBody">
+                        </tbody>
+                    </table>
+                    <div id="strategyChart"></div>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="chart-container" style="border-left:3px solid var(--color-accent-blue);background:var(--color-surface-alt);">
+                <h3 class="section-title">Methodik</h3>
+                <div id="methodikES">
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>Implizite Finanzierungskosten</strong> des ES-Futures ergeben sich aus der Differenz zwischen Futures- und Spotpreis (Basis).
+                        Die annualisierte Basis <code>(ES/SPX &minus; 1) &times; 365/DTE</code> entspricht dem Net Cost of Carry (Finanzierungsrate minus Dividendenrendite).
+                    </p>
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>Ohne Dividenden:</strong> Die rohe annualisierte Basis zeigt den &laquo;Net Cost of Carry&raquo; &ndash; wie viel es implizit kostet,
+                        den S&amp;P 500 &uuml;ber den Future zu halten (abz&uuml;glich entgangener Dividenden).
+                    </p>
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>Mit Dividenden:</strong> Addiert man die gesch&auml;tzte Dividendenrendite (Trailing 12M von SPY),
+                        erh&auml;lt man die reine implizite Finanzierungsrate, die mit SOFR oder Fed Funds verglichen werden kann.
+                    </p>
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>DTE-Filterung:</strong> Tage mit DTE &lt; 5 werden ausgeschlossen, da die Annualisierung bei sehr kurzer Restlaufzeit extrem verrauscht wird.
+                        Quartalsverf&auml;lle: 3. Freitag von M&auml;rz, Juni, September, Dezember.
+                    </p>
+                    <p style="font-size:0.85em;color:var(--color-text-muted);">
+                        <strong>Datenquellen:</strong> Yahoo Finance (ES=F, ^GSPC, SPY Dividenden), FRED (SOFR, DFF, DGS3MO).
+                    </p>
+                </div>
+                <div id="methodikGold" style="display:none;">
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>Implizite Finanzierungskosten</strong> des Gold-Futures ergeben sich aus der Basis: <code>(GC/Gold_Spot &minus; 1) &times; 365/DTE</code>.
+                        Da Gold keine Dividenden zahlt, entspricht die Basis direkt den Finanzierungs- und Lagerkosten.
+                    </p>
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>Implied Rate:</strong> Die annualisierte Basis repr&auml;sentiert die Summe aus Finanzierungskosten und Lagerkosten (Storage/Insurance).
+                        Bei institutionellem Gold sind die Lagerkosten gering, sodass die Rate haupts&auml;chlich die Finanzierungskosten widerspiegelt.
+                    </p>
+                    <p style="color:var(--color-text-secondary);font-size:0.9em;line-height:1.6;margin-bottom:8px;">
+                        <strong>DTE-Filterung:</strong> Tage mit DTE &lt; 5 werden ausgeschlossen.
+                        Gold-Futures-Verf&auml;lle: 3.-letzter Gesch&auml;ftstag der geraden Monate (Feb, Apr, Jun, Aug, Okt, Dez).
+                    </p>
+                    <p style="font-size:0.85em;color:var(--color-text-muted);">
+                        <strong>Datenquellen:</strong> Yahoo Finance (GC=F), FRED (GOLDAMGBD228NLBM / London Gold Fix, SOFR, DFF, DGS3MO).
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">Futures Finanzierung &middot; Daten: Yahoo Finance, FRED</div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+    var ffData = __FUTURES_FINANCING_DATA__;
+
+    if (!ffData) {
+        document.querySelector('.page-content').innerHTML =
+            '<div class="info-box"><h3>Keine Daten verf&uuml;gbar</h3><p>Bitte zuerst <code>python update_futures_financing.py</code> und dann <code>python generate.py</code> ausf&uuml;hren.</p></div>';
+    }
+
+    var plotlyConfig = { displayModeBar: true, displaylogo: false, modeBarButtonsToRemove: ['pan2d','lasso2d','select2d'], responsive: true };
+    var layoutBase = { font: { family: "'Inter','Segoe UI',sans-serif", size: 12 }, paper_bgcolor: 'white', plot_bgcolor: 'white', hovermode: 'x unified', margin: { l: 70, r: 70, t: 30, b: 50 } };
+
+    var currentTimeRange = 'max';
+    var showRef = true;
+    var currentInstrument = 'es';
+
+    function getActiveData() {
+        if (!ffData) return null;
+        return ffData[currentInstrument];
+    }
+
+    function getFilteredRange(dates) {
+        var len = dates.length;
+        if (currentTimeRange === 'max') return { start: 0, end: len };
+        var daysMap = { '1Y': 252, '3Y': 756, '5Y': 1260, '10Y': 2520 };
+        var days = daysMap[currentTimeRange] || len;
+        return { start: Math.max(0, len - days), end: len };
+    }
+
+    function sl(arr, range) {
+        if (!arr || arr.length === 0) return [];
+        return arr.slice(range.start, range.end);
+    }
+
+    function switchTimeRange(range, btn) {
+        currentTimeRange = range;
+        document.getElementById('timeRangeToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateAll();
+    }
+
+    function toggleOption(option, btn) {
+        if (option === 'ref') showRef = !showRef;
+        btn.classList.toggle('active');
+        updateAll();
+    }
+
+    function switchInstrument(instrument, btn) {
+        currentInstrument = instrument;
+        document.getElementById('instrumentToggle').querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        updateLabels();
+        updateAll();
+    }
+
+    function updateLabels() {
+        var isES = currentInstrument === 'es';
+
+        // Stat box label
+        document.getElementById('statImplLabel').textContent = isES ? 'Impl. Rate (mit Div.)' : 'Impl. Rate';
+
+        // Chart 1
+        document.getElementById('rateChartTitle').textContent = isES
+            ? 'Implizite Finanzierungsrate vs. Referenzzinsen'
+            : 'Gold Implied Financing Rate vs. Referenzzinsen';
+        document.getElementById('rateChartDesc').innerHTML = isES
+            ? 'Annualisierte implizite Finanzierungskosten des ES-Futures mit und ohne Dividendenber&uuml;cksichtigung, verglichen mit SOFR und Fed Funds Rate'
+            : 'Annualisierte implizite Finanzierungskosten des Gold-Futures (Basis + Lagerkosten), verglichen mit SOFR und Fed Funds Rate';
+
+        // Chart 3
+        document.getElementById('basisChartTitle').textContent = isES
+            ? 'Annualisierte Basis (ohne Dividenden)'
+            : 'Annualisierte Basis';
+        document.getElementById('basisChartDesc').innerHTML = isES
+            ? 'Net Cost of Carry = Finanzierungsrate minus Dividendenrendite. Entspricht (ES/SPX &minus; 1) &times; 365/DTE'
+            : 'Annualisierte Basis = (GC/Gold_Spot &minus; 1) &times; 365/DTE. Entspricht Finanzierung + Lagerkosten';
+
+        // Chart 4 (Dividendenrendite) nur bei ES
+        document.getElementById('divYieldSection').style.display = isES ? '' : 'none';
+
+        // Chart 5
+        document.getElementById('priceChartTitle').textContent = isES
+            ? 'ES-Futures vs. S&P 500 Spot & DTE'
+            : 'Gold-Futures vs. Gold Spot & DTE';
+        document.getElementById('priceChartDesc').innerHTML = isES
+            ? 'Rohdaten: ES=F und ^GSPC Preise (linke Achse) sowie Days-to-Expiration (rechte Achse)'
+            : 'Rohdaten: GC=F und London Gold Fix Preise (linke Achse) sowie Days-to-Expiration (rechte Achse)';
+
+        // Strategie (nur ES)
+        document.getElementById('strategySection').style.display = isES ? '' : 'none';
+
+        // Methodik
+        document.getElementById('methodikES').style.display = isES ? '' : 'none';
+        document.getElementById('methodikGold').style.display = isES ? 'none' : '';
+    }
+
+    // Chart 1: Implizite Rate vs. Referenzzinsen
+    function updateRateChart() {
+        var data = getActiveData();
+        if (!data) return;
+        var dates = data.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+        var isES = currentInstrument === 'es';
+
+        var traces = [];
+
+        if (isES) {
+            traces.push({ x: d, y: sl(data.implied_with_div, range), type: 'scatter', mode: 'lines', line: { color: '#2598C3', width: 2.5 }, name: 'Impl. Rate (mit Div.)', hovertemplate: 'Mit Div.: %{y:.2f}%<extra></extra>' });
+            traces.push({ x: d, y: sl(data.implied_no_div, range), type: 'scatter', mode: 'lines', line: { color: '#1A2E4A', width: 2 }, name: 'Impl. Rate (ohne Div.)', hovertemplate: 'Ohne Div.: %{y:.2f}%<extra></extra>' });
+        } else {
+            traces.push({ x: d, y: sl(data.implied_rate, range), type: 'scatter', mode: 'lines', line: { color: '#d97706', width: 2.5 }, name: 'Gold Impl. Rate', hovertemplate: 'Impl. Rate: %{y:.2f}%<extra></extra>' });
+        }
+
+        if (showRef) {
+            if (data.sofr && data.sofr.length > 0) {
+                traces.push({ x: d, y: sl(data.sofr, range), type: 'scatter', mode: 'lines', line: { color: '#dc2626', width: 1.5 }, name: 'SOFR', hovertemplate: 'SOFR: %{y:.2f}%<extra></extra>' });
+            }
+            if (data.dff && data.dff.length > 0) {
+                traces.push({ x: d, y: sl(data.dff, range), type: 'scatter', mode: 'lines', line: { color: '#F79645', width: 1.5 }, name: 'Eff. Fed Funds', hovertemplate: 'Fed Funds: %{y:.2f}%<extra></extra>' });
+            }
+            if (data.dgs3mo && data.dgs3mo.length > 0) {
+                traces.push({ x: d, y: sl(data.dgs3mo, range), type: 'scatter', mode: 'lines', line: { color: '#8b5cf6', width: 1.5 }, name: '3M T-Bill', hovertemplate: '3M T-Bill: %{y:.2f}%<extra></extra>' });
+            }
+        }
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y', showticklabels: false },
+            yaxis: { title: 'Annualisierte Rate (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 450, showlegend: true,
+            legend: { orientation: 'h', y: 1.15, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 40, b: 5 }
+        });
+
+        Plotly.newPlot('rateChart', traces, layout, plotlyConfig);
+        baseShapeCount.rateChart = 0;
+    }
+
+    // Chart 2: Spread vs. SOFR
+    function updateSpreadChart() {
+        var data = getActiveData();
+        if (!data) return;
+        var dates = data.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var spreadData = sl(data.spread_vs_sofr, range);
+        var traces = [{ x: d, y: spreadData, type: 'scatter', mode: 'lines', fill: 'tozeroy', fillcolor: currentInstrument === 'es' ? 'rgba(37,152,195,0.1)' : 'rgba(217,119,6,0.1)', line: { color: currentInstrument === 'es' ? '#2598C3' : '#d97706', width: 2 }, name: 'Spread vs. SOFR', hovertemplate: '%{y:+.2f} Pp.<extra></extra>' }];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y', showticklabels: false },
+            yaxis: { title: 'Spread (Prozentpunkte)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 300, showlegend: false,
+            margin: { l: 70, r: 30, t: 10, b: 5 },
+            shapes: [{ type: 'line', xref: 'paper', yref: 'y', x0: 0, x1: 1, y0: 0, y1: 0, line: { color: '#333', width: 1.5 } }]
+        });
+
+        Plotly.newPlot('spreadChart', traces, layout, plotlyConfig);
+        baseShapeCount.spreadChart = 1;
+    }
+
+    // Chart 3: Basis
+    function updateBasisChart() {
+        var data = getActiveData();
+        if (!data) return;
+        var dates = data.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+        var isES = currentInstrument === 'es';
+
+        var basisData = isES ? sl(data.implied_no_div, range) : sl(data.implied_rate, range);
+        var traces = [{ x: d, y: basisData, type: 'scatter', mode: 'lines', fill: 'tozeroy', fillcolor: isES ? 'rgba(26,46,74,0.08)' : 'rgba(217,119,6,0.08)', line: { color: isES ? '#1A2E4A' : '#d97706', width: 2 }, name: isES ? 'Net Cost of Carry' : 'Impl. Rate', hovertemplate: '%{y:.2f}%<extra></extra>' }];
+
+        if (showRef && data.dff && data.dff.length > 0) {
+            traces.push({ x: d, y: sl(data.dff, range), type: 'scatter', mode: 'lines', line: { color: '#F79645', width: 1.5 }, name: 'Fed Funds', hovertemplate: 'Fed Funds: %{y:.2f}%<extra></extra>' });
+        }
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y', showticklabels: false },
+            yaxis: { title: 'Rate (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 300, showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 }
+        });
+
+        Plotly.newPlot('basisChart', traces, layout, plotlyConfig);
+        baseShapeCount.basisChart = 0;
+    }
+
+    // Chart 4: Dividendenrendite (nur ES)
+    function updateDivYieldChart() {
+        if (currentInstrument !== 'es') return;
+        var data = getActiveData();
+        if (!data || !data.div_yield) return;
+        var dates = data.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [{ x: d, y: sl(data.div_yield, range), type: 'scatter', mode: 'lines', line: { color: '#16a34a', width: 2 }, name: 'Trailing 12M Div. Yield', hovertemplate: '%{y:.2f}%<extra></extra>' }];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y', showticklabels: false },
+            yaxis: { title: 'Dividendenrendite (%)', showgrid: true, gridcolor: '#E8E8E8' },
+            height: 250, showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 5 }
+        });
+
+        Plotly.newPlot('divYieldChart', traces, layout, plotlyConfig);
+    }
+
+    // Chart 5: Preise + DTE
+    function updatePriceChart() {
+        var data = getActiveData();
+        if (!data) return;
+        var dates = data.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+        var isES = currentInstrument === 'es';
+
+        var futColor = isES ? '#2598C3' : '#d97706';
+        var spotColor = isES ? '#1A2E4A' : '#92400e';
+        var futLabel = isES ? 'ES=F' : 'GC=F';
+        var spotLabel = isES ? 'S&P 500' : 'Gold Spot';
+
+        var traces = [
+            { x: d, y: sl(data.futures_price, range), type: 'scatter', mode: 'lines', line: { color: futColor, width: 2 }, name: futLabel, hovertemplate: futLabel + ': %{y:,.0f}<extra></extra>' },
+            { x: d, y: sl(data.spot_price, range), type: 'scatter', mode: 'lines', line: { color: spotColor, width: 1.5 }, name: spotLabel, hovertemplate: spotLabel + ': %{y:,.0f}<extra></extra>' },
+            { x: d, y: sl(data.dte, range), type: 'scatter', mode: 'lines', line: { color: '#F79645', width: 1 }, name: 'DTE', yaxis: 'y2', hovertemplate: 'DTE: %{y} Tage<extra></extra>' }
+        ];
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'Preis', showgrid: true, gridcolor: '#E8E8E8' },
+            yaxis2: { title: 'DTE (Tage)', overlaying: 'y', side: 'right', showgrid: false, range: [0, 100] },
+            height: 350, showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 70, t: 30, b: 50 }
+        });
+
+        Plotly.newPlot('priceChart', traces, layout, plotlyConfig);
+    }
+
+    // Chart 6: Dividendenrendite-Strategie (5MA, 10MA, 20MA)
+    var maColors = { '5': '#2598C3', '10': '#16a34a', '20': '#d97706', '30': '#dc2626', '40': '#8b5cf6' };
+    var maNames = { '5': '5MA', '10': '10MA', '20': '20MA', '30': '30MA', '40': '40MA' };
+
+    function updateStrategyChart() {
+        if (currentInstrument !== 'es') return;
+        var data = getActiveData();
+        if (!data || !data.strategy) return;
+        var s = data.strategy;
+        var v = s.variants;
+        var dates = data.dates;
+        var range = getFilteredRange(dates);
+        var d = sl(dates, range);
+
+        var traces = [];
+        ['5', '10', '20', '30', '40'].forEach(function(ma) {
+            if (!v[ma]) return;
+            traces.push({ x: d, y: sl(v[ma].cumret, range), type: 'scatter', mode: 'lines', line: { color: maColors[ma], width: 2.5 }, name: maNames[ma] + ' Strategie', hovertemplate: maNames[ma] + ': %{y:,.0f}<extra></extra>' });
+        });
+        traces.push({ x: d, y: sl(s.bh_cumret, range), type: 'scatter', mode: 'lines', line: { color: '#1A2E4A', width: 2 }, name: 'Buy & Hold S&P 500', hovertemplate: 'B&H: %{y:,.0f}<extra></extra>' });
+
+        var layout = Object.assign({}, layoutBase, {
+            xaxis: { showgrid: true, gridcolor: '#E8E8E8', tickformat: '%Y', hoverformat: '%d.%m.%Y' },
+            yaxis: { title: 'Kumulierte Rendite (Start=100)', showgrid: true, gridcolor: '#E8E8E8', type: 'log' },
+            height: 400, showlegend: true,
+            legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+            margin: { l: 70, r: 30, t: 30, b: 50 }
+        });
+
+        Plotly.newPlot('strategyChart', traces, layout, plotlyConfig);
+
+        // Tabelle
+        var tbody = document.getElementById('strategyTableBody');
+        var rows = '';
+        function fv(val) { return val != null ? val.toFixed(2) : '--'; }
+        ['5', '10', '20', '30', '40'].forEach(function(ma) {
+            if (!v[ma]) return;
+            var c = maColors[ma];
+            var d = v[ma];
+            rows += '<tr style="border-bottom:1px solid var(--color-border);">' +
+                '<td style="padding:6px 10px;"><span style="display:inline-block;width:12px;height:3px;background:' + c + ';border-radius:2px;margin-right:6px;vertical-align:middle;"></span>' + maNames[ma] + ' Div.Yield</td>' +
+                '<td style="text-align:right;padding:6px 10px;font-weight:700;color:' + c + ';">' + d.ann.toFixed(2) + '%</td>' +
+                '<td style="text-align:right;padding:6px 10px;">' + fv(d.var_pa) + '%&sup2;</td>' +
+                '<td style="text-align:right;padding:6px 10px;">' + fv(d.kelly) + '</td>' +
+                '<td style="text-align:right;padding:6px 10px;color:#dc2626;">' + d.dd.toFixed(1) + '%</td>' +
+                '<td style="text-align:right;padding:6px 10px;">' + d.exposure.toFixed(1) + '%</td>' +
+                '<td style="text-align:right;padding:6px 10px;font-weight:700;color:' + c + ';">' + fv(d.ret_pa_adj) + '%</td></tr>';
+        });
+        rows += '<tr style="border-bottom:1px solid var(--color-border);">' +
+            '<td style="padding:6px 10px;"><span style="display:inline-block;width:12px;height:3px;background:#1A2E4A;border-radius:2px;margin-right:6px;vertical-align:middle;"></span>Buy &amp; Hold</td>' +
+            '<td style="text-align:right;padding:6px 10px;font-weight:700;color:#1A2E4A;">' + s.bh_ann.toFixed(2) + '%</td>' +
+            '<td style="text-align:right;padding:6px 10px;">' + fv(s.bh_var_pa) + '%&sup2;</td>' +
+            '<td style="text-align:right;padding:6px 10px;">' + fv(s.bh_kelly) + '</td>' +
+            '<td style="text-align:right;padding:6px 10px;color:#dc2626;">' + s.bh_dd.toFixed(1) + '%</td>' +
+            '<td style="text-align:right;padding:6px 10px;">100.0%</td>' +
+            '<td style="text-align:right;padding:6px 10px;font-weight:700;color:#1A2E4A;">' + s.bh_ann.toFixed(2) + '%</td></tr>';
+        tbody.innerHTML = rows;
+    }
+
+    function updateStats() {
+        var data = getActiveData();
+        if (!data || !data.current) return;
+        var c = data.current;
+        var isES = currentInstrument === 'es';
+
+        var implRate = isES ? c.implied_with_div : c.implied_rate;
+        var elImpl = document.getElementById('statImplRate');
+        if (implRate != null) {
+            elImpl.textContent = implRate.toFixed(2) + '%';
+            elImpl.style.color = isES ? '#2598C3' : '#d97706';
+        } else {
+            elImpl.textContent = '--';
+        }
+
+        var elSOFR = document.getElementById('statSOFR');
+        if (c.sofr != null) {
+            elSOFR.textContent = c.sofr.toFixed(2) + '%';
+            elSOFR.style.color = '#dc2626';
+        } else {
+            elSOFR.textContent = '--';
+        }
+
+        var elSpread = document.getElementById('statSpread');
+        if (c.spread_vs_sofr != null) {
+            var sp = c.spread_vs_sofr;
+            elSpread.textContent = (sp >= 0 ? '+' : '') + sp.toFixed(2) + ' Pp.';
+            elSpread.style.color = Math.abs(sp) < 0.3 ? '#16a34a' : (sp > 0 ? '#dc2626' : '#F79645');
+        } else {
+            elSpread.textContent = '--';
+        }
+
+        var elBasis = document.getElementById('statBasisDTE');
+        if (c.basis_bps != null && c.dte != null) {
+            elBasis.textContent = c.basis_bps.toFixed(0) + ' bps / ' + c.dte + 'T';
+        } else {
+            elBasis.textContent = '--';
+        }
+
+        var label = isES ? 'ES' : 'Gold';
+        document.getElementById('currentInfo').innerHTML =
+            label + ' Impl. Rate: <strong>' + (implRate != null ? implRate.toFixed(2) + '%' : '--') + '</strong> &middot; ' +
+            'SOFR: ' + (c.sofr != null ? c.sofr.toFixed(2) + '%' : '--') + ' &middot; ' +
+            'Stand: ' + c.date;
+    }
+
+    var chartIds = ['rateChart', 'spreadChart', 'basisChart'];
+    var baseShapeCount = { rateChart: 0, spreadChart: 0, basisChart: 0 };
+    var crosshairActive = false;
+
+    function syncCrosshair(sourceId, xVal) {
+        crosshairActive = true;
+        var shape = { type: 'line', xref: 'x', yref: 'paper', x0: xVal, x1: xVal, y0: 0, y1: 1, line: { color: '#666', width: 1 } };
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            var shapes = (el.layout.shapes || []).slice(0, baseShapeCount[id] || 0);
+            shapes.push(shape);
+            Plotly.relayout(id, { shapes: shapes });
+        });
+    }
+
+    function clearCrosshair() {
+        if (!crosshairActive) return;
+        crosshairActive = false;
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || !el._fullLayout) return;
+            Plotly.relayout(id, { shapes: (el.layout.shapes || []).slice(0, baseShapeCount[id] || 0) });
+        });
+    }
+
+    function attachCrosshairListeners() {
+        chartIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.on('plotly_hover', function(data) { if (data.points && data.points.length > 0) syncCrosshair(id, data.points[0].x); });
+            el.on('plotly_unhover', function() { clearCrosshair(); });
+        });
+    }
+
+    function updateAll() {
+        if (!ffData) return;
+        var data = getActiveData();
+        if (!data) {
+            document.querySelector('.page-content').innerHTML =
+                '<div class="info-box"><h3>Keine Daten f&uuml;r ' + (currentInstrument === 'es' ? 'ES' : 'Gold') + '</h3><p>Daten konnten nicht geladen werden.</p></div>';
+            return;
+        }
+        updateStats();
+        updateRateChart();
+        updateSpreadChart();
+        updateBasisChart();
+        updateDivYieldChart();
+        updatePriceChart();
+        updateStrategyChart();
+        attachCrosshairListeners();
+    }
+
+    window.onload = function() { updateLabels(); updateAll(); };
+    </script>
+    <script src="../../shared/js/nav.js" data-active="marktanalysen"></script>
+</body>

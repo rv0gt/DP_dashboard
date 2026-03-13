@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYSE - Börseninformationen</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <style>
+        .clock-container { display: flex; gap: 20px; margin-top: 16px; }
+        .clock-card { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); border-radius: 6px; padding: 6px 14px; font-size: 13px; }
+        .clock-label { opacity: 0.85; }
+        .clock-time { font-weight: 700; font-family: 'Consolas', 'Monaco', monospace; }
+        .product-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .product-tag { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; cursor: default; }
+        .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 28px; }
+        .stat-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 20px 24px; }
+        .stat-number { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--color-text-secondary); }
+        .stat-sublabel { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; }
+        .stat-card.market-open { border-left: 4px solid var(--color-positive); }
+        .stat-card.market-open .stat-number { color: var(--color-positive); }
+        .stat-card.market-closed { border-left: 4px solid var(--color-negative); }
+        .stat-card.market-closed .stat-number { color: var(--color-negative); }
+        .countdown-timer { font-size: 20px; font-weight: 700; font-family: 'Consolas', 'Monaco', monospace; }
+        .upcoming-holidays { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; margin-bottom: 28px; overflow: hidden; }
+        .upcoming-header { background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-orange-dark) 100%); color: #fff; padding: 14px 20px; font-size: 15px; font-weight: 600; }
+        .upcoming-list { padding: 12px; }
+        .upcoming-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-radius: 6px; margin-bottom: 8px; background: var(--color-surface-alt); }
+        .upcoming-item:last-child { margin-bottom: 0; }
+        .upcoming-item.imminent { background: var(--color-negative-bg); border: 1px solid rgba(220, 38, 38, 0.2); }
+        .upcoming-info { display: flex; flex-direction: column; gap: 4px; }
+        .upcoming-name { font-weight: 600; color: var(--color-text); }
+        .upcoming-date { font-size: 12px; color: var(--color-text-muted); }
+        .upcoming-closure { display: block; font-size: 11px; color: var(--color-blue); margin-top: 4px; font-weight: 500; }
+        .upcoming-countdown { text-align: right; }
+        .upcoming-days { font-size: 20px; font-weight: 700; color: var(--color-blue); }
+        .upcoming-days.soon { color: var(--color-negative); }
+        .upcoming-label { font-size: 11px; color: var(--color-text-muted); }
+        .holidays-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .holiday-column { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; }
+        .holiday-column-header { background: var(--color-navy); color: #fff; padding: 14px 20px; font-size: 15px; font-weight: 600; }
+        .holiday-table { width: 100%; border-collapse: collapse; }
+        .holiday-table th { background: var(--color-surface-alt); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--color-border); }
+        .holiday-table td { padding: 10px 14px; border-bottom: 1px solid var(--color-border-light); font-size: 13px; }
+        .holiday-table tr:last-child td { border-bottom: none; }
+        .holiday-table tr:hover { background: var(--color-surface-alt); }
+        .holiday-date { font-weight: 600; }
+        .holiday-status { font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+        .holiday-status.status-closed { background: var(--color-negative-bg); color: var(--color-negative); }
+        .holiday-status.status-early { background: rgba(247, 150, 69, 0.15); color: var(--color-orange-dark); }
+        .closure-time { font-size: 11px; color: var(--color-text-muted); }
+        .last-update { text-align: center; font-size: 12px; color: var(--color-text-muted); margin-top: 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--color-blue); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
+        .back-link:hover { text-decoration: underline; }
+        @media (max-width: 900px) { .holidays-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .clock-container { flex-direction: column; gap: 8px; } }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <main class="main-content">
+
+            <a href="index.html" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                Zurück zur Übersicht
+            </a>
+
+            <div class="site-hero">
+                <h1>NYSE</h1>
+                <p>New York Stock Exchange - Aktien & ETFs</p>
+                <div class="product-tags" id="product-tags"></div>
+                <div class="clock-container">
+                    <div class="clock-card">
+                        <span class="clock-label">
+                            <svg width="21" height="15" viewBox="0 0 32 32" style="vertical-align:middle;border-radius:2px;box-shadow:0 0 1px rgba(0,0,0,0.3)"><rect width="32" height="32" fill="#D52B1E"/><rect x="13" y="6" width="6" height="20" fill="#fff"/><rect x="6" y="13" width="20" height="6" fill="#fff"/></svg>
+                            Zürich
+                        </span>
+                        <span class="clock-time" id="clock-ch">--:--:--</span>
+                    </div>
+                    <div class="clock-card">
+                        <span class="clock-label">
+                            <svg width="21" height="15" viewBox="0 0 7410 3900" style="vertical-align:middle;border-radius:2px;box-shadow:0 0 1px rgba(0,0,0,0.3)"><rect width="7410" height="3900" fill="#b22234"/><path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/></svg>
+                            New York
+                        </span>
+                        <span class="clock-time" id="clock-ny">--:--:--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card" id="market-status-card">
+                    <div class="stat-number" id="stat-market-status">-</div>
+                    <div class="stat-label" id="stat-market-label">Marktstatus</div>
+                    <div class="stat-sublabel" id="stat-market-time"></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-next-name">-</div>
+                    <div class="stat-label">Nächster Holiday</div>
+                    <div class="stat-sublabel" id="stat-next-date"></div>
+                </div>
+            </div>
+
+            <div class="upcoming-holidays">
+                <div class="upcoming-header">Kommende Trading Holidays (nächste 90 Tage)</div>
+                <div class="upcoming-list" id="upcoming-list">
+                    <p style="padding: 20px; text-align: center; color: var(--color-text-muted);">Lade Holidays...</p>
+                </div>
+            </div>
+
+            <div class="holidays-grid">
+                <div class="holiday-column">
+                    <div class="holiday-column-header" id="holidays-year1-header">NYSE Holidays</div>
+                    <table class="holiday-table" id="holidays-year1"><thead><tr><th>Datum</th><th>Holiday</th><th>Status</th><th>Schliessung (ET)</th></tr></thead><tbody></tbody></table>
+                </div>
+                <div class="holiday-column">
+                    <div class="holiday-column-header" id="holidays-year2-header">NYSE Holidays</div>
+                    <table class="holiday-table" id="holidays-year2"><thead><tr><th>Datum</th><th>Holiday</th><th>Status</th><th>Schliessung (ET)</th></tr></thead><tbody></tbody></table>
+                </div>
+            </div>
+
+            <div class="last-update" id="last-update"></div>
+        </main>
+    </div>
+
+<script src="../shared/js/nav.js" data-active="boerseninformationen"></script>
+<script>
+    const DATA_URL = './nyse.json';
+    let holidaysData = null;
+
+    function updateClocks() {
+        const now = new Date();
+        document.getElementById('clock-ch').textContent = now.toLocaleTimeString('de-CH', { timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.getElementById('clock-ny').textContent = now.toLocaleTimeString('de-CH', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    updateClocks(); setInterval(updateClocks, 1000);
+
+    function formatDate(dateStr) {
+        return new Date(dateStr).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+    function getNYTime() {
+        return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    }
+
+    // NYSE: Mo-Fr 09:30 - 16:00 ET
+    function getMarketStatus(holidays) {
+        const now = getNYTime();
+        const dow = now.getDay(), h = now.getHours(), m = now.getMinutes(), et = h * 60 + m;
+        const todayStr = now.toISOString().split('T')[0];
+        const todayH = holidays?.find(x => x.date === todayStr);
+
+        if (dow === 0 || dow === 6) return { isOpen: false, reason: 'Wochenende', nextTimeStr: 'Mo 09:30 ET' };
+        if (todayH) {
+            if (todayH.status === 'Closed') return { isOpen: false, reason: todayH.name, nextTimeStr: todayH.closure_end + ' ET' };
+            if (todayH.close_time) {
+                const ch = parseInt(todayH.close_time), cm = parseInt(todayH.close_time.split(':')[1]) || 0, ect = ch * 60 + cm;
+                if (et >= ect) return { isOpen: false, reason: todayH.name + ' (Early Close)', nextTimeStr: 'Morgen 09:30 ET' };
+                if (et >= 570 && et < ect) return { isOpen: true, nextTimeStr: todayH.close_time };
+            }
+        }
+        if (et < 570) return { isOpen: false, reason: 'Vorbörslich', nextTimeStr: 'Heute 09:30 ET' };
+        if (et >= 960) return { isOpen: false, reason: 'Nachbörslich', nextTimeStr: dow === 5 ? 'Mo 09:30 ET' : 'Morgen 09:30 ET' };
+        const dn = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+        return { isOpen: true, nextTimeStr: dn[dow] + ' 16:00 ET' };
+    }
+
+    function updateMarketStatusDisplay() {
+        const holidays = holidaysData?.trading_holidays?.upcoming || [];
+        const s = getMarketStatus(holidays);
+        const card = document.getElementById('market-status-card');
+        const num = document.getElementById('stat-market-status');
+        const lbl = document.getElementById('stat-market-label');
+        const sub = document.getElementById('stat-market-time');
+        card.classList.remove('market-open', 'market-closed');
+        if (s.isOpen) {
+            card.classList.add('market-open'); num.textContent = 'OPEN';
+            lbl.textContent = 'Markt geöffnet';
+            sub.textContent = 'Schliesst ' + s.nextTimeStr;
+        } else {
+            card.classList.add('market-closed'); num.textContent = 'CLOSED';
+            lbl.textContent = s.reason || 'Geschlossen';
+            sub.textContent = 'Öffnet ' + s.nextTimeStr;
+        }
+    }
+
+    function renderUpcoming(holidays) {
+        const c = document.getElementById('upcoming-list');
+        if (!holidays?.length) { c.innerHTML = '<p style="padding:20px;text-align:center;color:var(--color-text-muted)">Keine Holidays in den nächsten 90 Tagen</p>'; return; }
+        c.innerHTML = holidays.map(h => '<div class="upcoming-item ' + (h.days_until <= 7 ? 'imminent' : '') + '"><div class="upcoming-info"><span class="upcoming-name">' + h.name + '</span><span class="upcoming-date">' + formatDate(h.date) + ' (' + h.weekday + ')</span><span class="holiday-status ' + (h.status === 'Closed' ? 'status-closed' : 'status-early') + '">' + h.status + '</span>' + (h.closure_description ? '<span class="upcoming-closure">' + h.closure_description + '</span>' : '') + '</div><div class="upcoming-countdown"><div class="upcoming-days ' + (h.days_until <= 7 ? 'soon' : '') + '">' + h.days_until + '</div><div class="upcoming-label">Tage</div></div></div>').join('');
+    }
+
+    function renderTable(id, holidays) {
+        const tb = document.querySelector('#' + id + ' tbody');
+        if (!holidays?.length) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px">Keine Daten</td></tr>'; return; }
+        tb.innerHTML = holidays.map(h => '<tr><td class="holiday-date">' + formatDate(h.date) + '</td><td>' + h.name + '</td><td><span class="holiday-status ' + (h.status === 'Closed' ? 'status-closed' : 'status-early') + '">' + h.status + '</span></td><td class="closure-time">' + (h.closure_start && h.closure_end ? h.closure_start + ' - ' + h.closure_end : '-') + '</td></tr>').join('');
+    }
+
+    async function load() {
+        try {
+            const r = await fetch(DATA_URL); if (!r.ok) throw new Error('HTTP ' + r.status);
+            const data = await r.json(); holidaysData = data;
+            const PN = {'SPY':'SPDR S&P 500 ETF','QQQ':'Invesco QQQ Trust (Nasdaq 100)','IWM':'iShares Russell 2000 ETF','DIA':'SPDR Dow Jones Industrial ETF','GLD':'SPDR Gold Shares ETF','SLV':'iShares Silver Trust ETF','USO':'United States Oil Fund','TLT':'iShares 20+ Year Treasury ETF','IEF':'iShares 7-10 Year Treasury ETF','SHY':'iShares 1-3 Year Treasury ETF','AAPL':'Apple Inc.','MSFT':'Microsoft Corp.','AMZN':'Amazon.com Inc.','GOOGL':'Alphabet Inc.','META':'Meta Platforms Inc.','NVDA':'NVIDIA Corp.','TSLA':'Tesla Inc.'};
+            if (data.products) document.getElementById('product-tags').innerHTML = data.products.map(p => '<span class="product-tag" title="' + (PN[p]||p) + '">' + p + '</span>').join('');
+            const up = data.trading_holidays?.upcoming || [];
+            if (up.length > 0) { document.getElementById('stat-next-name').textContent = up[0].name; document.getElementById('stat-next-date').textContent = formatDate(up[0].date) + ' (in ' + up[0].days_until + ' Tagen)'; }
+            else { document.getElementById('stat-next-name').textContent = 'Keine'; }
+            updateMarketStatusDisplay();
+            renderUpcoming(up);
+            const y = new Date().getFullYear();
+            document.getElementById('holidays-year1-header').textContent = y + ' NYSE Holidays';
+            document.getElementById('holidays-year2-header').textContent = (y+1) + ' NYSE Holidays';
+            renderTable('holidays-year1', data.trading_holidays?.['all_' + y] || []);
+            renderTable('holidays-year2', data.trading_holidays?.['all_' + (y+1)] || []);
+            if (data.timestamp) document.getElementById('last-update').textContent = 'Letzte Aktualisierung: ' + new Date(data.timestamp).toLocaleString('de-DE');
+        } catch (e) { console.error(e); document.getElementById('upcoming-list').innerHTML = '<p style="padding:20px;text-align:center;color:var(--color-negative)">Fehler beim Laden der Daten</p>'; }
+    }
+    load(); setInterval(load, 300000); setInterval(updateMarketStatusDisplay, 1000);
+</script>
+</body>
+</html>
