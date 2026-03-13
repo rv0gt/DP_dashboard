@@ -1,1 +1,14 @@
-/home/cheffe/PortfolioHub/01_Investments/03_Systembetrieb/04_Dashboard/01_Webseite/dashboard_analyse.json
+{
+  "timestamp": "2026-03-13T12:56:09.125061",
+  "server_status": {
+    "gateway_running": true,
+    "port_4002_listening": true,
+    "last_check": "2026-03-13T12:56:09.147567",
+    "overall": true
+  },
+  "system_status": {
+    "ram_usage_percent": 42.1,
+    "disk_usage_percent": 72,
+    "uptime_days": 8.2
+  }
+}
