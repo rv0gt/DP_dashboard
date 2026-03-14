@@ -1,7 +1,7 @@
 {
-    "timestamp": "2026-03-14T04:10:06.435452",
+    "timestamp": "2026-03-14T05:10:06.562613",
     "overview": {
-        "konto_wert_nlv": 1342014.74,
+        "konto_wert_nlv": 1342013.02,
         "konto_wert_from_ib": true,
         "neuer_hebel": 0.8578,
         "mes_preis": 6625.25,
