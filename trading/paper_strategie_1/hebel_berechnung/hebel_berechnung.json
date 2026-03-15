@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-03-13T15:10:13.295120",
+    "timestamp": "2026-03-15T17:10:24.506769",
     "hebel_history": [
         {
             "timestamp_chi": "2026-03-12T17:10:03",
@@ -2936,8 +2936,8 @@
             "ma10_beitrag": -1.929738,
             "ma50_wert": 1,
             "ma50_beitrag": 0.119662,
-            "reason_code": "HEBEL_AENDERUNG_SIGNIFIKANT",
-            "changed_columns": "BAMLHE00EHYIEY, BAMLH0A0HYM2SYTW, BAMLC0A3CAEY, pc_ratio_volume",
+            "reason_code": null,
+            "changed_columns": null,
             "aktion": "BUY",
             "delta": 24
         },
